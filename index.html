@@ -3022,26 +3022,68 @@
         persResp.style.transition = 'opacity 0.4s ease';
         requestAnimationFrame(() => { persResp.style.opacity = '1'; });
 
-        // Play pre-generated audio response
-        persAudio.src = INDUSTRIES[currentIndustry].personalised;
-        persAudio.play().catch(() => {});
+        // Generate personalised audio via ElevenLabs using the captured business name
+        micSub.textContent = 'Generating your personalised greeting...';
 
-        micSub.textContent = 'Playing your personalised greeting...';
+        const ELEVEN_KEY   = 'sk_d1ec7a4b25d20932e3743644693576454d0664d24956d5b7';
+        const ALICE_VOICE  = 'Xb7hH8MSUJpSbSDYk0k2'; // Alice — British female (Aria)
 
-        persAudio.addEventListener('ended', () => {
-          micSub.textContent = 'That could be your business — every single call.';
-          // Reveal Layer 3
-          setTimeout(() => {
-            layer3El.style.display = 'block';
-            layer3El.style.opacity = '0';
-            layer3El.style.transform = 'translateY(16px)';
-            layer3El.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            requestAnimationFrame(() => {
-              layer3El.style.opacity = '1';
-              layer3El.style.transform = 'translateY(0)';
-            });
-          }, 1200);
-        }, { once: true });
+        // Build industry-aware greeting
+        const greetings = {
+          plumbing:      'Thank you for calling ' + name + '. You\'ve reached us outside of business hours, but don\'t worry — I\'m here to help. My name is Aria. How can I help you tonight?',
+          law:           'Good afternoon, you\'ve reached ' + name + '. The office is currently closed, but I\'m here to assist you. My name is Aria. How can I help?',
+          estateAgency:  'Good evening, thank you for calling ' + name + '. I\'m Aria — how can I help you today?'
+        };
+        const greetingText = greetings[currentIndustry] || 'Thank you for calling ' + name + '. My name is Aria — how can I help you today?';
+
+        fetch('https://api.elevenlabs.io/v1/text-to-speech/' + ALICE_VOICE, {
+          method: 'POST',
+          headers: {
+            'xi-api-key': ELEVEN_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            text: greetingText,
+            model_id: 'eleven_turbo_v2_5',
+            voice_settings: { stability: 0.45, similarity_boost: 0.82, style: 0.25, use_speaker_boost: true }
+          })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('ElevenLabs error ' + res.status);
+          return res.blob();
+        })
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          persAudio.src = url;
+          micSub.textContent = 'Playing your personalised greeting...';
+          persAudio.play().catch(() => {});
+
+          persAudio.addEventListener('ended', () => {
+            micSub.textContent = 'That could be your business — every single call.';
+            URL.revokeObjectURL(url);
+            // Reveal Layer 3
+            setTimeout(() => {
+              layer3El.style.display = 'block';
+              layer3El.style.opacity = '0';
+              layer3El.style.transform = 'translateY(16px)';
+              layer3El.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+              requestAnimationFrame(() => {
+                layer3El.style.opacity = '1';
+                layer3El.style.transform = 'translateY(0)';
+              });
+            }, 1200);
+          }, { once: true });
+        })
+        .catch(err => {
+          console.error('ElevenLabs TTS error:', err);
+          // Fallback: play pre-recorded sample
+          persAudio.src = INDUSTRIES[currentIndustry].personalised;
+          persAudio.play().catch(() => {});
+          micSub.textContent = 'Playing your personalised greeting...';
+          persAudio.addEventListener('ended', () => {
+            micSub.textContent = 'That could be your business — every single call.';
+          }, { once: true });
+        });
       }
 
       // ── LAYER 3: ACTIVATE BUTTON ────────────────────────────────
