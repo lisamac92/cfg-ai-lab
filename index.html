@@ -687,6 +687,7 @@
     }
 
     .waveform-bar.played { opacity: 0.8; background: var(--cfg-teal); }
+    .waveform-bar.active  { opacity: 1.0; background: var(--cfg-orange); }
 
     .playback-time {
       font-size: 12px;
@@ -719,6 +720,140 @@
     }
 
     .transcript-line.highlight .speaker { color: var(--cfg-orange); }
+    .transcript-line.caller .speaker { color: var(--cfg-orange); }
+    .transcript-placeholder {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-style: italic;
+      padding: 8px 0;
+    }
+
+    /* Layer divider */
+    .layer-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      margin: var(--s3) 0 var(--s2);
+    }
+    .layer-divider::before, .layer-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .layer-divider-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      white-space: nowrap;
+    }
+
+    /* Personalised response */
+    .personalised-response {
+      background: linear-gradient(135deg, rgba(78,205,196,0.08), rgba(15,45,96,0.06));
+      border: 1px solid rgba(78,205,196,0.3);
+      border-radius: var(--radius-sm);
+      padding: var(--s2) var(--s3);
+      margin-top: var(--s2);
+    }
+    .personalised-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      margin-bottom: 6px;
+    }
+    .personalised-text {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    /* Activation panel */
+    .activation-panel {
+      background: linear-gradient(135deg, var(--cfg-navy) 0%, #0a2040 100%);
+      border-radius: var(--radius-sm);
+      padding: var(--s3);
+      color: #fff;
+    }
+    .activation-headline {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .activation-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+      margin-bottom: var(--s2);
+    }
+    .activation-pricing {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      margin-bottom: var(--s2);
+    }
+    .price-item { flex: 1; }
+    .price-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2px;
+    }
+    .price-value {
+      font-family: var(--font-head);
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .price-unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+    }
+    .price-divider {
+      width: 1px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
+    }
+    .activation-includes {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: var(--s2);
+    }
+    .activation-include-item {
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
+    }
+    .btn-activate {
+      display: block;
+      width: 100%;
+      background: var(--cfg-orange);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 8px;
+    }
+    .btn-activate:hover { background: #e55a25; transform: translateY(-1px); }
+    .activation-note {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+    }
 
     /* Mic prompt */
     .mic-prompt {
@@ -750,6 +885,15 @@
     }
 
     .mic-icon-wrap svg { fill: #fff; width: 16px; height: 16px; }
+
+    .mic-icon-wrap.listening {
+      background: var(--cfg-orange);
+      animation: mic-pulse 1s ease-in-out infinite;
+    }
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.5); }
+      50%       { box-shadow: 0 0 0 10px rgba(255,107,53,0); }
+    }
 
     .mic-text-wrap .mic-title {
       font-size: 13px;
@@ -1646,65 +1790,97 @@
       <div class="container">
         <div class="experience-grid">
 
-          <!-- Demo Panel -->
+          <!-- Demo Panel — Module 1: AI Receptionist -->
           <div>
-            <div class="demo-card">
+            <div class="demo-card" id="m1-card">
               <div class="demo-card-header">
                 <div class="demo-card-icon">
                   <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
                 </div>
                 <div>
                   <div class="demo-card-title">The AI Receptionist</div>
-                  <div class="demo-card-sub">Pick your industry and press play</div>
+                  <div class="demo-card-sub" id="m1-card-sub">Pick your industry and press play</div>
                 </div>
               </div>
               <div class="demo-card-body">
-                <div class="selector-label">Choose your industry</div>
-                <div class="selector-tabs">
-                  <button class="tab-btn active">Plumbing</button>
-                  <button class="tab-btn">Law Firm</button>
-                  <button class="tab-btn">Estate Agency</button>
+
+                <!-- LAYER 1: Industry selector + audio player -->
+                <div id="m1-layer1">
+                  <div class="selector-label">Choose your industry</div>
+                  <div class="selector-tabs" id="m1-tabs">
+                    <button class="tab-btn active" data-industry="plumbing">Plumbing</button>
+                    <button class="tab-btn" data-industry="law">Law Firm</button>
+                    <button class="tab-btn" data-industry="estate">Estate Agency</button>
+                  </div>
+
+                  <div class="playback-area">
+                    <div class="playback-controls">
+                      <button class="play-btn" id="m1-play-btn">
+                        <svg id="m1-play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        <svg id="m1-pause-icon" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                      </button>
+                      <div class="waveform" id="m1-waveform">
+                        <div class="waveform-bars" id="m1-bars"></div>
+                      </div>
+                      <span class="playback-time" id="m1-time">0:00</span>
+                    </div>
+                    <div class="transcript-wrap" id="m1-transcript">
+                      <div class="transcript-placeholder">Select an industry above, then press play to hear the AI in action.</div>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="playback-area">
-                  <div class="playback-controls">
-                    <button class="play-btn">
-                      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                    </button>
-                    <div class="waveform">
-                      <div class="waveform-bars">
-                        <div class="waveform-bar played" style="height:60%"></div>
-                        <div class="waveform-bar played" style="height:80%"></div>
-                        <div class="waveform-bar played" style="height:50%"></div>
-                        <div class="waveform-bar played" style="height:90%"></div>
-                        <div class="waveform-bar played" style="height:70%"></div>
-                        <div class="waveform-bar played" style="height:55%"></div>
-                        <div class="waveform-bar" style="height:75%"></div>
-                        <div class="waveform-bar" style="height:65%"></div>
-                        <div class="waveform-bar" style="height:85%"></div>
-                        <div class="waveform-bar" style="height:50%"></div>
-                        <div class="waveform-bar" style="height:70%"></div>
-                        <div class="waveform-bar" style="height:60%"></div>
+                <!-- LAYER 2: Microphone personalisation (shown after audio plays) -->
+                <div id="m1-layer2" style="display:none">
+                  <div class="layer-divider">
+                    <span class="layer-divider-label">Now make it yours</span>
+                  </div>
+                  <div class="mic-prompt" id="m1-mic-prompt">
+                    <div class="mic-icon-wrap" id="m1-mic-btn" role="button" tabindex="0" title="Press and say your business name">
+                      <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                    </div>
+                    <div class="mic-text-wrap">
+                      <div class="mic-title" id="m1-mic-title">Press and say your business name.</div>
+                      <div class="mic-sub" id="m1-mic-sub">Hear the AI greet your callers — instantly.</div>
+                    </div>
+                  </div>
+                  <div id="m1-personalised-response" style="display:none" class="personalised-response">
+                    <div class="personalised-label">Aria says:</div>
+                    <div class="personalised-text" id="m1-personalised-text"></div>
+                    <audio id="m1-personalised-audio" style="display:none"></audio>
+                  </div>
+                </div>
+
+                <!-- LAYER 3: Activation offer (shown after Layer 2 completes) -->
+                <div id="m1-layer3" style="display:none">
+                  <div class="layer-divider">
+                    <span class="layer-divider-label">Ready to go live?</span>
+                  </div>
+                  <div class="activation-panel">
+                    <div class="activation-headline">Activate your AI Receptionist</div>
+                    <div class="activation-desc">We'll fully install the agent, customise the script for your business, and give you a 14-day no-obligation trial of the live service.</div>
+                    <div class="activation-pricing">
+                      <div class="price-item">
+                        <div class="price-label">One-time setup</div>
+                        <div class="price-value">£600</div>
+                      </div>
+                      <div class="price-divider"></div>
+                      <div class="price-item">
+                        <div class="price-label">Monthly retainer</div>
+                        <div class="price-value">£499<span class="price-unit">/mo</span></div>
                       </div>
                     </div>
-                    <span class="playback-time">0:18 / 0:42</span>
-                  </div>
-                  <div class="transcript-wrap">
-                    <div class="transcript-line"><span class="speaker">AI:</span> Thank you for calling Apex Plumbers. You've reached us outside of business hours. My name is Aria — how can I help you today?</div>
-                    <div class="transcript-line highlight"><span class="speaker">Caller:</span> Hi, I've got a burst pipe in my kitchen, it's quite urgent.</div>
-                    <div class="transcript-line"><span class="speaker">AI:</span> I completely understand — let's get this sorted for you right away. Can I take your postcode so I can check our nearest available engineer?</div>
+                    <div class="activation-includes">
+                      <div class="activation-include-item">✓ Full installation &amp; script customisation</div>
+                      <div class="activation-include-item">✓ 14-day no-obligation live trial</div>
+                      <div class="activation-include-item">✓ One-to-one strategy call with an AI Builder</div>
+                      <div class="activation-include-item">✓ Ongoing monitoring &amp; support</div>
+                    </div>
+                    <a href="#" class="btn-activate" id="m1-activate-btn">Activate for £600 →</a>
+                    <div class="activation-note">Secure payment via Stripe. Cancel anytime after the trial.</div>
                   </div>
                 </div>
 
-                <div class="mic-prompt">
-                  <div class="mic-icon-wrap">
-                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                  </div>
-                  <div class="mic-text-wrap">
-                    <div class="mic-title">Now make it yours.</div>
-                    <div class="mic-sub">Press and say your company name — hear it respond with your business.</div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -1717,8 +1893,8 @@
                 <div class="takeaway-sub">We'll send you a summary of this interaction to your inbox.</div>
               </div>
               <div class="takeaway-form">
-                <input class="email-input" type="email" placeholder="your@email.co.uk" />
-                <button class="send-btn">Send Summary</button>
+                <input class="email-input" id="m1-email" type="email" placeholder="your@email.co.uk" />
+                <button class="send-btn" id="m1-send-btn">Send Summary</button>
               </div>
             </div>
           </div>
@@ -2314,8 +2490,343 @@
       });
     })();
 
-    // Tab switching (generic)
-    document.querySelectorAll('.selector-tabs').forEach(tabGroup => {
+    // ============================================================
+    // MODULE 1: AI RECEPTIONIST — INTERACTIVE LOGIC
+    // ============================================================
+    (function() {
+
+      // ── DATA ────────────────────────────────────────────────────
+      const INDUSTRIES = {
+        plumbing: {
+          label: 'Apex Plumbers',
+          audio: 'audio/demo_plumbing.mp3',
+          personalised: 'audio/personalised_plumbing_sample.mp3',
+          transcript: [
+            { speaker: 'AI',     text: "Thank you for calling Apex Plumbers. You've reached us outside of business hours. My name is Aria — how can I help you today?" },
+            { speaker: 'Caller', text: "Hi, I've got a burst pipe in my kitchen. It's quite urgent." },
+            { speaker: 'AI',     text: "I completely understand — let's get this sorted for you right away. Can I take your postcode so I can check our nearest available engineer?" },
+            { speaker: 'Caller', text: "Yes, it's SW1A 2AA." },
+            { speaker: 'AI',     text: "Perfect. I can see we have an engineer available in your area within the next two hours. I'm booking that in for you now and sending a confirmation text to your mobile. Is there anything else I can help you with?" },
+            { speaker: 'Caller', text: "No, that's brilliant. Thank you so much." },
+            { speaker: 'AI',     text: "You're very welcome. Help is on its way. Goodbye for now." },
+          ]
+        },
+        law: {
+          label: 'Hartley & Associates',
+          audio: 'audio/demo_law.mp3',
+          personalised: 'audio/personalised_law_sample.mp3',
+          transcript: [
+            { speaker: 'AI',     text: "Good evening. You've reached Hartley & Associates Solicitors. My name is Aria — how can I assist you today?" },
+            { speaker: 'Caller', text: "Hi, I need some urgent advice. I've just been served with a court summons and I don't know what to do." },
+            { speaker: 'AI',     text: "I understand this must feel very stressful — you've done the right thing by calling us. I'm going to take a few details from you now so one of our solicitors can call you back first thing tomorrow morning. Could I start with your full name, please?" },
+            { speaker: 'Caller', text: "Yes, it's James Whitfield." },
+            { speaker: 'AI',     text: "Thank you, Mr Whitfield. I've logged your enquiry as urgent. A solicitor from our litigation team will contact you before 9 AM tomorrow. You'll also receive a confirmation email shortly. Is there anything else I can note down for them?" },
+            { speaker: 'Caller', text: "No, that covers it. Thank you." },
+            { speaker: 'AI',     text: "Of course. Please don't worry — you're in good hands. Goodbye, Mr Whitfield." },
+          ]
+        },
+        estate: {
+          label: 'Prestige Properties',
+          audio: 'audio/demo_estate.mp3',
+          personalised: 'audio/personalised_estate_sample.mp3',
+          transcript: [
+            { speaker: 'AI',     text: "Hello and welcome to Prestige Properties. My name is Aria — thanks for calling. How can I help you today?" },
+            { speaker: 'Caller', text: "Hi, I saw a property on your website — four-bedroom detached in Kensington — and I'd like to arrange a viewing." },
+            { speaker: 'AI',     text: "Wonderful choice — that property has had a great deal of interest this week. I can check availability and book a viewing for you right now. Could I take your name and a preferred day and time?" },
+            { speaker: 'Caller', text: "Sure — it's Sarah Chen, and I'm free this Saturday afternoon." },
+            { speaker: 'AI',     text: "Perfect, Sarah. I'm booking you in for Saturday at 2 PM. You'll receive a confirmation by email and a reminder the morning of the viewing. Our agent will meet you at the property. Is there anything specific you'd like them to prepare for you?" },
+            { speaker: 'Caller', text: "No, that's great. Really appreciate it." },
+            { speaker: 'AI',     text: "Our pleasure, Sarah. We look forward to seeing you on Saturday. Goodbye for now." },
+          ]
+        }
+      };
+
+      // ── ELEMENTS ────────────────────────────────────────────────
+      const tabsEl       = document.getElementById('m1-tabs');
+      const playBtn      = document.getElementById('m1-play-btn');
+      const playIcon     = document.getElementById('m1-play-icon');
+      const pauseIcon    = document.getElementById('m1-pause-icon');
+      const barsEl       = document.getElementById('m1-bars');
+      const timeEl       = document.getElementById('m1-time');
+      const transcriptEl = document.getElementById('m1-transcript');
+      const layer2El     = document.getElementById('m1-layer2');
+      const layer3El     = document.getElementById('m1-layer3');
+      const micBtn       = document.getElementById('m1-mic-btn');
+      const micTitle     = document.getElementById('m1-mic-title');
+      const micSub       = document.getElementById('m1-mic-sub');
+      const persResp     = document.getElementById('m1-personalised-response');
+      const persText     = document.getElementById('m1-personalised-text');
+      const persAudio    = document.getElementById('m1-personalised-audio');
+      const cardSub      = document.getElementById('m1-card-sub');
+      const sendBtn      = document.getElementById('m1-send-btn');
+      const emailInput   = document.getElementById('m1-email');
+
+      // ── STATE ───────────────────────────────────────────────────
+      let currentIndustry = 'plumbing';
+      let audio = new Audio();
+      let waveInterval = null;
+      let transcriptTimeout = null;
+      let layer1Done = false;
+      let layer2Done = false;
+
+      // ── WAVEFORM BARS ───────────────────────────────────────────
+      const BAR_COUNT = 32;
+      const barHeights = Array.from({length: BAR_COUNT}, () => 20 + Math.random() * 80);
+      function buildBars() {
+        barsEl.innerHTML = '';
+        barHeights.forEach(h => {
+          const b = document.createElement('div');
+          b.className = 'waveform-bar';
+          b.style.height = h + '%';
+          barsEl.appendChild(b);
+        });
+      }
+      buildBars();
+
+      function updateBars(fraction) {
+        const bars = barsEl.querySelectorAll('.waveform-bar');
+        const played = Math.floor(fraction * BAR_COUNT);
+        bars.forEach((b, i) => {
+          b.classList.toggle('played', i < played);
+          b.classList.toggle('active', i === played);
+        });
+      }
+
+      function animateBars() {
+        // Subtle random height variation while playing
+        waveInterval = setInterval(() => {
+          const bars = barsEl.querySelectorAll('.waveform-bar');
+          bars.forEach((b, i) => {
+            if (b.classList.contains('played') || b.classList.contains('active')) return;
+            b.style.height = (20 + Math.random() * 80) + '%';
+          });
+        }, 120);
+      }
+
+      function stopBarAnimation() {
+        if (waveInterval) { clearInterval(waveInterval); waveInterval = null; }
+      }
+
+      // ── TIME FORMATTING ─────────────────────────────────────────
+      function fmtTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return m + ':' + String(sec).padStart(2, '0');
+      }
+
+      // ── TRANSCRIPT ──────────────────────────────────────────────
+      function buildTranscript(industry) {
+        transcriptEl.innerHTML = '';
+        INDUSTRIES[industry].transcript.forEach((line, i) => {
+          const div = document.createElement('div');
+          div.className = 'transcript-line' + (line.speaker === 'Caller' ? ' caller' : '');
+          div.id = 'm1-tline-' + i;
+          div.style.opacity = '0';
+          div.style.transform = 'translateY(6px)';
+          div.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          div.innerHTML = '<span class="speaker">' + line.speaker + ':</span> ' + line.text;
+          transcriptEl.appendChild(div);
+        });
+      }
+
+      function revealTranscriptLines(industry) {
+        const lines = INDUSTRIES[industry].transcript;
+        const duration = audio.duration || 60;
+        lines.forEach((line, i) => {
+          const el = document.getElementById('m1-tline-' + i);
+          if (!el) return;
+          // Spread lines evenly across the audio duration
+          const delay = (i / lines.length) * duration * 1000;
+          transcriptTimeout = setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+            // Scroll transcript into view
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, delay);
+        });
+      }
+
+      // ── LOAD INDUSTRY ───────────────────────────────────────────
+      function loadIndustry(industry) {
+        currentIndustry = industry;
+        layer1Done = false;
+        // Reset audio
+        audio.pause();
+        audio.src = INDUSTRIES[industry].audio;
+        // Reset UI
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
+        timeEl.textContent = '0:00';
+        buildBars();
+        updateBars(0);
+        stopBarAnimation();
+        buildTranscript(industry);
+        cardSub.textContent = 'Press play to hear the AI in action';
+        // Hide layers 2 & 3
+        layer2El.style.display = 'none';
+        layer3El.style.display = 'none';
+        layer2Done = false;
+      }
+
+      // ── PLAY / PAUSE ────────────────────────────────────────────
+      playBtn.addEventListener('click', () => {
+        if (audio.paused) {
+          audio.play().catch(() => {});
+        } else {
+          audio.pause();
+        }
+      });
+
+      audio.addEventListener('play', () => {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = '';
+        animateBars();
+        revealTranscriptLines(currentIndustry);
+        cardSub.textContent = 'Listening to ' + INDUSTRIES[currentIndustry].label + '...';
+      });
+
+      audio.addEventListener('pause', () => {
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
+        stopBarAnimation();
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        const dur = audio.duration || 1;
+        updateBars(audio.currentTime / dur);
+        timeEl.textContent = fmtTime(audio.currentTime) + ' / ' + fmtTime(dur);
+      });
+
+      audio.addEventListener('ended', () => {
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
+        stopBarAnimation();
+        updateBars(1);
+        layer1Done = true;
+        cardSub.textContent = 'Now make it yours ↓';
+        // Reveal Layer 2 with a smooth slide-in
+        layer2El.style.display = 'block';
+        layer2El.style.opacity = '0';
+        layer2El.style.transform = 'translateY(16px)';
+        layer2El.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        requestAnimationFrame(() => {
+          layer2El.style.opacity = '1';
+          layer2El.style.transform = 'translateY(0)';
+        });
+      });
+
+      // ── INDUSTRY TABS ───────────────────────────────────────────
+      tabsEl.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabsEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          loadIndustry(btn.dataset.industry);
+        });
+      });
+
+      // ── LAYER 2: MICROPHONE ─────────────────────────────────────
+      let recognition = null;
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      micBtn.addEventListener('click', startListening);
+      micBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') startListening(); });
+
+      function startListening() {
+        if (layer2Done) return;
+        if (!SpeechRecognition) {
+          // Fallback: prompt for text input
+          const name = prompt('Please type your business name:');
+          if (name) handleBusinessName(name.trim());
+          return;
+        }
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-GB';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        micBtn.classList.add('listening');
+        micTitle.textContent = 'Listening...';
+        micSub.textContent = 'Say your business name now.';
+
+        recognition.onresult = (e) => {
+          const name = e.results[0][0].transcript;
+          handleBusinessName(name);
+        };
+        recognition.onerror = () => {
+          micBtn.classList.remove('listening');
+          micTitle.textContent = 'Could not hear you — try again.';
+          micSub.textContent = 'Make sure your microphone is allowed.';
+        };
+        recognition.onend = () => {
+          micBtn.classList.remove('listening');
+        };
+        recognition.start();
+      }
+
+      function handleBusinessName(name) {
+        layer2Done = true;
+        micBtn.classList.remove('listening');
+        micTitle.textContent = '"' + name + '"';
+        micSub.textContent = 'Aria is responding...';
+
+        // Show personalised response
+        const responseText = 'Thank you for calling ' + name + '. My name is Aria — how can I help you today?';
+        persText.textContent = responseText;
+        persResp.style.display = 'block';
+        persResp.style.opacity = '0';
+        persResp.style.transition = 'opacity 0.4s ease';
+        requestAnimationFrame(() => { persResp.style.opacity = '1'; });
+
+        // Play pre-generated audio response
+        persAudio.src = INDUSTRIES[currentIndustry].personalised;
+        persAudio.play().catch(() => {});
+
+        micSub.textContent = 'Playing your personalised greeting...';
+
+        persAudio.addEventListener('ended', () => {
+          micSub.textContent = 'That could be your business — every single call.';
+          // Reveal Layer 3
+          setTimeout(() => {
+            layer3El.style.display = 'block';
+            layer3El.style.opacity = '0';
+            layer3El.style.transform = 'translateY(16px)';
+            layer3El.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            requestAnimationFrame(() => {
+              layer3El.style.opacity = '1';
+              layer3El.style.transform = 'translateY(0)';
+            });
+          }, 1200);
+        }, { once: true });
+      }
+
+      // ── LAYER 3: ACTIVATE BUTTON ────────────────────────────────
+      document.getElementById('m1-activate-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        // TODO: Replace href with live Stripe payment link
+        alert('Stripe payment integration coming soon. Setup fee: £600');
+      });
+
+      // ── TAKEAWAY EMAIL ──────────────────────────────────────────
+      sendBtn.addEventListener('click', () => {
+        const email = emailInput.value.trim();
+        if (!email || !email.includes('@')) {
+          emailInput.style.borderColor = 'var(--cfg-orange)';
+          return;
+        }
+        emailInput.style.borderColor = '';
+        sendBtn.textContent = 'Sent ✓';
+        sendBtn.disabled = true;
+        // TODO: Wire to email service (e.g. Resend / Mailchimp)
+        console.log('Summary requested for:', email, 'Industry:', currentIndustry);
+      });
+
+      // ── INIT ────────────────────────────────────────────────────
+      loadIndustry('plumbing');
+
+    })();
+
+    // Tab switching for other modules (generic fallback)
+    document.querySelectorAll('.selector-tabs:not(#m1-tabs)').forEach(tabGroup => {
       tabGroup.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
