@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Door Animation Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; gap: 20px; }
+    canvas { display: block; }
+    button {
+      padding: 12px 32px;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      color: #fff;
+      font-size: 15px;
+      font-family: sans-serif;
+      border-radius: 8px;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+    button:hover { background: rgba(255,255,255,0.08); }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <button id="openBtn">Enter the Lab →</button>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const btn = document.getElementById('openBtn');
+
+    const W = Math.min(window.innerWidth, 900);
+    const H = Math.min(window.innerHeight - 80, 600);
+    canvas.width = W;
+    canvas.height = H;
+
+    // CFG colours
+    const NAVY       = '#0F2D60';
+    const NAVY_LIGHT = '#1a3d78';
+    const NAVY_DARK  = '#0a2050';
+    const TEAL       = '#0BEAB5';
+    const ORANGE     = '#FE5B02';
+    const WHITE      = '#ffffff';
+
+    // Animation state
+    let angle = 0;          // 0 = closed, 1 = fully open
+    let animating = false;
+    let startTime = null;
+    const DURATION = 1600;  // ms
+
+    // Easing — ease-in-out cubic
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // ----------------------------------------------------------------
+    // Draw a single door panel as a perspective trapezoid.
+    //
+    // The door is hinged at the CENTRE SEAM (x = W/2).
+    // As it opens (swings away from viewer), the outer edge moves
+    // outward AND the door face foreshortens (narrows) because we
+    // are seeing it at an angle.
+    //
+    // Parameters:
+    //   side        : 'left' | 'right'
+    //   openFraction: 0 (closed) → 1 (fully open, ~90°)
+    // ----------------------------------------------------------------
+    function drawDoor(side, openFraction) {
+      const cx = W / 2;   // hinge x (centre seam)
+      const top = 0;
+      const bot = H;
+
+      // When closed, the door fills its half of the screen.
+      // doorWidth = half screen width when closed.
+      const maxW = W / 2;
+
+      // As the door opens, we rotate it around the hinge.
+      // The apparent (projected) width shrinks with cos(theta).
+      // theta goes from 0 → ~85° as openFraction goes 0 → 1.
+      const theta = openFraction * (Math.PI / 2) * 0.92; // max ~83°
+      const projectedW = maxW * Math.cos(theta);
+
+      // The outer edge also moves slightly away from centre due to
+      // perspective foreshortening — we exaggerate this a little
+      // to make the swing feel more dramatic.
+      const outerShift = maxW * Math.sin(theta) * 0.18;
+
+      // Coordinates for left door:
+      //   Hinge edge: x = cx (fixed)
+      //   Outer edge: x = cx - projectedW - outerShift
+      // Coordinates for right door:
+      //   Hinge edge: x = cx (fixed)
+      //   Outer edge: x = cx + projectedW + outerShift
+
+      let hingeX, outerX;
+      if (side === 'left') {
+        hingeX = cx;
+        outerX = cx - projectedW - outerShift;
+      } else {
+        hingeX = cx;
+        outerX = cx + projectedW + outerShift;
+      }
+
+      // Perspective taper: top of door is slightly narrower than bottom
+      // to give a sense of vanishing point above.
+      const taper = projectedW * 0.06 * (1 - openFraction * 0.5);
+
+      let topHinge, topOuter, botHinge, botOuter;
+      if (side === 'left') {
+        topHinge = hingeX + taper;
+        topOuter = outerX - taper;
+        botHinge = hingeX;
+        botOuter = outerX;
+      } else {
+        topHinge = hingeX - taper;
+        topOuter = outerX + taper;
+        botHinge = hingeX;
+        botOuter = outerX;
+      }
+
+      // ---- Draw door body ----
+      ctx.beginPath();
+      ctx.moveTo(topHinge, top);
+      ctx.lineTo(topOuter, top);
+      ctx.lineTo(botOuter, bot);
+      ctx.lineTo(botHinge, bot);
+      ctx.closePath();
+
+      // Door gradient — slightly lighter towards hinge (catches light)
+      const grad = ctx.createLinearGradient(
+        side === 'left' ? outerX : hingeX, 0,
+        side === 'left' ? hingeX : outerX, 0
+      );
+      if (side === 'left') {
+        grad.addColorStop(0, NAVY_DARK);
+        grad.addColorStop(0.6, NAVY);
+        grad.addColorStop(1, NAVY_LIGHT);
+      } else {
+        grad.addColorStop(0, NAVY_LIGHT);
+        grad.addColorStop(0.4, NAVY);
+        grad.addColorStop(1, NAVY_DARK);
+      }
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // ---- Glass sheen overlay ----
+      // A lighter vertical stripe near the hinge edge (catches light)
+      const sheenW = projectedW * 0.15;
+      const sheenX = side === 'left' ? hingeX - sheenW : hingeX;
+      const sheenGrad = ctx.createLinearGradient(sheenX, 0, sheenX + sheenW, 0);
+      sheenGrad.addColorStop(0, 'rgba(255,255,255,0.10)');
+      sheenGrad.addColorStop(1, 'rgba(255,255,255,0.00)');
+      ctx.beginPath();
+      ctx.moveTo(topHinge, top);
+      ctx.lineTo(topOuter, top);
+      ctx.lineTo(botOuter, bot);
+      ctx.lineTo(botHinge, bot);
+      ctx.closePath();
+      ctx.fillStyle = sheenGrad;
+      ctx.fill();
+
+      // ---- Inset panel border ----
+      if (projectedW > 30) {
+        const inset = projectedW * 0.08;
+        const vInset = H * 0.10;
+        ctx.beginPath();
+        if (side === 'left') {
+          ctx.moveTo(topHinge - inset + taper * 0.5, top + vInset);
+          ctx.lineTo(topOuter + inset - taper * 0.5, top + vInset);
+          ctx.lineTo(botOuter + inset, bot - vInset);
+          ctx.lineTo(botHinge - inset, bot - vInset);
+        } else {
+          ctx.moveTo(topHinge + inset - taper * 0.5, top + vInset);
+          ctx.lineTo(topOuter - inset + taper * 0.5, top + vInset);
+          ctx.lineTo(botOuter - inset, bot - vInset);
+          ctx.lineTo(botHinge + inset, bot - vInset);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // ---- Door handle ----
+      if (projectedW > 60) {
+        const handleX = side === 'left'
+          ? hingeX - projectedW * 0.12
+          : hingeX + projectedW * 0.12;
+        const handleY = H * 0.5;
+        const handleH = Math.min(50, projectedW * 0.25);
+        const handleW = Math.max(3, projectedW * 0.025);
+        const alpha = Math.max(0, 1 - openFraction * 2.5);
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Handle bar
+        const hGrad = ctx.createLinearGradient(0, handleY - handleH/2, 0, handleY + handleH/2);
+        hGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
+        hGrad.addColorStop(0.5, 'rgba(255,255,255,0.18)');
+        hGrad.addColorStop(1, 'rgba(255,255,255,0.35)');
+        ctx.fillStyle = hGrad;
+        ctx.beginPath();
+        ctx.roundRect(handleX - handleW/2, handleY - handleH/2, handleW, handleH, handleW/2);
+        ctx.fill();
+
+        // Handle dots
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.beginPath();
+        ctx.arc(handleX, handleY - handleH/2 - 7, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(handleX, handleY + handleH/2 + 7, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // Draw the teal seam glow at the centre
+    // ----------------------------------------------------------------
+    function drawSeamGlow(openFraction) {
+      const cx = W / 2;
+      const glowAlpha = Math.max(0, 1 - openFraction * 3);
+      const glowW = 3 + openFraction * 40;
+
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, `rgba(11,234,181,0)`);
+      grad.addColorStop(0.3, `rgba(11,234,181,${0.8 * glowAlpha})`);
+      grad.addColorStop(0.7, `rgba(11,234,181,${0.8 * glowAlpha})`);
+      grad.addColorStop(1, `rgba(11,234,181,0)`);
+
+      ctx.save();
+      ctx.filter = `blur(${3 + openFraction * 8}px)`;
+      ctx.fillStyle = grad;
+      ctx.fillRect(cx - glowW/2, 0, glowW, H);
+      ctx.restore();
+    }
+
+    // ----------------------------------------------------------------
+    // Draw the light bloom expanding from the gap
+    // ----------------------------------------------------------------
+    function drawLightBloom(openFraction) {
+      if (openFraction < 0.05) return;
+      const cx = W / 2;
+      const cy = H / 2;
+      const radius = openFraction * W * 0.8;
+      const alpha = Math.min(openFraction * 2, 1) * 0.25;
+
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      grad.addColorStop(0, `rgba(11,234,181,${alpha})`);
+      grad.addColorStop(0.4, `rgba(11,234,181,${alpha * 0.4})`);
+      grad.addColorStop(1, `rgba(11,234,181,0)`);
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // ----------------------------------------------------------------
+    // Draw the background (visible through the gap between doors)
+    // ----------------------------------------------------------------
+    function drawBackground() {
+      // Dark navy background
+      ctx.fillStyle = NAVY_DARK;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // ----------------------------------------------------------------
+    // Draw the entrance content (logo, headline, button hint)
+    // ----------------------------------------------------------------
+    function drawEntranceContent(openFraction) {
+      const alpha = Math.max(0, 1 - openFraction * 4);
+      if (alpha <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      // Eyebrow
+      ctx.fillStyle = TEAL;
+      ctx.font = '600 11px sans-serif';
+      ctx.letterSpacing = '0.12em';
+      ctx.textAlign = 'center';
+      ctx.fillText('WELCOME TO THE AI LAB', W/2, H * 0.32);
+
+      // Headline
+      ctx.fillStyle = WHITE;
+      ctx.font = `800 ${Math.round(W * 0.048)}px Manrope, sans-serif`;
+      ctx.fillText('See what AI can do', W/2, H * 0.44);
+      ctx.fillText('for your business.', W/2, H * 0.44 + Math.round(W * 0.058));
+
+      ctx.restore();
+    }
+
+    // ----------------------------------------------------------------
+    // Main render loop
+    // ----------------------------------------------------------------
+    function render(timestamp) {
+      if (animating) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const t = Math.min(elapsed / DURATION, 1);
+        angle = easeInOutCubic(t);
+        if (t >= 1) {
+          animating = false;
+          // Signal the main page that animation is complete
+          if (window.onDoorOpen) window.onDoorOpen();
+        }
+      }
+
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Background (the "lab" behind the doors)
+      drawBackground();
+
+      // 2. Light bloom through the gap
+      drawLightBloom(angle);
+
+      // 3. Seam glow
+      drawSeamGlow(angle);
+
+      // 4. Right door (draw behind left)
+      drawDoor('right', angle);
+
+      // 5. Left door
+      drawDoor('left', angle);
+
+      // 6. Entrance content (fades out as doors open)
+      drawEntranceContent(angle);
+
+      if (animating || angle < 1) {
+        requestAnimationFrame(render);
+      }
+    }
+
+    // Initial render (static closed state)
+    requestAnimationFrame(render);
+
+    btn.addEventListener('click', () => {
+      if (!animating && angle === 0) {
+        animating = true;
+        startTime = null;
+        btn.style.opacity = '0';
+        btn.style.pointerEvents = 'none';
+        requestAnimationFrame(render);
+      }
+    });
+  </script>
+</body>
+</html>

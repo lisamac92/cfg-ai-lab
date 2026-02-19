@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The AI Lab — ClickFlow Grow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       CFG DESIGN SYSTEM — TOKENS
+    ============================================================ */
+    :root {
+      /* Brand */
+      --cfg-navy:       #0F2D60;
+      --cfg-orange:     #FE5B02;
+      --cfg-teal:       #0BEAB5;
+
+      /* Neutrals */
+      --bg:             #F5F5F7;
+      --surface:        #FFFFFF;
+      --text-primary:   #1D1D1F;
+      --text-secondary: #86868B;
+      --border:         #D2D2D7;
+
+      /* Semantic */
+      --success:        #34C759;
+
+      /* Typography */
+      --font-head:      'Manrope', sans-serif;
+      --font-body:      'Inter', sans-serif;
+
+      /* Spacing (8px grid) */
+      --s1: 8px;
+      --s2: 16px;
+      --s3: 24px;
+      --s4: 32px;
+      --s5: 48px;
+      --s6: 64px;
+      --s7: 96px;
+
+      /* Layout */
+      --max-w:          1100px;
+      --radius:         12px;
+      --radius-sm:      8px;
+
+      /* Shadows */
+      --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:  0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg:  0 8px 32px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+
+      /* Easing */
+      --ease-door: cubic-bezier(0.76, 0, 0.24, 1);
+      --ease-std:  cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--s4);
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* ============================================================
+       CANVAS DOOR ENTRANCE — PERSPECTIVE SWING
+       All door drawing is handled by JavaScript/Canvas.
+       This block only handles the container and overlay UI.
+    ============================================================ */
+    #entrance {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      overflow: hidden;
+      background: #0a2050;
+    }
+
+    /* The canvas fills the entire entrance */
+    #door-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Content overlay sits above the canvas */
+    .entrance-content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 10;
+      padding: var(--s4);
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .entrance-content.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .entrance-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: var(--s6);
+    }
+
+    .entrance-logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--cfg-orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .entrance-logo-mark svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .entrance-logo-text {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .entrance-eyebrow {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      margin-bottom: var(--s3);
+    }
+
+    .entrance-headline {
+      font-family: var(--font-head);
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--s3);
+      max-width: 660px;
+    }
+
+    .entrance-sub {
+      font-size: 17px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: var(--s7);
+      max-width: 440px;
+      line-height: 1.6;
+    }
+
+    .btn-enter {
+      pointer-events: all;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 600;
+      padding: 16px 40px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    .btn-enter:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.8);
+    }
+
+    .btn-enter:active { transform: scale(1.02); }
+
+    .btn-enter .arrow {
+      display: inline-block;
+      transition: transform 0.2s var(--ease-std);
+    }
+
+    .btn-enter:hover .arrow { transform: translateX(4px); }
+
+    /* Subtle teal accent line at bottom of entrance */
+    .entrance-accent {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--cfg-teal), transparent);
+      opacity: 0.6;
+      z-index: 10;
+    }
+
+    /* ============================================================
+       MAIN CONTENT REVEAL
+    ============================================================ */
+    #main-content {
+      opacity: 0;
+      transform: scale(0.985);
+      transition: opacity 0.9s 0.3s var(--ease-std),
+                  transform 0.9s 0.3s var(--ease-std);
+    }
+
+    #main-content.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    .nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 30px;
+      height: 30px;
+      background: var(--cfg-navy);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-logo-mark svg {
+      width: 16px;
+      height: 16px;
+      fill: #fff;
+    }
+
+    .nav-logo-text {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--cfg-navy);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--s5);
+    }
+
+    .nav-link {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-link:hover { color: var(--text-primary); }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--cfg-navy);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: var(--cfg-orange);
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      background: var(--surface);
+      padding: var(--s7) 0 var(--s6);
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle background gradient */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(ellipse at center, rgba(11,234,181,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cfg-orange);
+      margin-bottom: var(--s3);
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--cfg-orange);
+      opacity: 0.5;
+    }
+
+    .hero-headline {
+      font-family: var(--font-head);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      color: var(--cfg-navy);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--s3);
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-headline .highlight {
+      color: var(--cfg-orange);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto var(--s5);
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--s2);
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cfg-navy);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--cfg-orange);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--cfg-navy);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      border: 1.5px solid var(--cfg-navy);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15,45,96,0.05);
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       SECTION SHARED STYLES
+    ============================================================ */
+    .lab-section {
+      padding: var(--s7) 0;
+    }
+
+    .lab-section + .lab-section {
+      border-top: 1px solid var(--border);
+    }
+
+    .section-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cfg-orange);
+      margin-bottom: var(--s2);
+    }
+
+    .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: var(--cfg-orange);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 50%;
+    }
+
+    .section-headline {
+      font-family: var(--font-head);
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 800;
+      color: var(--cfg-navy);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin-bottom: var(--s2);
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 480px;
+      margin-bottom: var(--s5);
+    }
+
+    /* Two-column grid */
+    .experience-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s6);
+      align-items: start;
+    }
+
+    /* ============================================================
+       DEMO CARD (shared panel style)
+    ============================================================ */
+    .demo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .demo-card-header {
+      padding: var(--s3) var(--s4);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      background: var(--surface);
+    }
+
+    .demo-card-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--cfg-navy), #1a4a8a);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .demo-card-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+
+    .demo-card-title {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .demo-card-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .demo-card-body {
+      padding: var(--s4);
+    }
+
+    /* ============================================================
+       SELECTOR TABS
+    ============================================================ */
+    .selector-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: var(--s1);
+    }
+
+    .selector-tabs {
+      display: flex;
+      gap: var(--s1);
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+      margin-bottom: var(--s3);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--cfg-navy);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    /* ============================================================
+       PLAYBACK / AUDIO AREA (Module 1)
+    ============================================================ */
+    .playback-area {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: var(--s3);
+      margin-bottom: var(--s3);
+    }
+
+    .playback-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      margin-bottom: var(--s2);
+    }
+
+    .play-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--cfg-navy);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .play-btn:hover {
+      background: var(--cfg-orange);
+      transform: scale(1.05);
+    }
+
+    .play-btn svg { fill: #fff; width: 14px; height: 14px; margin-left: 2px; }
+
+    .waveform {
+      flex: 1;
+      height: 36px;
+      background: linear-gradient(90deg,
+        var(--border) 0%, var(--border) 30%,
+        var(--cfg-teal) 30%, var(--cfg-teal) 45%,
+        var(--border) 45%);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .waveform-bars {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 100%;
+      padding: 4px 8px;
+    }
+
+    .waveform-bar {
+      flex: 1;
+      background: var(--cfg-navy);
+      border-radius: 2px;
+      opacity: 0.25;
+    }
+
+    .waveform-bar.played { opacity: 0.8; background: var(--cfg-teal); }
+
+    .playback-time {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Transcript */
+    .transcript-wrap {
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      padding: var(--s2) var(--s3);
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .transcript-line {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      padding: 4px 0;
+    }
+
+    .transcript-line .speaker {
+      font-weight: 600;
+      color: var(--cfg-navy);
+      margin-right: 6px;
+    }
+
+    .transcript-line.highlight .speaker { color: var(--cfg-orange); }
+
+    /* Mic prompt */
+    .mic-prompt {
+      background: linear-gradient(135deg, rgba(15,45,96,0.04), rgba(11,234,181,0.04));
+      border: 1px dashed rgba(15,45,96,0.2);
+      border-radius: var(--radius-sm);
+      padding: var(--s2) var(--s3);
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .mic-prompt:hover {
+      border-color: var(--cfg-navy);
+      background: rgba(15,45,96,0.06);
+    }
+
+    .mic-icon-wrap {
+      width: 40px;
+      height: 40px;
+      background: var(--cfg-navy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mic-icon-wrap svg { fill: #fff; width: 16px; height: 16px; }
+
+    .mic-text-wrap .mic-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mic-text-wrap .mic-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ============================================================
+       STEP LIST (description column)
+    ============================================================ */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s3);
+      margin-bottom: var(--s5);
+    }
+
+    .step-item {
+      display: flex;
+      gap: var(--s2);
+      align-items: flex-start;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: rgba(15,45,96,0.08);
+      color: var(--cfg-navy);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-content .step-title {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .step-content .step-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       TAKEAWAY BAR
+    ============================================================ */
+    .takeaway-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--s3) var(--s4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s3);
+      margin-top: var(--s3);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .takeaway-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--cfg-teal), #09c9a0);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .takeaway-icon svg { fill: var(--cfg-navy); width: 16px; height: 16px; }
+
+    .takeaway-text .takeaway-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .takeaway-text .takeaway-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .takeaway-form {
+      display: flex;
+      gap: var(--s1);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .email-input {
+      width: 200px;
+      height: 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0 var(--s2);
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .email-input:focus { border-color: var(--cfg-navy); }
+    .email-input::placeholder { color: var(--text-secondary); }
+
+    .send-btn {
+      height: 40px;
+      padding: 0 var(--s2);
+      background: var(--cfg-navy);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover { background: var(--cfg-orange); }
+
+    /* ============================================================
+       GENIUS BAR CTA
+    ============================================================ */
+    /* ===== TABLE PLACARDS (Option C) ===== */
+    .placard-section {
+      background: var(--bg-page);
+      padding: 72px 24px 80px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .placard-section .section-eyebrow {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      margin-bottom: 8px;
+    }
+
+    .placard-section .section-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--cfg-navy);
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .placard-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .placard-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.25s ease;
+    }
+
+    .placard-wrap:hover {
+      transform: translateY(-6px);
+    }
+
+    .placard-wrap:hover .placard-card {
+      box-shadow: 0 24px 64px rgba(15,45,96,0.18), 0 4px 16px rgba(15,45,96,0.1);
+    }
+
+    .placard-card {
+      width: 230px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(15,45,96,0.1), 0 2px 8px rgba(15,45,96,0.06);
+      transition: box-shadow 0.25s ease;
+      background: #fff;
+      border: 1px solid var(--border);
+    }
+
+    .placard-top {
+      padding: 28px 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .placard-1 .placard-top { background: var(--cfg-navy); }
+    .placard-2 .placard-top { background: var(--cfg-orange); }
+    .placard-3 .placard-top { background: var(--cfg-teal); }
+
+    .placard-table-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .placard-1 .placard-table-label { color: rgba(255,255,255,0.5); }
+    .placard-2 .placard-table-label { color: rgba(255,255,255,0.6); }
+    .placard-3 .placard-table-label { color: rgba(15,45,96,0.45); }
+
+    .placard-number {
+      font-family: 'Manrope', sans-serif;
+      font-size: 60px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .placard-1 .placard-number { color: rgba(255,255,255,0.18); }
+    .placard-2 .placard-number { color: rgba(255,255,255,0.22); }
+    .placard-3 .placard-number { color: rgba(15,45,96,0.18); }
+
+    .placard-station-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .placard-1 .placard-station-name { color: #fff; }
+    .placard-2 .placard-station-name { color: #fff; }
+    .placard-3 .placard-station-name { color: var(--cfg-navy); }
+
+    .placard-body {
+      padding: 20px 20px 24px;
+      text-align: center;
+    }
+
+    .placard-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .placard-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .placard-1 .placard-cta { color: var(--cfg-navy); }
+    .placard-2 .placard-cta { color: var(--cfg-orange); }
+    .placard-3 .placard-cta { color: #08b88a; }
+
+    .placard-pole {
+      width: 3px;
+      height: 36px;
+      border-radius: 2px;
+    }
+
+
+    /* ── Pendant Light ── */
+    /* Cable drops from the top of the section */
+    .pendant-cable {
+      /* SVG pendant lamp */
+    }
+
+    .pendant-svg {
+      width: 100px;
+      height: 180px;
+      display: block;
+      margin: 0 auto;
+      overflow: visible;
+      flex-shrink: 0;
+    }
+
+    .placard-base-REMOVED {
+      width: 56px;
+      height: 7px;
+      border-radius: 4px;
+      opacity: 0.25;
+    }
+    .placard-1 .placard-base { background: var(--cfg-navy); }
+    .placard-2 .placard-base { background: var(--cfg-orange); }
+    .placard-3 .placard-base { background: var(--cfg-teal); }
+
+    .placard-table-line {
+      width: 100%;
+      max-width: 900px;
+      margin: 32px auto 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--border), var(--border), transparent);
+      position: relative;
+    }
+    .placard-table-line::before {
+      content: 'EXPERIENCE TABLE';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--border);
+      white-space: nowrap;
+    }
+
+    /* ===== GENIUS BAR ===== */
+    .genius-bar {
+      background: linear-gradient(135deg, var(--cfg-navy), #1a4a8a);
+      border-radius: var(--radius);
+      padding: var(--s4) var(--s5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s3);
+      margin-top: var(--s5);
+    }
+
+    .genius-bar-text .gb-title {
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .genius-bar-text .gb-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .genius-bar-pricing {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .genius-bar-pricing .price-setup {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2px;
+    }
+
+    .genius-bar-pricing .price-main {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cfg-teal);
+    }
+
+    .genius-bar-pricing .price-monthly {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+
+    .btn-genius {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cfg-orange);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-genius:hover {
+      background: #e54d00;
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       MODULE 2: INTELLIGENCE PANEL
+    ============================================================ */
+    .intel-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+      margin-bottom: var(--s3);
+    }
+
+    .intel-field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .intel-select,
+    .intel-input {
+      width: 100%;
+      height: 44px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0 var(--s2);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+
+    .intel-select:focus,
+    .intel-input:focus { border-color: var(--cfg-navy); }
+
+    .intel-btn {
+      width: 100%;
+      height: 44px;
+      background: var(--cfg-navy);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+    }
+
+    .intel-btn:hover { background: var(--cfg-orange); }
+
+    .intel-result-wrap {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      padding: var(--s3);
+      min-height: 120px;
+    }
+
+    .intel-result-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cfg-orange);
+      margin-bottom: var(--s2);
+    }
+
+    .intel-result-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-primary);
+    }
+
+    .intel-result-angle {
+      margin-top: var(--s2);
+      padding-top: var(--s2);
+      border-top: 1px solid var(--border);
+    }
+
+    .intel-result-angle .angle-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      margin-bottom: 4px;
+    }
+
+    .intel-result-angle .angle-text {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-primary);
+    }
+
+    .intel-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      gap: var(--s2);
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .intel-placeholder svg { opacity: 0.3; width: 32px; height: 32px; }
+    .intel-placeholder p { font-size: 13px; }
+
+    /* ============================================================
+       MODULE 3: CHAT PANEL
+    ============================================================ */
+    .chat-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 440px;
+    }
+
+    .chat-header {
+      padding: var(--s2) var(--s3);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      background: var(--surface);
+    }
+
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--cfg-navy), #1a4a8a);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-avatar svg { fill: #fff; width: 16px; height: 16px; }
+
+    .chat-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .chat-status { font-size: 12px; color: var(--success); display: flex; align-items: center; gap: 4px; }
+    .chat-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .chat-scenario-bar {
+      padding: var(--s2) var(--s3);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: var(--s3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+      overflow-y: auto;
+    }
+
+    .chat-bubble-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .chat-bubble-wrap.user { align-items: flex-end; }
+
+    .chat-bubble {
+      max-width: 78%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .chat-bubble.ai {
+      background: var(--bg);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-bubble.user {
+      background: var(--cfg-navy);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-sender {
+      font-size: 11px;
+      color: var(--text-secondary);
+      padding: 0 4px;
+    }
+
+    .chat-input-bar {
+      padding: var(--s2) var(--s3);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: var(--s1);
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0 var(--s2);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input:focus { border-color: var(--cfg-navy); }
+    .chat-input::placeholder { color: var(--text-secondary); }
+
+    .chat-send-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--cfg-navy);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .chat-send-btn:hover { background: var(--cfg-orange); }
+    .chat-send-btn svg { fill: #fff; width: 16px; height: 16px; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--cfg-navy);
+      padding: var(--s6) 0 var(--s5);
+      margin-top: var(--s7);
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--s3);
+    }
+
+    .footer-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--cfg-orange);
+      border-radius: 6px;
+    }
+
+    .footer-logo-text {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--s4);
+    }
+
+    .footer-link {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover { color: #fff; }
+
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .footer-teal-bar {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cfg-teal), transparent);
+      opacity: 0.4;
+      margin-bottom: var(--s5);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      .experience-grid { grid-template-columns: 1fr; }
+      .takeaway-bar { flex-direction: column; align-items: flex-start; }
+      .genius-bar { flex-direction: column; }
+      .genius-bar-pricing { text-align: left; }
+      .nav-links { display: none; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       SLIDING DOORS ENTRANCE
+  ============================================================ -->
+    <div id="entrance">
+      <canvas id="door-canvas"></canvas>
+    <div class="entrance-content">
+      <div class="entrance-logo-wrap">
+        <div class="entrance-logo-mark">
+          <svg viewBox="0 0 20 20"><path d="M10 2L2 7v6l8 5 8-5V7L10 2zm0 2.5L16 8l-6 3.75L4 8l6-3.5z"/></svg>
+        </div>
+        <span class="entrance-logo-text">ClickFlow Grow</span>
+      </div>
+      <div class="entrance-eyebrow">Welcome to the AI Lab</div>
+      <h1 class="entrance-headline">See what AI can do<br/>for your business.</h1>
+      <p class="entrance-sub">Have a play. No commitment, no jargon — just you and the technology.</p>
+      <button class="btn-enter" id="enterBtn">
+        Enter the Lab
+        <span class="arrow">→</span>
+      </button>
+    </div>
+    <div class="entrance-accent"></div>
+  </div>
+
+  <!-- ============================================================
+       MAIN LAB CONTENT
+  ============================================================ -->
+  <div id="main-content">
+
+    <!-- NAV -->
+    <nav class="nav">
+      <div class="container">
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-mark">
+            <svg viewBox="0 0 20 20"><path d="M10 2L2 7v6l8 5 8-5V7L10 2zm0 2.5L16 8l-6 3.75L4 8l6-3.5z"/></svg>
+          </div>
+          <span class="nav-logo-text">ClickFlow Grow</span>
+        </a>
+        <div class="nav-links">
+          <a href="#module-1" class="nav-link">AI Receptionist</a>
+          <a href="#module-2" class="nav-link">AI Prospecting</a>
+          <a href="#module-3" class="nav-link">AI Workflows</a>
+        </div>
+        <a href="#" class="nav-cta">Speak to an AI Builder →</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-eyebrow">The ClickFlow Grow AI Lab</div>
+        <h1 class="hero-headline">See what AI can do<br/>for <span class="highlight">your business.</span></h1>
+        <p class="hero-sub">Three hands-on experiences built for real business owners. Have a play — we think you'll be surprised.</p>
+        <div class="hero-actions">
+          <a href="#module-1" class="btn-primary">Start Exploring →</a>
+          <a href="#" class="btn-secondary">Speak to an AI Builder</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TABLE PLACARDS — OPTION C
+    ============================================================ -->
+    <section class="placard-section">
+      <div class="section-eyebrow">Inside the Lab</div>
+      <div class="section-title">Three tables. Pick one and have a go.</div>
+
+      <div class="placard-row">
+
+        <!-- Table 1 — AI Receptionist -->
+        <a href="#module-1" class="placard-wrap placard-1">
+          <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Cable -->
+            <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
+            <!-- Ceiling rose -->
+            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#0F2D60"/>
+            <!-- Dome shade: narrow at top, wide bowl at bottom -->
+            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#0F2D60"/>
+            <!-- Inner rim highlight -->
+            <ellipse cx="50" cy="140" rx="28" ry="5" fill="#1a4080" opacity="0.8"/>
+            <!-- Light glow cone below shade -->
+            <defs>
+              <radialGradient id="glow1" cx="50%" cy="0%" r="100%">
+                <stop offset="0%" stop-color="#0F2D60" stop-opacity="0.18"/>
+                <stop offset="100%" stop-color="#0F2D60" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow1)"/>
+          </svg>
+          <div class="placard-card">
+            <div class="placard-top">
+              <div class="placard-table-label">Table</div>
+              <div class="placard-number">01</div>
+              <div class="placard-station-name">AI Receptionist</div>
+            </div>
+            <div class="placard-body">
+              <div class="placard-desc">Hear AI answer a call for your business — 24 hours a day, 7 days a week.</div>
+              <div class="placard-cta">Visit this table →</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Table 2 — AI Prospecting -->
+        <a href="#module-2" class="placard-wrap placard-2">
+          <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
+            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#FE5B02"/>
+            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#FE5B02"/>
+            <ellipse cx="50" cy="140" rx="28" ry="5" fill="#ff7a30" opacity="0.8"/>
+            <defs>
+              <radialGradient id="glow2" cx="50%" cy="0%" r="100%">
+                <stop offset="0%" stop-color="#FE5B02" stop-opacity="0.18"/>
+                <stop offset="100%" stop-color="#FE5B02" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow2)"/>
+          </svg>
+          <div class="placard-card">
+            <div class="placard-top">
+              <div class="placard-table-label">Table</div>
+              <div class="placard-number">02</div>
+              <div class="placard-station-name">AI Prospecting</div>
+            </div>
+            <div class="placard-body">
+              <div class="placard-desc">Find the prospects who are ready to buy — before your competitors do.</div>
+              <div class="placard-cta">Visit this table →</div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Table 3 — AI Workflows -->
+        <a href="#module-3" class="placard-wrap placard-3">
+          <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
+            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#0BEAB5"/>
+            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#0BEAB5"/>
+            <ellipse cx="50" cy="140" rx="28" ry="5" fill="#3df5c9" opacity="0.8"/>
+            <defs>
+              <radialGradient id="glow3" cx="50%" cy="0%" r="100%">
+                <stop offset="0%" stop-color="#0BEAB5" stop-opacity="0.38"/>
+                <stop offset="100%" stop-color="#0BEAB5" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow3)"/>
+          </svg>
+          <div class="placard-card">
+            <div class="placard-top">
+              <div class="placard-table-label">Table</div>
+              <div class="placard-number">03</div>
+              <div class="placard-station-name">AI Workflows</div>
+            </div>
+            <div class="placard-body">
+              <div class="placard-desc">Your business booking, onboarding, and following up — while you sleep.</div>
+              <div class="placard-cta">Visit this table →</div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+
+      <div class="placard-table-line"></div>
+    </section>
+
+    <!-- ============================================================
+         MODULE 1: THE AI RECEPTIONIST
+    ============================================================ -->
+    <section class="lab-section" id="module-1">
+      <div class="container">
+        <div class="experience-grid">
+
+          <!-- Demo Panel -->
+          <div>
+            <div class="demo-card">
+              <div class="demo-card-header">
+                <div class="demo-card-icon">
+                  <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+                </div>
+                <div>
+                  <div class="demo-card-title">The AI Receptionist</div>
+                  <div class="demo-card-sub">Pick your industry and press play</div>
+                </div>
+              </div>
+              <div class="demo-card-body">
+                <div class="selector-label">Choose your industry</div>
+                <div class="selector-tabs">
+                  <button class="tab-btn active">Plumbing</button>
+                  <button class="tab-btn">Law Firm</button>
+                  <button class="tab-btn">Estate Agency</button>
+                </div>
+
+                <div class="playback-area">
+                  <div class="playback-controls">
+                    <button class="play-btn">
+                      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <div class="waveform">
+                      <div class="waveform-bars">
+                        <div class="waveform-bar played" style="height:60%"></div>
+                        <div class="waveform-bar played" style="height:80%"></div>
+                        <div class="waveform-bar played" style="height:50%"></div>
+                        <div class="waveform-bar played" style="height:90%"></div>
+                        <div class="waveform-bar played" style="height:70%"></div>
+                        <div class="waveform-bar played" style="height:55%"></div>
+                        <div class="waveform-bar" style="height:75%"></div>
+                        <div class="waveform-bar" style="height:65%"></div>
+                        <div class="waveform-bar" style="height:85%"></div>
+                        <div class="waveform-bar" style="height:50%"></div>
+                        <div class="waveform-bar" style="height:70%"></div>
+                        <div class="waveform-bar" style="height:60%"></div>
+                      </div>
+                    </div>
+                    <span class="playback-time">0:18 / 0:42</span>
+                  </div>
+                  <div class="transcript-wrap">
+                    <div class="transcript-line"><span class="speaker">AI:</span> Thank you for calling Apex Plumbers. You've reached us outside of business hours. My name is Aria — how can I help you today?</div>
+                    <div class="transcript-line highlight"><span class="speaker">Caller:</span> Hi, I've got a burst pipe in my kitchen, it's quite urgent.</div>
+                    <div class="transcript-line"><span class="speaker">AI:</span> I completely understand — let's get this sorted for you right away. Can I take your postcode so I can check our nearest available engineer?</div>
+                  </div>
+                </div>
+
+                <div class="mic-prompt">
+                  <div class="mic-icon-wrap">
+                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                  </div>
+                  <div class="mic-text-wrap">
+                    <div class="mic-title">Now make it yours.</div>
+                    <div class="mic-sub">Press and say your company name — hear it respond with your business.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="takeaway-bar">
+              <div class="takeaway-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </div>
+              <div class="takeaway-text">
+                <div class="takeaway-title">Take this experience with you.</div>
+                <div class="takeaway-sub">We'll send you a summary of this interaction to your inbox.</div>
+              </div>
+              <div class="takeaway-form">
+                <input class="email-input" type="email" placeholder="your@email.co.uk" />
+                <button class="send-btn">Send Summary</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <div class="section-eyebrow"><span class="section-num">1</span> Experience Table</div>
+            <h2 class="section-headline">Never miss a call.<br/>Never lose a lead.</h2>
+            <p class="section-desc">What would it mean for your business if every single call was answered perfectly — even at 11pm on a Sunday? Your AI Receptionist is always on, always professional, and always on-brand.</p>
+
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <div class="step-title">Select your industry</div>
+                  <div class="step-desc">Choose from Plumbing, Law, or Estate Agency to hear a real call scenario relevant to your world.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <div class="step-title">Listen to the call</div>
+                  <div class="step-desc">Hear the AI handle a live enquiry — professional, calm, and completely on-brand.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <div class="step-title">Make it yours</div>
+                  <div class="step-desc">Press the microphone and say your business name. Hear the AI greet your callers — instantly.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="genius-bar">
+              <div class="genius-bar-text">
+                <div class="gb-title">Like what you hear?</div>
+                <div class="gb-sub">Speak to one of our AI Builders — they'll design this around your business.</div>
+              </div>
+              <a href="#" class="btn-genius">Talk to an AI Builder →</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MODULE 2: THE AI PROSPECTING ASSISTANT
+    ============================================================ -->
+    <section class="lab-section" id="module-2" style="background: var(--surface);">
+      <div class="container">
+        <div class="experience-grid">
+
+          <!-- Description (left on this module) -->
+          <div>
+            <div class="section-eyebrow"><span class="section-num">2</span> Experience Table</div>
+            <h2 class="section-headline">Know exactly who to<br/>call — and why.</h2>
+            <p class="section-desc">Imagine walking into every sales call already knowing something the prospect hasn't told you yet. Our AI finds the real-world triggers that make your outreach feel like perfect timing, not a cold call.</p>
+
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <div class="step-title">Define your mission</div>
+                  <div class="step-desc">Tell us what you sell and what your key sales trigger looks like — a safety incident, a failing SEO score, a new hire.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <div class="step-title">Choose a real company</div>
+                  <div class="step-desc">Enter any company website. Our AI goes to work immediately, scanning live news and data for your trigger.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <div class="step-title">Receive your intelligence brief</div>
+                  <div class="step-desc">A concise, actionable report lands in seconds — with a specific sales angle you can use today.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="genius-bar">
+              <div class="genius-bar-text">
+                <div class="gb-title">Want to find prospects like this every day?</div>
+                <div class="gb-sub">One of our AI Builders will show you exactly what a full pipeline looks like for your industry.</div>
+              </div>
+              <a href="#" class="btn-genius">Talk to an AI Builder →</a>
+            </div>
+          </div>
+
+          <!-- Intelligence Panel (right) -->
+          <div>
+            <div class="demo-card">
+              <div class="demo-card-header">
+                <div class="demo-card-icon">
+                  <svg viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+                </div>
+                <div>
+                  <div class="demo-card-title">AI Intelligence Engine</div>
+                  <div class="demo-card-sub">Try it on a real company you know</div>
+                </div>
+              </div>
+              <div class="demo-card-body">
+                <div class="intel-form">
+                  <div>
+                    <div class="intel-field-label">I sell...</div>
+                    <select class="intel-select">
+                      <option>Health &amp; Safety Consulting</option>
+                      <option>SEO &amp; Digital Marketing</option>
+                      <option>Corporate Insurance</option>
+                      <option>HR &amp; Employment Law</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div class="intel-field-label">My key sales trigger is...</div>
+                    <input class="intel-input" type="text" value="a recent safety incident or negative press coverage" />
+                  </div>
+                  <div>
+                    <div class="intel-field-label">Investigate this company</div>
+                    <input class="intel-input" type="text" placeholder="e.g. tesco.com or burgerking.co.uk" />
+                  </div>
+                  <button class="intel-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+                    Run Intelligence Search
+                  </button>
+                </div>
+
+                <div class="intel-result-wrap">
+                  <div class="intel-result-label">Intelligence Found</div>
+                  <div class="intel-result-text">According to a <strong>BBC News</strong> report from 14 February 2026, <strong>Tesco PLC</strong> reported a minor fire at its Reading distribution centre. No injuries were recorded, but operations were briefly halted pending a Health &amp; Safety Executive inspection.</div>
+                  <div class="intel-result-angle">
+                    <div class="angle-label">Your Sales Angle</div>
+                    <div class="angle-text">This is a direct opening to engage their Head of Operations or EHS Manager about reviewing their current fire safety and business continuity protocols — before the HSE inspection concludes.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="takeaway-bar">
+              <div class="takeaway-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </div>
+              <div class="takeaway-text">
+                <div class="takeaway-title">Keep this intelligence brief.</div>
+                <div class="takeaway-sub">We'll send the full report to your inbox — ready to use.</div>
+              </div>
+              <div class="takeaway-form">
+                <input class="email-input" type="email" placeholder="your@email.co.uk" />
+                <button class="send-btn">Send Brief</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MODULE 3: THE CONVERSATIONAL AI WORKFLOW
+    ============================================================ -->
+    <section class="lab-section" id="module-3">
+      <div class="container">
+        <div class="experience-grid">
+
+          <!-- Chat Panel -->
+          <div>
+            <div class="chat-panel">
+              <div class="chat-header">
+                <div class="chat-avatar">
+                  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                </div>
+                <div>
+                  <div class="chat-title">AI Workflow Assistant</div>
+                  <div class="chat-status">Online now</div>
+                </div>
+              </div>
+              <div class="chat-scenario-bar">
+                <div class="selector-label" style="margin-bottom:6px;">Choose a scenario</div>
+                <div class="selector-tabs">
+                  <button class="tab-btn active">The Plumber</button>
+                  <button class="tab-btn">The Accountant</button>
+                  <button class="tab-btn">The Restaurant</button>
+                </div>
+              </div>
+              <div class="chat-messages">
+                <div class="chat-bubble-wrap">
+                  <span class="chat-sender">AI Receptionist — Apex Plumbers</span>
+                  <div class="chat-bubble ai">Hello! Thanks for getting in touch with Apex Plumbers. I'm here to help 24/7. What can I help you with today?</div>
+                </div>
+                <div class="chat-bubble-wrap user">
+                  <div class="chat-bubble user">Hi, I have a leaking tap in my kitchen. It's been dripping for a few days.</div>
+                  <span class="chat-sender">You</span>
+                </div>
+                <div class="chat-bubble-wrap">
+                  <span class="chat-sender">AI Receptionist — Apex Plumbers</span>
+                  <div class="chat-bubble ai">No problem at all — let's get that sorted. Could I take your postcode so I can check the nearest available engineer for you?</div>
+                </div>
+              </div>
+              <div class="chat-input-bar">
+                <input class="chat-input" type="text" placeholder="Type your message…" />
+                <button class="chat-send-btn">
+                  <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="takeaway-bar">
+              <div class="takeaway-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+              </div>
+              <div class="takeaway-text">
+                <div class="takeaway-title">Get your booking confirmation.</div>
+                <div class="takeaway-sub">We'll send a summary of this interaction to your inbox.</div>
+              </div>
+              <div class="takeaway-form">
+                <input class="email-input" type="email" placeholder="your@email.co.uk" />
+                <button class="send-btn">Send Confirmation</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <div class="section-eyebrow"><span class="section-num">3</span> Experience Table</div>
+            <h2 class="section-headline">Your business, handling<br/>things while you sleep.</h2>
+            <p class="section-desc">A customer books an appointment at midnight. A new client signs their contract on a Sunday. A table is reserved without a single phone call. Have a go — type something and see what happens.</p>
+
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-num">1</div>
+                <div class="step-content">
+                  <div class="step-title">Choose a business scenario</div>
+                  <div class="step-desc">Select from a Plumber, an Accountant, or a Restaurant — and watch the full workflow play out.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">2</div>
+                <div class="step-content">
+                  <div class="step-title">Step into the conversation</div>
+                  <div class="step-desc">Type your own message and experience the AI responding in real time, guiding you through the process.</div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-content">
+                  <div class="step-title">Complete a real task</div>
+                  <div class="step-desc">Book an appointment, start an onboarding, or receive a menu. The task is done — no human required.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="genius-bar">
+              <div class="genius-bar-text">
+                <div class="gb-title">Imagine this running in your business tomorrow.</div>
+                <div class="gb-sub">Our AI Builders will design the exact workflow your business needs. Let's start with a conversation.</div>
+              </div>
+              <a href="#" class="btn-genius">Talk to an AI Builder →</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <div class="footer-teal-bar"></div>
+        <div class="footer-inner">
+          <div class="footer-logo-wrap">
+            <div class="footer-logo-mark"></div>
+            <span class="footer-logo-text">ClickFlow Grow</span>
+          </div>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Contact</a>
+          </div>
+          <div class="footer-copy">© 2026 ClickFlow Grow. All rights reserved.</div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /main-content -->
+
+  <script>
+    // ============================================================
+    // CANVAS PERSPECTIVE DOOR ANIMATION
+    // ============================================================
+    (function() {
+      const canvas = document.getElementById('door-canvas');
+      const ctx = canvas.getContext('2d');
+      const enterBtn = document.getElementById('enterBtn');
+      const entranceContent = document.querySelector('.entrance-content');
+      const entrance = document.getElementById('entrance');
+      const mainContent = document.getElementById('main-content');
+
+      // Size canvas to full viewport
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Animation state
+      let openFraction = 0;
+      let animating = false;
+      let startTime = null;
+      const DURATION = 2600;
+
+      function easeInOutCubic(t) {
+        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+      }
+
+      // ─────────────────────────────────────────────────────────────────────
+      // INSIDE-OUT DOOR ANIMATION
+      // The viewer is INSIDE the Lab. Two large doors fill the full screen.
+      // Each door hinges on its OUTER edge and swings AWAY from the viewer
+      // (i.e. outward into the world beyond). As they open, the world is
+      // revealed through the widening gap at the centre.
+      //
+      // Perspective trick: the inner edge (near the seam) foreshortens and
+      // moves outward as the door rotates. We simulate this with a trapezoid
+      // whose inner edge shrinks and shifts as the door swings open.
+      // ─────────────────────────────────────────────────────────────────────
+
+      function drawDoor(side, frac) {
+        const W = canvas.width, H = canvas.height;
+        const cx = W / 2;
+        const halfW = W / 2;
+
+        // How far the door has rotated (0 = closed, PI/2 = fully open)
+        const theta = frac * (Math.PI / 2) * 0.97;
+
+        // The projected width of the door face as it rotates away
+        const projW = halfW * Math.cos(theta);
+
+        // The inner edge (seam side) foreshortens MORE than the outer edge
+        // because it is further from the hinge — creating a strong trapezoid
+        const innerTaper = halfW * Math.sin(theta) * 0.55;
+
+        // Door face coordinates
+        // Left door: hinge on LEFT edge (x=0), inner edge moves RIGHT toward cx
+        // Right door: hinge on RIGHT edge (x=W), inner edge moves LEFT toward cx
+        let outerTop, outerBot, innerTop, innerBot;
+
+        if (side === 'left') {
+          outerTop = 0;
+          outerBot = 0;
+          innerTop = projW + innerTaper;
+          innerBot = projW - innerTaper;
+        } else {
+          outerTop = W;
+          outerBot = W;
+          innerTop = W - projW - innerTaper;
+          innerBot = W - projW + innerTaper;
+        }
+
+        // Draw the door panel as a trapezoid
+        ctx.beginPath();
+        ctx.moveTo(outerTop, 0);
+        ctx.lineTo(innerTop, 0);
+        ctx.lineTo(innerBot, H);
+        ctx.lineTo(outerBot, H);
+        ctx.closePath();
+
+        // Door colour — dark navy with subtle gradient for depth
+        const grad = ctx.createLinearGradient(
+          side === 'left' ? 0 : W, 0,
+          side === 'left' ? projW : W - projW, 0
+        );
+        if (side === 'left') {
+          grad.addColorStop(0, '#071526');   // outer edge — darkest (in shadow)
+          grad.addColorStop(0.4, '#0F2D60'); // mid
+          grad.addColorStop(1, '#1e4a8a');   // inner edge — lighter (facing viewer)
+        } else {
+          grad.addColorStop(0, '#1e4a8a');   // inner edge — lighter
+          grad.addColorStop(0.6, '#0F2D60'); // mid
+          grad.addColorStop(1, '#071526');   // outer edge — darkest
+        }
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Glass reflection streak on inner third of door
+        if (projW > 30) {
+          const sheenStart = side === 'left' ? innerTop * 0.7 : innerTop + (W - innerTop) * 0.3;
+          const sheenEnd   = side === 'left' ? innerTop * 0.85 : innerTop + (W - innerTop) * 0.45;
+          const sheenGrad = ctx.createLinearGradient(sheenStart, 0, sheenEnd, 0);
+          sheenGrad.addColorStop(0, 'rgba(255,255,255,0.00)');
+          sheenGrad.addColorStop(0.5, 'rgba(255,255,255,0.10)');
+          sheenGrad.addColorStop(1, 'rgba(255,255,255,0.00)');
+          ctx.beginPath();
+          ctx.moveTo(outerTop, 0);
+          ctx.lineTo(innerTop, 0);
+          ctx.lineTo(innerBot, H);
+          ctx.lineTo(outerBot, H);
+          ctx.closePath();
+          ctx.fillStyle = sheenGrad;
+          ctx.fill();
+        }
+
+        // Inset panel rectangle (architectural detail)
+        if (projW > 60) {
+          const pIns = projW * 0.08;
+          const vIns = H * 0.08;
+          const pInnerTop = innerTop + (side === 'left' ? -pIns : pIns);
+          const pInnerBot = innerBot + (side === 'left' ? -pIns : pIns);
+          const pOuterTop = outerTop + (side === 'left' ? pIns : -pIns);
+          const pOuterBot = outerBot + (side === 'left' ? pIns : -pIns);
+          ctx.beginPath();
+          ctx.moveTo(pOuterTop, vIns);
+          ctx.lineTo(pInnerTop, vIns);
+          ctx.lineTo(pInnerBot, H - vIns);
+          ctx.lineTo(pOuterBot, H - vIns);
+          ctx.closePath();
+          ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+
+        // Door handle — vertical bar near inner edge, fades as door opens
+        if (projW > 80) {
+          const handleAlpha = Math.max(0, 1 - frac * 2.5);
+          if (handleAlpha > 0) {
+            ctx.save();
+            ctx.globalAlpha = handleAlpha;
+
+            // Architectural pull bar — positioned toward the OUTER edge of each door
+            // Left door: handle sits at ~35% of the door width from the seam (i.e. further left)
+            // Right door: handle sits at ~35% of the door width from the seam (i.e. further right)
+            const hx = side === 'left'
+              ? innerTop * 0.55
+              : innerTop + (W - innerTop) * 0.45;
+            const hy = H * 0.5;
+
+            // Bar dimensions: tall and slim — like a hotel/Apple Store entrance handle
+            const hh = H * 0.473;  // 47.3% of viewport height — another 30% longer
+            const hw = Math.max(7, projW * 0.032); // slim but visible width
+            const radius = hw / 2;
+
+            // Brushed steel gradient: light centre stripe, darker edges — fully opaque
+            const hGrad = ctx.createLinearGradient(hx - hw/2, 0, hx + hw/2, 0);
+            hGrad.addColorStop(0,   'rgba(100,112,130,1.0)');
+            hGrad.addColorStop(0.2, 'rgba(195,208,222,1.0)');
+            hGrad.addColorStop(0.5, 'rgba(245,250,255,1.0)');
+            hGrad.addColorStop(0.8, 'rgba(195,208,222,1.0)');
+            hGrad.addColorStop(1,   'rgba(100,112,130,1.0)');
+
+            // Draw the bar
+            ctx.fillStyle = hGrad;
+            ctx.beginPath();
+            ctx.roundRect(hx - hw/2, hy - hh/2, hw, hh, radius);
+            ctx.fill();
+
+            // Subtle shadow behind the bar for depth
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = side === 'left' ? -2 : 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillStyle = hGrad;
+            ctx.beginPath();
+            ctx.roundRect(hx - hw/2, hy - hh/2, hw, hh, radius);
+            ctx.fill();
+
+            // End caps — circular terminations at top and bottom of bar
+            // Top cap: highlight at top-centre, shadow toward bar (dome faces up/outward)
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            const topCapGrad = ctx.createRadialGradient(
+              hx - hw * 0.25, hy - hh/2 - hw * 0.25, hw * 0.05,
+              hx, hy - hh/2, hw
+            );
+            topCapGrad.addColorStop(0, 'rgba(255,255,255,1.0)');
+            topCapGrad.addColorStop(0.4, 'rgba(230,238,248,1.0)');
+            topCapGrad.addColorStop(1, 'rgba(110,122,140,1.0)');
+            ctx.fillStyle = topCapGrad;
+            ctx.beginPath();
+            ctx.arc(hx, hy - hh/2, hw * 1.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Bottom cap: highlight at bottom-centre, shadow toward bar (dome faces down/outward)
+            const botCapGrad = ctx.createRadialGradient(
+              hx - hw * 0.25, hy + hh/2 + hw * 0.25, hw * 0.05,
+              hx, hy + hh/2, hw
+            );
+            botCapGrad.addColorStop(0, 'rgba(255,255,255,1.0)');
+            botCapGrad.addColorStop(0.4, 'rgba(230,238,248,1.0)');
+            botCapGrad.addColorStop(1, 'rgba(110,122,140,1.0)');
+            ctx.fillStyle = botCapGrad;
+            ctx.beginPath();
+            ctx.arc(hx, hy + hh/2, hw * 1.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+          }
+        }
+      }
+
+      function drawBackground(frac) {
+        // As doors open, the background transitions from dark navy to
+        // a bright white/teal glow — simulating light flooding in from outside
+        const W = canvas.width, H = canvas.height;
+        const cx = W/2, cy = H/2;
+
+        // Base dark background
+        ctx.fillStyle = '#06111f';
+        ctx.fillRect(0, 0, W, H);
+
+        // Light flooding in through the gap — grows from centre
+        if (frac > 0.02) {
+          const gapHalfW = (W / 2) * (1 - Math.cos(frac * Math.PI / 2)) * 1.1;
+          const lightIntensity = Math.min(frac * 1.8, 1);
+
+          // Bright centre glow (the world beyond)
+          const lightGrad = ctx.createRadialGradient(cx, cy * 0.7, 0, cx, cy * 0.7, gapHalfW * 2.5);
+          lightGrad.addColorStop(0, `rgba(255,255,255,${lightIntensity * 0.95})`);
+          lightGrad.addColorStop(0.15, `rgba(220,245,255,${lightIntensity * 0.8})`);
+          lightGrad.addColorStop(0.4, `rgba(11,234,181,${lightIntensity * 0.35})`);
+          lightGrad.addColorStop(0.7, `rgba(15,45,96,${lightIntensity * 0.15})`);
+          lightGrad.addColorStop(1, 'rgba(6,17,31,0)');
+          ctx.fillStyle = lightGrad;
+          ctx.fillRect(0, 0, W, H);
+
+          // Clip the bright light to only show through the gap between doors
+          // (approximate — doors cover from 0 to leftInner and rightInner to W)
+          const theta = frac * (Math.PI / 2) * 0.97;
+          const projW = (W/2) * Math.cos(theta);
+          const innerTaper = (W/2) * Math.sin(theta) * 0.55;
+          const leftInnerTop  = projW + innerTaper;
+          const rightInnerTop = W - projW - innerTaper;
+
+          // Dark overlay over door areas (redraw doors will cover this anyway)
+          // Just ensure gap area stays bright
+        }
+
+        // Seam glow — teal line at centre, fades as gap widens
+        const seamAlpha = Math.max(0, 1 - frac * 3.5);
+        if (seamAlpha > 0) {
+          const seamGrad = ctx.createLinearGradient(0, 0, 0, H);
+          seamGrad.addColorStop(0, 'rgba(11,234,181,0)');
+          seamGrad.addColorStop(0.25, `rgba(11,234,181,${seamAlpha * 0.9})`);
+          seamGrad.addColorStop(0.75, `rgba(11,234,181,${seamAlpha * 0.9})`);
+          seamGrad.addColorStop(1, 'rgba(11,234,181,0)');
+          ctx.save();
+          ctx.filter = 'blur(3px)';
+          ctx.fillStyle = seamGrad;
+          ctx.fillRect(W/2 - 2, 0, 4, H);
+          ctx.restore();
+        }
+      }
+
+      function render(ts) {
+        const W = canvas.width, H = canvas.height;
+        if (animating) {
+          if (!startTime) startTime = ts;
+          const t = Math.min((ts - startTime) / DURATION, 1);
+          openFraction = easeInOutCubic(t);
+          if (t >= 1) {
+            animating = false;
+            mainContent.classList.add('visible');
+            setTimeout(() => { entrance.style.display = 'none'; }, 200);
+          }
+        }
+
+        ctx.clearRect(0, 0, W, H);
+        drawBackground(openFraction);
+        drawDoor('left', openFraction);
+        drawDoor('right', openFraction);
+
+        if (animating || openFraction < 1) {
+          requestAnimationFrame(render);
+        }
+      }
+
+      // Initial static render
+      requestAnimationFrame(render);
+
+      enterBtn.addEventListener('click', () => {
+        if (animating || openFraction > 0) return;
+        // Fade out the text overlay
+        entranceContent.classList.add('fade-out');
+        // Start door animation after brief delay
+        setTimeout(() => {
+          animating = true;
+          startTime = null;
+          requestAnimationFrame(render);
+        }, 200);
+      });
+    })();
+
+    // Tab switching (generic)
+    document.querySelectorAll('.selector-tabs').forEach(tabGroup => {
+      tabGroup.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
