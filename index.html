@@ -1814,6 +1814,190 @@
       text-transform: uppercase;
       color: var(--text-secondary);
     }
+
+    /* Typing dots */
+    .typing-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--cfg-teal);
+      margin: 0 2px;
+      animation: typing-bounce 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Spin animation for search loading */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin-icon { animation: spin 0.8s linear infinite; }
+
+    /* ── DEMODROP SECTION ─────────────────────────────────────── */
+    .demodrop-section {
+      background: linear-gradient(135deg, var(--cfg-navy) 0%, #1a2a4a 100%);
+      padding: var(--s8) 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .demodrop-section::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,200,180,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .demodrop-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .demodrop-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      margin-bottom: var(--s3);
+    }
+    .demodrop-headline {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: var(--s3);
+    }
+    .demodrop-sub {
+      font-size: 17px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+      margin-bottom: var(--s6);
+    }
+    .demodrop-form {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: var(--s5) var(--s5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--s4);
+    }
+    .demodrop-field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
+      text-align: left;
+    }
+    .demodrop-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .demodrop-input::placeholder { color: rgba(255,255,255,0.35); }
+    .demodrop-input:focus { outline: none; border-color: var(--cfg-teal); }
+    .demodrop-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s3);
+    }
+    .demodrop-btn {
+      padding: 16px 32px;
+      background: var(--cfg-orange);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .demodrop-btn:hover { background: #e06000; transform: translateY(-1px); }
+    .demodrop-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .demodrop-result {
+      margin-top: var(--s5);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(0,200,180,0.3);
+      border-radius: 16px;
+      padding: var(--s5);
+      text-align: left;
+      display: none;
+    }
+    .demodrop-result-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cfg-teal);
+      margin-bottom: var(--s3);
+    }
+    .demodrop-greeting {
+      font-size: 17px;
+      color: #fff;
+      line-height: 1.6;
+      margin-bottom: var(--s4);
+      font-style: italic;
+    }
+    .demodrop-services {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: var(--s4);
+    }
+    .demodrop-tag {
+      padding: 5px 12px;
+      background: rgba(0,200,180,0.15);
+      border: 1px solid rgba(0,200,180,0.3);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--cfg-teal);
+      font-weight: 600;
+    }
+    .demodrop-cta {
+      margin-top: var(--s5);
+      padding: var(--s4) var(--s5);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--s4);
+    }
+    .demodrop-cta-text {
+      font-size: 15px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.4;
+    }
+    .demodrop-cta-text strong { color: #fff; }
+    .demodrop-activate-btn {
+      padding: 12px 24px;
+      background: var(--cfg-orange);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .demodrop-activate-btn:hover { background: #e06000; }
   </style>
 </head>
 <body>
@@ -2224,7 +2408,7 @@
                 <div class="intel-form">
                   <div>
                     <div class="intel-field-label">I sell...</div>
-                    <select class="intel-select">
+                    <select class="intel-select" id="m2-product">
                       <option>Health &amp; Safety Consulting</option>
                       <option>SEO &amp; Digital Marketing</option>
                       <option>Corporate Insurance</option>
@@ -2233,24 +2417,24 @@
                   </div>
                   <div>
                     <div class="intel-field-label">My key sales trigger is...</div>
-                    <input class="intel-input" type="text" value="a recent safety incident or negative press coverage" />
+                    <input class="intel-input" id="m2-trigger" type="text" value="a recent safety incident or negative press coverage" />
                   </div>
                   <div>
                     <div class="intel-field-label">Investigate this company</div>
-                    <input class="intel-input" type="text" placeholder="e.g. tesco.com or burgerking.co.uk" />
+                    <input class="intel-input" id="m2-domain" type="text" placeholder="e.g. tesco.com or burgerking.co.uk" />
                   </div>
-                  <button class="intel-btn">
+                  <button class="intel-btn" id="m2-search-btn">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
                     Run Intelligence Search
                   </button>
                 </div>
 
-                <div class="intel-result-wrap">
+                <div class="intel-result-wrap" id="m2-result-wrap" style="display:none">
                   <div class="intel-result-label">Intelligence Found</div>
-                  <div class="intel-result-text">According to a <strong>BBC News</strong> report from 14 February 2026, <strong>Tesco PLC</strong> reported a minor fire at its Reading distribution centre. No injuries were recorded, but operations were briefly halted pending a Health &amp; Safety Executive inspection.</div>
+                  <div class="intel-result-text" id="m2-result-text"></div>
                   <div class="intel-result-angle">
                     <div class="angle-label">Your Sales Angle</div>
-                    <div class="angle-text">This is a direct opening to engage their Head of Operations or EHS Manager about reviewing their current fire safety and business continuity protocols — before the HSE inspection concludes.</div>
+                    <div class="angle-text" id="m2-angle-text"></div>
                   </div>
                 </div>
               </div>
@@ -2299,35 +2483,24 @@
                   <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
                 </div>
                 <div>
-                  <div class="chat-title">AI Workflow Assistant</div>
+                  <div class="chat-title" id="m3-chat-title">AI Workflow Assistant</div>
                   <div class="chat-status">Online now</div>
                 </div>
               </div>
               <div class="chat-scenario-bar">
                 <div class="selector-label" style="margin-bottom:6px;">Choose a scenario</div>
                 <div class="selector-tabs">
-                  <button class="tab-btn active">The Plumber</button>
-                  <button class="tab-btn">The Accountant</button>
-                  <button class="tab-btn">The Restaurant</button>
+                  <button class="tab-btn active" data-scenario="plumber">The Plumber</button>
+                  <button class="tab-btn" data-scenario="accountant">The Accountant</button>
+                  <button class="tab-btn" data-scenario="restaurant">The Restaurant</button>
                 </div>
               </div>
-              <div class="chat-messages">
-                <div class="chat-bubble-wrap">
-                  <span class="chat-sender">AI Receptionist — Apex Plumbers</span>
-                  <div class="chat-bubble ai">Hello! Thanks for getting in touch with Apex Plumbers. I'm here to help 24/7. What can I help you with today?</div>
-                </div>
-                <div class="chat-bubble-wrap user">
-                  <div class="chat-bubble user">Hi, I have a leaking tap in my kitchen. It's been dripping for a few days.</div>
-                  <span class="chat-sender">You</span>
-                </div>
-                <div class="chat-bubble-wrap">
-                  <span class="chat-sender">AI Receptionist — Apex Plumbers</span>
-                  <div class="chat-bubble ai">No problem at all — let's get that sorted. Could I take your postcode so I can check the nearest available engineer for you?</div>
-                </div>
+              <div class="chat-messages" id="m3-messages">
+
               </div>
               <div class="chat-input-bar">
-                <input class="chat-input" type="text" placeholder="Type your message…" />
-                <button class="chat-send-btn">
+                <input class="chat-input" id="m3-input" type="text" placeholder="Type your message…" />
+                <button class="chat-send-btn" id="m3-send-btn">
                   <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
               </div>
@@ -2387,6 +2560,63 @@
             </div>
           </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         DEMODROP — YOUR BUSINESS, LIVE IN 60 SECONDS
+    ============================================================ -->
+    <section class="demodrop-section" id="demodrop">
+      <div class="container">
+        <div class="demodrop-inner">
+          <div class="demodrop-eyebrow">The DemoDrop</div>
+          <h2 class="demodrop-headline">Hear Aria answer calls<br/>for <em>your</em> business — right now.</h2>
+          <p class="demodrop-sub">Enter your business name and website. In 60 seconds, we'll build a live AI receptionist trained on your business and let you hear exactly how it would greet your callers.</p>
+
+          <div class="demodrop-form">
+            <div class="demodrop-row">
+              <div>
+                <div class="demodrop-field-label">Your business name</div>
+                <input class="demodrop-input" id="dd-name" type="text" placeholder="e.g. Apex Plumbers" />
+              </div>
+              <div>
+                <div class="demodrop-field-label">Your website</div>
+                <input class="demodrop-input" id="dd-url" type="text" placeholder="e.g. apexplumbers.co.uk" />
+              </div>
+            </div>
+            <div>
+              <div class="demodrop-field-label">Your industry</div>
+              <select class="demodrop-input" id="dd-industry" style="cursor:pointer">
+                <option value="plumbing">Plumbing &amp; Heating</option>
+                <option value="law">Legal Services</option>
+                <option value="estate agency">Estate Agency</option>
+                <option value="accountancy">Accountancy</option>
+                <option value="restaurant">Restaurant &amp; Hospitality</option>
+                <option value="dental">Dental &amp; Healthcare</option>
+                <option value="construction">Construction &amp; Trades</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <button class="demodrop-btn" id="dd-btn">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+              Build My Demo in 60 Seconds
+            </button>
+          </div>
+
+          <div class="demodrop-result" id="dd-result">
+            <div class="demodrop-result-label">Your AI Receptionist is ready</div>
+            <div class="demodrop-greeting" id="dd-greeting"></div>
+            <div class="demodrop-services" id="dd-services"></div>
+            <div style="font-size:13px; color:rgba(255,255,255,0.5); margin-bottom:var(--s3)" id="dd-hours"></div>
+            <div class="demodrop-cta">
+              <div class="demodrop-cta-text">
+                <strong>This is already built for you.</strong><br/>
+                Activate your AI Receptionist for <strong>£600 setup + £499/month</strong>.
+              </div>
+              <button class="demodrop-activate-btn" onclick="window.open('https://buy.stripe.com/placeholder','_blank')">Activate Now →</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -3112,15 +3342,258 @@
 
     })();
 
-    // Tab switching for other modules (generic fallback)
-    document.querySelectorAll('.selector-tabs:not(#m1-tabs)').forEach(tabGroup => {
-      tabGroup.querySelectorAll('.tab-btn').forEach(btn => {
+    // ============================================================
+    // MODULE 2 — AI INTELLIGENCE ENGINE
+    // ============================================================
+    (function() {
+      const API = 'http://localhost:5001';
+      const searchBtn  = document.getElementById('m2-search-btn');
+      const productSel = document.getElementById('m2-product');
+      const triggerIn  = document.getElementById('m2-trigger');
+      const domainIn   = document.getElementById('m2-domain');
+      const resultWrap = document.getElementById('m2-result-wrap');
+      const resultText = document.getElementById('m2-result-text');
+      const angleText  = document.getElementById('m2-angle-text');
+
+      if (!searchBtn) return;
+
+      searchBtn.addEventListener('click', async () => {
+        const domain = domainIn.value.trim();
+        if (!domain) {
+          domainIn.style.borderColor = 'var(--cfg-orange)';
+          domainIn.focus();
+          return;
+        }
+        domainIn.style.borderColor = '';
+        searchBtn.disabled = true;
+        searchBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="white" class="spin-icon"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Searching...';
+        resultWrap.style.display = 'none';
+
+        try {
+          const res = await fetch(API + '/api/intelligence', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              product: productSel.value,
+              trigger: triggerIn.value,
+              domain:  domain
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error);
+
+          const company = data.company || domain;
+          const source  = data.source  || 'Industry Source';
+          const date    = data.date    || 'Recently';
+          resultText.innerHTML = `According to <strong>${source}</strong> (${date}), <strong>${company}</strong> — ${data.brief}`;
+          angleText.textContent = data.angle;
+          resultWrap.style.display = 'block';
+          resultWrap.scrollIntoView({behavior:'smooth', block:'nearest'});
+        } catch(e) {
+          resultText.innerHTML = `<span style="color:var(--cfg-orange)">Search failed: ${e.message}. Please check the company domain and try again.</span>`;
+          angleText.textContent = '';
+          resultWrap.style.display = 'block';
+        } finally {
+          searchBtn.disabled = false;
+          searchBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg> Run Intelligence Search';
+        }
+      });
+    })();
+
+    // ============================================================
+    // MODULE 3 — AI WORKFLOW CHAT
+    // ============================================================
+    (function() {
+      const API = 'http://localhost:5001';
+      const messagesEl = document.getElementById('m3-messages');
+      const inputEl    = document.getElementById('m3-input');
+      const sendBtn    = document.getElementById('m3-send-btn');
+      const titleEl    = document.getElementById('m3-chat-title');
+
+      if (!messagesEl) return;
+
+      let currentScenario = 'plumber';
+      let chatHistory = [];
+      let isTyping = false;
+
+      const scenarioNames = {
+        plumber:    'AI Receptionist — Apex Plumbers',
+        accountant: 'AI Onboarding — Meridian Accountants',
+        restaurant: 'AI Reservations — The Harbour Table'
+      };
+
+      const scenarioGreetings = {
+        plumber:    "Hello! Thanks for getting in touch with Apex Plumbers. I'm here to help 24/7 — what can I help you with today?",
+        accountant: "Welcome to Meridian Accountants! I'm here to help get you set up as a new client. Shall we get started?",
+        restaurant: "Good evening! Welcome to The Harbour Table. I'd love to help you make a reservation — when were you thinking of joining us?"
+      };
+
+      function addBubble(role, text, sender) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-bubble-wrap' + (role === 'user' ? ' user' : '');
+        if (role === 'user') {
+          wrap.innerHTML = `<div class="chat-bubble user">${text}</div><span class="chat-sender">You</span>`;
+        } else {
+          wrap.innerHTML = `<span class="chat-sender">${sender}</span><div class="chat-bubble ai">${text}</div>`;
+        }
+        messagesEl.appendChild(wrap);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return wrap;
+      }
+
+      function addTypingIndicator() {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-bubble-wrap';
+        wrap.id = 'm3-typing';
+        wrap.innerHTML = `<span class="chat-sender">${scenarioNames[currentScenario]}</span><div class="chat-bubble ai" style="padding:12px 16px"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div>`;
+        messagesEl.appendChild(wrap);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function removeTypingIndicator() {
+        const el = document.getElementById('m3-typing');
+        if (el) el.remove();
+      }
+
+      function loadScenario(scenario) {
+        currentScenario = scenario;
+        chatHistory = [];
+        messagesEl.innerHTML = '';
+        if (titleEl) titleEl.textContent = scenarioNames[scenario];
+        const greeting = scenarioGreetings[scenario];
+        chatHistory.push({role:'assistant', content: greeting});
+        addBubble('ai', greeting, scenarioNames[scenario]);
+      }
+
+      async function sendMessage() {
+        if (isTyping) return;
+        const text = inputEl.value.trim();
+        if (!text) return;
+        inputEl.value = '';
+        chatHistory.push({role:'user', content: text});
+        addBubble('user', text, 'You');
+        isTyping = true;
+        addTypingIndicator();
+
+        try {
+          const res = await fetch(API + '/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({scenario: currentScenario, messages: chatHistory})
+          });
+          const data = await res.json();
+          removeTypingIndicator();
+          if (data.error) throw new Error(data.error);
+          chatHistory.push({role:'assistant', content: data.reply});
+          addBubble('ai', data.reply, data.sender || scenarioNames[currentScenario]);
+        } catch(e) {
+          removeTypingIndicator();
+          addBubble('ai', 'Sorry, I had a connection issue. Please try again in a moment.', scenarioNames[currentScenario]);
+        } finally {
+          isTyping = false;
+        }
+      }
+
+      // Scenario tab switching
+      document.querySelectorAll('[data-scenario]').forEach(btn => {
         btn.addEventListener('click', () => {
-          tabGroup.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('[data-scenario]').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+          loadScenario(btn.dataset.scenario);
         });
       });
-    });
+
+      sendBtn.addEventListener('click', sendMessage);
+      inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+      // Init with plumber scenario
+      loadScenario('plumber');
+    })();
+
+    // ============================================================
+    // DEMODROP — PERSONALISED DEMO GENERATOR
+    // ============================================================
+    (function() {
+      const API = 'http://localhost:5001';
+      const ddBtn      = document.getElementById('dd-btn');
+      const ddName     = document.getElementById('dd-name');
+      const ddUrl      = document.getElementById('dd-url');
+      const ddIndustry = document.getElementById('dd-industry');
+      const ddResult   = document.getElementById('dd-result');
+      const ddGreeting = document.getElementById('dd-greeting');
+      const ddServices = document.getElementById('dd-services');
+      const ddHours    = document.getElementById('dd-hours');
+
+      if (!ddBtn) return;
+
+      let ddAudio = null;
+
+      ddBtn.addEventListener('click', async () => {
+        const name = ddName.value.trim();
+        const url  = ddUrl.value.trim();
+        if (!name) { ddName.style.borderColor = 'var(--cfg-orange)'; ddName.focus(); return; }
+        ddName.style.borderColor = '';
+
+        ddBtn.disabled = true;
+        ddBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="white" class="spin-icon"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Building your demo...';
+        ddResult.style.display = 'none';
+
+        try {
+          // Step 1: Generate knowledge base
+          const kbRes = await fetch(API + '/api/demodrop', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              business_name: name,
+              website_url: url,
+              industry: ddIndustry.value
+            })
+          });
+          const kb = await kbRes.json();
+          if (kb.error) throw new Error(kb.error);
+
+          // Step 2: Display the knowledge base
+          ddGreeting.textContent = `“${kb.greeting}”`;
+          ddServices.innerHTML = (kb.services || []).map(s => `<span class="demodrop-tag">${s}</span>`).join('');
+          ddHours.textContent = `⏰ ${kb.hours || 'Hours not specified'}`;
+          ddResult.style.display = 'block';
+          ddResult.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+
+          // Step 3: Generate ElevenLabs audio of the greeting
+          ddBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="white" class="spin-icon"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Generating Aria\'s voice...';
+          const ELEVEN_KEY = 'sk_d1ec7a4b25d20932e3743644693576454d0664d24956d5b7';
+          const ALICE_VOICE = 'Xb7hH8MSUJpSbSDYk0k2'; // Alice — British female
+          const ttsRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ALICE_VOICE}`, {
+            method: 'POST',
+            headers: {
+              'xi-api-key': ELEVEN_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              text: kb.greeting,
+              model_id: 'eleven_turbo_v2_5',
+              voice_settings: { stability: 0.5, similarity_boost: 0.75 }
+            })
+          });
+          if (ttsRes.ok) {
+            const blob = await ttsRes.blob();
+            const audioUrl = URL.createObjectURL(blob);
+            if (ddAudio) { ddAudio.pause(); ddAudio = null; }
+            ddAudio = new Audio(audioUrl);
+            ddAudio.play();
+          }
+
+          ddBtn.disabled = false;
+          ddBtn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg> Hear Aria Again';
+        } catch(e) {
+          ddBtn.disabled = false;
+          ddBtn.innerHTML = 'Try Again';
+          ddGreeting.textContent = 'Sorry, something went wrong. Please try again.';
+          ddResult.style.display = 'block';
+        }
+      });
+    })();
+
   </script>
 
 </body>
