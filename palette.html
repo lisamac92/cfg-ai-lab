@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CFG AI Lab — Colour Direction Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f5;
+      color: #111;
+      padding: 48px 24px 80px;
+    }
+    .page-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 32px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 8px;
+      color: #111;
+    }
+    .page-sub {
+      text-align: center;
+      font-size: 17px;
+      color: #666;
+      margin-bottom: 56px;
+    }
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .palette-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      border: 2px solid transparent;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .palette-card:hover {
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    }
+
+    /* ── PREVIEW AREA ── */
+    .preview {
+      padding: 28px 28px 20px;
+    }
+    .preview-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .preview-logo {
+      font-family: 'Manrope', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .preview-cta-btn {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: default;
+    }
+    .preview-hero {
+      padding: 20px 0 16px;
+    }
+    .preview-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .preview-headline {
+      font-family: 'Manrope', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .preview-sub {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 16px;
+    }
+    .preview-btn {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: default;
+    }
+    .preview-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .preview-card {
+      border-radius: 10px;
+      padding: 12px 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .preview-card-num {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .preview-card-label {
+      font-size: 10px;
+      font-weight: 600;
+      opacity: 0.75;
+    }
+    .preview-step-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    .preview-room-stripe {
+      height: 3px;
+      border-radius: 0 0 0 0;
+      margin: 0 -28px 16px;
+    }
+
+    /* ── PALETTE SWATCHES ── */
+    .swatches {
+      display: flex;
+      gap: 0;
+      height: 8px;
+    }
+    .swatch {
+      flex: 1;
+    }
+
+    /* ── INFO AREA ── */
+    .palette-info {
+      padding: 20px 28px 24px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .palette-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .palette-desc {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .palette-tokens {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .token {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #444;
+    }
+    .token-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    .palette-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       OPTION A — Electric Blue + Coral
+    ───────────────────────────────────────────────────────────── */
+    .opt-a .preview { background: #ffffff; }
+    .opt-a .preview-logo { color: #0047FF; }
+    .opt-a .preview-eyebrow { color: #0047FF; }
+    .opt-a .preview-headline { color: #0a0a0a; }
+    .opt-a .preview-btn { background: #0047FF; color: white; }
+    .opt-a .preview-cta-btn { background: #0047FF; color: white; }
+    .opt-a .preview-card-1 { background: #EFF3FF; color: #0047FF; }
+    .opt-a .preview-card-2 { background: #FFF0EE; color: #E8441A; }
+    .opt-a .preview-card-3 { background: #F0FDF9; color: #059669; }
+    .opt-a .preview-step-badge { background: #EFF3FF; color: #0047FF; }
+    .opt-a .preview-room-stripe { background: linear-gradient(90deg, #0047FF, #E8441A); }
+    .opt-a .swatches .s1 { background: #0a0a0a; }
+    .opt-a .swatches .s2 { background: #0047FF; }
+    .opt-a .swatches .s3 { background: #E8441A; }
+    .opt-a .swatches .s4 { background: #F5F7FF; }
+    .opt-a .palette-label { background: #EFF3FF; color: #0047FF; }
+
+    /* ─────────────────────────────────────────────────────────────
+       OPTION B — Deep Indigo + Emerald
+    ───────────────────────────────────────────────────────────── */
+    .opt-b .preview { background: #ffffff; }
+    .opt-b .preview-logo { color: #3730A3; }
+    .opt-b .preview-eyebrow { color: #3730A3; }
+    .opt-b .preview-headline { color: #0a0a0a; }
+    .opt-b .preview-btn { background: #3730A3; color: white; }
+    .opt-b .preview-cta-btn { background: #3730A3; color: white; }
+    .opt-b .preview-card-1 { background: #EEF2FF; color: #3730A3; }
+    .opt-b .preview-card-2 { background: #ECFDF5; color: #059669; }
+    .opt-b .preview-card-3 { background: #FFF7ED; color: #C2410C; }
+    .opt-b .preview-step-badge { background: #EEF2FF; color: #3730A3; }
+    .opt-b .preview-room-stripe { background: linear-gradient(90deg, #3730A3, #10B981); }
+    .opt-b .swatches .s1 { background: #0a0a0a; }
+    .opt-b .swatches .s2 { background: #3730A3; }
+    .opt-b .swatches .s3 { background: #10B981; }
+    .opt-b .swatches .s4 { background: #F5F3FF; }
+    .opt-b .palette-label { background: #EEF2FF; color: #3730A3; }
+
+    /* ─────────────────────────────────────────────────────────────
+       OPTION C — Slate + Teal (keep teal, go light)
+    ───────────────────────────────────────────────────────────── */
+    .opt-c .preview { background: #ffffff; }
+    .opt-c .preview-logo { color: #0F172A; }
+    .opt-c .preview-eyebrow { color: #0ABFA0; }
+    .opt-c .preview-headline { color: #0F172A; }
+    .opt-c .preview-btn { background: #0ABFA0; color: #0F172A; }
+    .opt-c .preview-cta-btn { background: #0F172A; color: white; }
+    .opt-c .preview-card-1 { background: #F0FDFB; color: #0ABFA0; }
+    .opt-c .preview-card-2 { background: #F0FDFB; color: #0891B2; }
+    .opt-c .preview-card-3 { background: #F0FDFB; color: #7C3AED; }
+    .opt-c .preview-step-badge { background: #F0FDFB; color: #0ABFA0; border: 1px solid #0ABFA0; }
+    .opt-c .preview-room-stripe { background: linear-gradient(90deg, #0ABFA0, #0891B2); }
+    .opt-c .swatches .s1 { background: #0F172A; }
+    .opt-c .swatches .s2 { background: #0ABFA0; }
+    .opt-c .swatches .s3 { background: #0891B2; }
+    .opt-c .swatches .s4 { background: #F8FAFC; }
+    .opt-c .palette-label { background: #F0FDFB; color: #0ABFA0; border: 1px solid #0ABFA0; }
+
+    /* ─────────────────────────────────────────────────────────────
+       OPTION D — Near-black + Lime/Acid Green
+    ───────────────────────────────────────────────────────────── */
+    .opt-d .preview { background: #ffffff; }
+    .opt-d .preview-logo { color: #111827; }
+    .opt-d .preview-eyebrow { color: #65A30D; }
+    .opt-d .preview-headline { color: #111827; }
+    .opt-d .preview-btn { background: #111827; color: #A3E635; }
+    .opt-d .preview-cta-btn { background: #111827; color: #A3E635; }
+    .opt-d .preview-card-1 { background: #F7FEE7; color: #3F6212; }
+    .opt-d .preview-card-2 { background: #F0FDF4; color: #166534; }
+    .opt-d .preview-card-3 { background: #FAFAF9; color: #292524; }
+    .opt-d .preview-step-badge { background: #F7FEE7; color: #65A30D; border: 1px solid #A3E635; }
+    .opt-d .preview-room-stripe { background: linear-gradient(90deg, #A3E635, #65A30D); }
+    .opt-d .swatches .s1 { background: #111827; }
+    .opt-d .swatches .s2 { background: #A3E635; }
+    .opt-d .swatches .s3 { background: #65A30D; }
+    .opt-d .swatches .s4 { background: #F7FEE7; }
+    .opt-d .palette-label { background: #F7FEE7; color: #65A30D; border: 1px solid #A3E635; }
+
+    /* ─────────────────────────────────────────────────────────────
+       OPTION E — Charcoal + Electric Violet
+    ───────────────────────────────────────────────────────────── */
+    .opt-e .preview { background: #ffffff; }
+    .opt-e .preview-logo { color: #1C1C1E; }
+    .opt-e .preview-eyebrow { color: #7C3AED; }
+    .opt-e .preview-headline { color: #1C1C1E; }
+    .opt-e .preview-btn { background: #7C3AED; color: white; }
+    .opt-e .preview-cta-btn { background: #7C3AED; color: white; }
+    .opt-e .preview-card-1 { background: #F5F3FF; color: #7C3AED; }
+    .opt-e .preview-card-2 { background: #FDF4FF; color: #A21CAF; }
+    .opt-e .preview-card-3 { background: #F0FDFB; color: #0ABFA0; }
+    .opt-e .preview-step-badge { background: #F5F3FF; color: #7C3AED; }
+    .opt-e .preview-room-stripe { background: linear-gradient(90deg, #7C3AED, #A21CAF); }
+    .opt-e .swatches .s1 { background: #1C1C1E; }
+    .opt-e .swatches .s2 { background: #7C3AED; }
+    .opt-e .swatches .s3 { background: #A21CAF; }
+    .opt-e .swatches .s4 { background: #F5F3FF; }
+    .opt-e .palette-label { background: #F5F3FF; color: #7C3AED; }
+
+    .note {
+      max-width: 760px;
+      margin: 48px auto 0;
+      background: white;
+      border-radius: 16px;
+      padding: 28px 32px;
+      font-size: 16px;
+      color: #444;
+      line-height: 1.7;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .note strong { color: #111; }
+  </style>
+</head>
+<body>
+
+  <h1 class="page-title">CFG AI Lab — Colour Direction</h1>
+  <p class="page-sub">Five options for a light-background redesign. Each shows how the nav, hero, step badges, and table cards would feel.</p>
+
+  <div class="palette-grid">
+
+    <!-- ── OPTION A: Electric Blue + Coral ── -->
+    <div class="palette-card opt-a">
+      <div class="preview">
+        <div class="preview-room-stripe"></div>
+        <div class="preview-nav">
+          <div class="preview-logo">CFG AI Lab</div>
+          <div class="preview-cta-btn">Speak to a Builder →</div>
+        </div>
+        <div class="preview-hero">
+          <div class="preview-eyebrow">Table 01 · AI Receptionist</div>
+          <div class="preview-headline">Never miss a call.<br/>Never lose a lead.</div>
+          <div class="preview-sub">Your AI Receptionist answers every call — professionally, on-brand, 24 hours a day.</div>
+          <div class="preview-btn">Start the demo ↓</div>
+        </div>
+        <div class="preview-cards">
+          <div class="preview-card preview-card-1">
+            <div class="preview-card-num">01</div>
+            <div class="preview-card-label">AI Receptionist</div>
+          </div>
+          <div class="preview-card preview-card-2">
+            <div class="preview-card-num">02</div>
+            <div class="preview-card-label">AI Prospecting</div>
+          </div>
+          <div class="preview-card preview-card-3">
+            <div class="preview-card-num">03</div>
+            <div class="preview-card-label">AI Workflows</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="preview-step-badge">Step 1 of 3</div>
+          <div style="font-size:15px; font-weight:700; color:#0a0a0a; margin-bottom:4px;">Choose your industry and listen</div>
+          <div style="font-size:12px; color:#666;">Select the industry closest to your business, then press play.</div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatch s1"></div>
+        <div class="swatch s2"></div>
+        <div class="swatch s3"></div>
+        <div class="swatch s4"></div>
+      </div>
+      <div class="palette-info">
+        <div class="palette-label">Option A</div>
+        <div class="palette-name">Electric Blue + Coral</div>
+        <div class="palette-desc">Bold, modern, and confident. Blue anchors the brand; coral gives each table a warm, energetic accent. Feels like a premium SaaS product — think Stripe or Linear.</div>
+        <div class="palette-tokens">
+          <div class="token"><div class="token-dot" style="background:#0a0a0a;"></div> #0a0a0a</div>
+          <div class="token"><div class="token-dot" style="background:#0047FF;"></div> #0047FF Electric Blue</div>
+          <div class="token"><div class="token-dot" style="background:#E8441A;"></div> #E8441A Coral</div>
+          <div class="token"><div class="token-dot" style="background:#F5F7FF;"></div> #F5F7FF Off-white</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── OPTION B: Deep Indigo + Emerald ── -->
+    <div class="palette-card opt-b">
+      <div class="preview">
+        <div class="preview-room-stripe"></div>
+        <div class="preview-nav">
+          <div class="preview-logo">CFG AI Lab</div>
+          <div class="preview-cta-btn">Speak to a Builder →</div>
+        </div>
+        <div class="preview-hero">
+          <div class="preview-eyebrow">Table 01 · AI Receptionist</div>
+          <div class="preview-headline">Never miss a call.<br/>Never lose a lead.</div>
+          <div class="preview-sub">Your AI Receptionist answers every call — professionally, on-brand, 24 hours a day.</div>
+          <div class="preview-btn">Start the demo ↓</div>
+        </div>
+        <div class="preview-cards">
+          <div class="preview-card preview-card-1">
+            <div class="preview-card-num">01</div>
+            <div class="preview-card-label">AI Receptionist</div>
+          </div>
+          <div class="preview-card preview-card-2">
+            <div class="preview-card-num">02</div>
+            <div class="preview-card-label">AI Prospecting</div>
+          </div>
+          <div class="preview-card preview-card-3">
+            <div class="preview-card-num">03</div>
+            <div class="preview-card-label">AI Workflows</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="preview-step-badge">Step 1 of 3</div>
+          <div style="font-size:15px; font-weight:700; color:#0a0a0a; margin-bottom:4px;">Choose your industry and listen</div>
+          <div style="font-size:12px; color:#666;">Select the industry closest to your business, then press play.</div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatch s1"></div>
+        <div class="swatch s2"></div>
+        <div class="swatch s3"></div>
+        <div class="swatch s4"></div>
+      </div>
+      <div class="palette-info">
+        <div class="palette-label">Option B</div>
+        <div class="palette-name">Deep Indigo + Emerald</div>
+        <div class="palette-desc">Trustworthy and intelligent. Indigo reads as "serious tech" while emerald brings a fresh, forward-thinking energy. Great for business owners who want to feel safe and impressed.</div>
+        <div class="palette-tokens">
+          <div class="token"><div class="token-dot" style="background:#0a0a0a;"></div> #0a0a0a</div>
+          <div class="token"><div class="token-dot" style="background:#3730A3;"></div> #3730A3 Indigo</div>
+          <div class="token"><div class="token-dot" style="background:#10B981;"></div> #10B981 Emerald</div>
+          <div class="token"><div class="token-dot" style="background:#F5F3FF;"></div> #F5F3FF Lavender tint</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── OPTION C: Slate + Teal (light version) ── -->
+    <div class="palette-card opt-c">
+      <div class="preview">
+        <div class="preview-room-stripe"></div>
+        <div class="preview-nav">
+          <div class="preview-logo">CFG AI Lab</div>
+          <div class="preview-cta-btn">Speak to a Builder →</div>
+        </div>
+        <div class="preview-hero">
+          <div class="preview-eyebrow">Table 01 · AI Receptionist</div>
+          <div class="preview-headline">Never miss a call.<br/>Never lose a lead.</div>
+          <div class="preview-sub">Your AI Receptionist answers every call — professionally, on-brand, 24 hours a day.</div>
+          <div class="preview-btn">Start the demo ↓</div>
+        </div>
+        <div class="preview-cards">
+          <div class="preview-card preview-card-1">
+            <div class="preview-card-num">01</div>
+            <div class="preview-card-label">AI Receptionist</div>
+          </div>
+          <div class="preview-card preview-card-2">
+            <div class="preview-card-num">02</div>
+            <div class="preview-card-label">AI Prospecting</div>
+          </div>
+          <div class="preview-card preview-card-3">
+            <div class="preview-card-num">03</div>
+            <div class="preview-card-label">AI Workflows</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="preview-step-badge">Step 1 of 3</div>
+          <div style="font-size:15px; font-weight:700; color:#0F172A; margin-bottom:4px;">Choose your industry and listen</div>
+          <div style="font-size:12px; color:#666;">Select the industry closest to your business, then press play.</div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatch s1"></div>
+        <div class="swatch s2"></div>
+        <div class="swatch s3"></div>
+        <div class="swatch s4"></div>
+      </div>
+      <div class="palette-info">
+        <div class="palette-label">Option C</div>
+        <div class="palette-name">Slate + Teal (light mode)</div>
+        <div class="palette-desc">Keeps your existing teal brand colour but moves to a clean white/slate background. The most familiar transition — same identity, completely different feel. Approachable and clean.</div>
+        <div class="palette-tokens">
+          <div class="token"><div class="token-dot" style="background:#0F172A;"></div> #0F172A Slate</div>
+          <div class="token"><div class="token-dot" style="background:#0ABFA0;"></div> #0ABFA0 Teal</div>
+          <div class="token"><div class="token-dot" style="background:#0891B2;"></div> #0891B2 Sky blue</div>
+          <div class="token"><div class="token-dot" style="background:#F8FAFC;"></div> #F8FAFC Off-white</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── OPTION D: Near-black + Lime ── -->
+    <div class="palette-card opt-d">
+      <div class="preview">
+        <div class="preview-room-stripe"></div>
+        <div class="preview-nav">
+          <div class="preview-logo">CFG AI Lab</div>
+          <div class="preview-cta-btn">Speak to a Builder →</div>
+        </div>
+        <div class="preview-hero">
+          <div class="preview-eyebrow">Table 01 · AI Receptionist</div>
+          <div class="preview-headline">Never miss a call.<br/>Never lose a lead.</div>
+          <div class="preview-sub">Your AI Receptionist answers every call — professionally, on-brand, 24 hours a day.</div>
+          <div class="preview-btn">Start the demo ↓</div>
+        </div>
+        <div class="preview-cards">
+          <div class="preview-card preview-card-1">
+            <div class="preview-card-num">01</div>
+            <div class="preview-card-label">AI Receptionist</div>
+          </div>
+          <div class="preview-card preview-card-2">
+            <div class="preview-card-num">02</div>
+            <div class="preview-card-label">AI Prospecting</div>
+          </div>
+          <div class="preview-card preview-card-3">
+            <div class="preview-card-num">03</div>
+            <div class="preview-card-label">AI Workflows</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="preview-step-badge">Step 1 of 3</div>
+          <div style="font-size:15px; font-weight:700; color:#111827; margin-bottom:4px;">Choose your industry and listen</div>
+          <div style="font-size:12px; color:#666;">Select the industry closest to your business, then press play.</div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatch s1"></div>
+        <div class="swatch s2"></div>
+        <div class="swatch s3"></div>
+        <div class="swatch s4"></div>
+      </div>
+      <div class="palette-info">
+        <div class="palette-label">Option D</div>
+        <div class="palette-name">Near-black + Lime Green</div>
+        <div class="palette-desc">Edgy, modern, and memorable. The lime/acid green accent is instantly distinctive — used by brands like Monzo and Vercel. High energy, great for a tech-forward audience.</div>
+        <div class="palette-tokens">
+          <div class="token"><div class="token-dot" style="background:#111827;"></div> #111827 Near-black</div>
+          <div class="token"><div class="token-dot" style="background:#A3E635;"></div> #A3E635 Lime</div>
+          <div class="token"><div class="token-dot" style="background:#65A30D;"></div> #65A30D Dark lime</div>
+          <div class="token"><div class="token-dot" style="background:#F7FEE7;"></div> #F7FEE7 Lime tint</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── OPTION E: Charcoal + Electric Violet ── -->
+    <div class="palette-card opt-e">
+      <div class="preview">
+        <div class="preview-room-stripe"></div>
+        <div class="preview-nav">
+          <div class="preview-logo">CFG AI Lab</div>
+          <div class="preview-cta-btn">Speak to a Builder →</div>
+        </div>
+        <div class="preview-hero">
+          <div class="preview-eyebrow">Table 01 · AI Receptionist</div>
+          <div class="preview-headline">Never miss a call.<br/>Never lose a lead.</div>
+          <div class="preview-sub">Your AI Receptionist answers every call — professionally, on-brand, 24 hours a day.</div>
+          <div class="preview-btn">Start the demo ↓</div>
+        </div>
+        <div class="preview-cards">
+          <div class="preview-card preview-card-1">
+            <div class="preview-card-num">01</div>
+            <div class="preview-card-label">AI Receptionist</div>
+          </div>
+          <div class="preview-card preview-card-2">
+            <div class="preview-card-num">02</div>
+            <div class="preview-card-label">AI Prospecting</div>
+          </div>
+          <div class="preview-card preview-card-3">
+            <div class="preview-card-num">03</div>
+            <div class="preview-card-label">AI Workflows</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="preview-step-badge">Step 1 of 3</div>
+          <div style="font-size:15px; font-weight:700; color:#1C1C1E; margin-bottom:4px;">Choose your industry and listen</div>
+          <div style="font-size:12px; color:#666;">Select the industry closest to your business, then press play.</div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatch s1"></div>
+        <div class="swatch s2"></div>
+        <div class="swatch s3"></div>
+        <div class="swatch s4"></div>
+      </div>
+      <div class="palette-info">
+        <div class="palette-label">Option E</div>
+        <div class="palette-name">Charcoal + Electric Violet</div>
+        <div class="palette-desc">Premium, creative, and unmistakably AI. Violet is the colour most associated with AI products right now (Notion, ElevenLabs, Claude). Sophisticated without being cold.</div>
+        <div class="palette-tokens">
+          <div class="token"><div class="token-dot" style="background:#1C1C1E;"></div> #1C1C1E Charcoal</div>
+          <div class="token"><div class="token-dot" style="background:#7C3AED;"></div> #7C3AED Violet</div>
+          <div class="token"><div class="token-dot" style="background:#A21CAF;"></div> #A21CAF Fuchsia</div>
+          <div class="token"><div class="token-dot" style="background:#F5F3FF;"></div> #F5F3FF Lavender</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <strong>How to read these:</strong> Each card shows a miniature version of the Table 1 room — the nav bar, room colour stripe, hero section, the three table cards from the lobby, and a step badge. The colour swatches at the bottom of each preview show the full palette. All options use a white or near-white background with strong, readable typography. The accent colours are used for buttons, badges, stripes, and interactive elements — not as backgrounds.
+  </div>
+
+</body>
+</html>
