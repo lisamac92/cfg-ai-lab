@@ -14,7 +14,6 @@
     :root {
       /* Brand */
       --cfg-navy:       #0F2D60;
-      --cfg-gold:        #F5C518;
       --cfg-teal:       #0BEAB5;
 
       /* Neutrals — Dark Glassmorphism */
@@ -131,7 +130,7 @@
     .entrance-logo-mark {
       width: 36px;
       height: 36px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       border-radius: 8px;
       display: flex;
       align-items: center;
@@ -326,7 +325,7 @@
     }
 
     .nav-cta:hover {
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       transform: translateY(-1px);
     }
 
@@ -362,7 +361,7 @@
       transform: translateX(-50%);
       width: 600px;
       height: 300px;
-      background: radial-gradient(ellipse at center, rgba(245,197,24,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse at center, rgba(11,234,181,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -374,7 +373,7 @@
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--cfg-gold);
+      color: var(--cfg-teal);
       margin-bottom: var(--s3);
     }
 
@@ -384,7 +383,7 @@
       display: block;
       width: 24px;
       height: 1px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       opacity: 0.5;
     }
 
@@ -402,7 +401,7 @@
     }
 
     .hero-headline .highlight {
-      color: var(--cfg-gold);
+      color: var(--cfg-teal);
     }
 
     .hero-sub {
@@ -428,7 +427,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-family: var(--font-body);
       font-size: 17px;
@@ -443,7 +442,7 @@
     }
 
     .btn-primary:hover {
-      background: #d4a800;
+      background: #09c99a;
       transform: translateY(-2px);
       box-shadow: 0 0 36px rgba(11,234,181,0.5);
     }
@@ -492,7 +491,7 @@
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--cfg-gold);
+      color: var(--cfg-teal);
       margin-bottom: var(--s2);
     }
 
@@ -502,7 +501,7 @@
       justify-content: center;
       width: 22px;
       height: 22px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-size: 11px;
       font-weight: 700;
@@ -606,8 +605,8 @@
     .selector-tabs {
       display: flex;
       gap: var(--s1);
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.20);
       border-radius: var(--radius-sm);
       padding: 4px;
       margin-bottom: var(--s3);
@@ -622,7 +621,7 @@
       font-family: var(--font-body);
       font-size: 15px;
       font-weight: 500;
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.88);
       cursor: pointer;
       transition: background 0.2s, color 0.2s;
       white-space: nowrap;
@@ -636,8 +635,8 @@
     }
 
     .tab-btn:hover:not(.active) {
-      color: rgba(200,215,255,0.85);
-      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.08);
     }
 
     /* ============================================================
@@ -673,7 +672,7 @@
     }
 
     .play-btn:hover {
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       transform: scale(1.05);
     }
 
@@ -704,7 +703,7 @@
     }
 
     .waveform-bar.played { opacity: 1.0; background: var(--cfg-teal); }
-    .waveform-bar.active  { opacity: 1.0; background: var(--cfg-gold); }
+    .waveform-bar.active  { opacity: 1.0; background: var(--cfg-teal); }
 
     .playback-time {
       font-size: 14px;
@@ -715,9 +714,9 @@
 
     /* Transcript */
     .transcript-wrap {
-      background: rgba(0,0,0,0.2);
+      background: #ffffff;
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid #e8e8e8;
       padding: var(--s2) var(--s3);
       max-height: 120px;
       overflow-y: auto;
@@ -726,21 +725,21 @@
     .transcript-line {
       font-size: 15px;
       line-height: 1.7;
-      color: rgba(200,215,255,0.88);
+      color: #222;
       padding: 5px 0;
     }
 
     .transcript-line .speaker {
-      font-weight: 600;
-      color: var(--cfg-teal);
+      font-weight: 700;
+      color: #0a9e7a;
       margin-right: 6px;
     }
 
-    .transcript-line.highlight .speaker { color: var(--cfg-gold); }
-    .transcript-line.caller .speaker { color: var(--cfg-gold); }
+    .transcript-line.highlight .speaker { color: #0a9e7a; }
+    .transcript-line.caller .speaker { color: #1a4a8a; }
     .transcript-placeholder {
       font-size: 15px;
-      color: rgba(200,215,255,0.55);
+      color: #aaa;
       font-style: italic;
       padding: 8px 0;
     }
@@ -853,7 +852,7 @@
     .btn-activate {
       display: block;
       width: 100%;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-family: var(--font-body);
       font-size: 17px;
@@ -904,7 +903,7 @@
     .mic-icon-wrap svg { fill: #fff; width: 16px; height: 16px; }
 
     .mic-icon-wrap.listening {
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       animation: mic-pulse 1s ease-in-out infinite;
     }
     @keyframes mic-pulse {
@@ -1037,7 +1036,7 @@
     .send-btn {
       height: 44px;
       padding: 0 var(--s3);
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-family: var(--font-body);
       font-size: 15px;
@@ -1047,10 +1046,10 @@
       cursor: pointer;
       white-space: nowrap;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 16px rgba(245,197,24,0.3);
+      box-shadow: 0 0 16px rgba(11,234,181,0.3);
     }
 
-    .send-btn:hover { background: #d4a800; box-shadow: 0 0 24px rgba(245,197,24,0.5); }
+    .send-btn:hover { background: #09c99a; box-shadow: 0 0 24px rgba(11,234,181,0.5); }
 
     /* ============================================================
        GENIUS BAR CTA
@@ -1128,7 +1127,7 @@
     }
 
     .placard-1 .placard-top { background: var(--cfg-navy); }
-    .placard-2 .placard-top { background: var(--cfg-gold); }
+    .placard-2 .placard-top { background: var(--cfg-teal); }
     .placard-3 .placard-top { background: var(--cfg-teal); }
 
     .placard-table-label {
@@ -1216,7 +1215,7 @@
       opacity: 0.25;
     }
     .placard-1 .placard-base { background: var(--cfg-navy); }
-    .placard-2 .placard-base { background: var(--cfg-gold); }
+    .placard-2 .placard-base { background: var(--cfg-teal); }
     .placard-3 .placard-base { background: var(--cfg-teal); }
 
     .placard-table-line {
@@ -1307,7 +1306,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-family: var(--font-body);
       font-size: 18px;
@@ -1370,7 +1369,7 @@
     .intel-btn {
       width: 100%;
       height: 50px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-family: var(--font-body);
       font-size: 17px;
@@ -1383,10 +1382,10 @@
       justify-content: center;
       gap: 8px;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 20px rgba(245,197,24,0.3);
+      box-shadow: 0 0 20px rgba(11,234,181,0.3);
     }
 
-    .intel-btn:hover { background: #d4a800; box-shadow: 0 0 28px rgba(245,197,24,0.5); }
+    .intel-btn:hover { background: #09c99a; box-shadow: 0 0 28px rgba(11,234,181,0.5); }
 
     .intel-result-wrap {
       background: rgba(0,0,0,0.2);
@@ -1401,7 +1400,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--cfg-gold);
+      color: var(--cfg-teal);
       margin-bottom: var(--s2);
     }
 
@@ -1534,7 +1533,7 @@
     }
 
     .chat-bubble.user {
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       border-bottom-right-radius: 4px;
       box-shadow: 0 0 16px rgba(11,234,181,0.25);
@@ -1586,7 +1585,7 @@
       transition: background 0.2s;
     }
 
-    .chat-send-btn:hover { background: var(--cfg-gold); }
+    .chat-send-btn:hover { background: var(--cfg-teal); }
     .chat-send-btn svg { fill: #fff; width: 16px; height: 16px; }
 
     /* ============================================================
@@ -1615,7 +1614,7 @@
     .footer-logo-mark {
       width: 28px;
       height: 28px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       border-radius: 6px;
     }
 
@@ -1697,7 +1696,7 @@
     }
     .play-pulse.playing {
       animation: none;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
     }
 
     .play-btn-wrap {
@@ -1768,7 +1767,7 @@
       50%       { box-shadow: 0 0 0 14px rgba(15,45,96,0); }
     }
     .mic-icon-wrap.listening {
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       animation: mic-active-pulse 0.8s ease-in-out infinite;
     }
     @keyframes mic-active-pulse {
@@ -1949,7 +1948,7 @@
     }
     .demodrop-btn {
       padding: 16px 32px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-size: 16px;
       font-weight: 700;
@@ -1962,7 +1961,7 @@
       justify-content: center;
       gap: 8px;
     }
-    .demodrop-btn:hover { background: #d4a800; transform: translateY(-1px); }
+    .demodrop-btn:hover { background: #09c99a; transform: translateY(-1px); }
     .demodrop-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .demodrop-result {
       margin-top: var(--s5);
@@ -2022,7 +2021,7 @@
     .demodrop-cta-text strong { color: #fff; }
     .demodrop-activate-btn {
       padding: 12px 24px;
-      background: var(--cfg-gold);
+      background: var(--cfg-teal);
       color: #fff;
       font-size: 15px;
       font-weight: 700;
@@ -2032,7 +2031,7 @@
       white-space: nowrap;
       transition: background 0.2s;
     }
-    .demodrop-activate-btn:hover { background: #d4a800; }
+    .demodrop-activate-btn:hover { background: #09c99a; }
     /* ============================================================
        ROOM LAYOUT — Full-width step-by-step design
     ============================================================ */
@@ -2148,7 +2147,7 @@
     .room-subhead {
       font-size: 20px;
       line-height: 1.7;
-      color: rgba(255,255,255,0.65);
+      color: rgba(255,255,255,0.85);
       max-width: 600px;
       margin: 0 auto 40px;
     }
@@ -2166,7 +2165,7 @@
       gap: 10px;
       font-size: 17px;
       font-weight: 600;
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.92);
     }
     .hero-step-num {
       width: 32px;
@@ -2181,7 +2180,7 @@
     }
     .hero-step-arrow {
       font-size: 20px;
-      color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.55);
     }
     .room-start-btn {
       font-size: 18px;
@@ -2228,7 +2227,7 @@
     .room-step-desc {
       font-size: 19px;
       line-height: 1.7;
-      color: rgba(255,255,255,0.65);
+      color: rgba(255,255,255,0.82);
     }
     .room-step-body {
       max-width: 900px;
@@ -2397,7 +2396,7 @@
     }
     .intel-field-group select:focus,
     .intel-field-group input:focus {
-      border-color: rgba(245,197,24,0.5) !important;
+      border-color: rgba(11,234,181,0.5) !important;
     }
 
     /* Table 3 chat bubbles */
@@ -2555,13 +2554,13 @@
         <a href="#" onclick="event.preventDefault(); showView('table-2')" class="placard-wrap placard-2">
           <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
             <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
-            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#F5C518"/>
-            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#F5C518"/>
+            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#0BEAB5"/>
+            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#0BEAB5"/>
             <ellipse cx="50" cy="140" rx="28" ry="5" fill="#F7D060" opacity="0.8"/>
             <defs>
               <radialGradient id="glow2" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stop-color="#F5C518" stop-opacity="0.18"/>
-                <stop offset="100%" stop-color="#F5C518" stop-opacity="0"/>
+                <stop offset="0%" stop-color="#0BEAB5" stop-opacity="0.18"/>
+                <stop offset="100%" stop-color="#0BEAB5" stop-opacity="0"/>
               </radialGradient>
             </defs>
             <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow2)"/>
@@ -2636,7 +2635,7 @@
     <!-- Progress dots -->
     <div class="room-progress">
       <span class="room-dot active" style="background:#0BEAB5;"></span>
-      <span class="room-dot" style="border-color:#F5C518;"></span>
+      <span class="room-dot" style="border-color:#0BEAB5;"></span>
       <span class="room-dot" style="border-color:#0BEAB5; opacity:0.4;"></span>
     </div>
 
@@ -2668,7 +2667,7 @@
       <div class="room-step-body">
         <!-- Industry selector -->
         <div class="t1-industry-selector">
-          <div class="selector-label" style="color: rgba(255,255,255,0.6); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Choose your industry</div>
+          <div class="selector-label" style="color: rgba(255,255,255,0.85); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Choose your industry</div>
           <div class="selector-tabs t1-tabs-large" id="m1-tabs">
             <button class="tab-btn active" data-industry="plumbing">🔧 Plumbing</button>
             <button class="tab-btn" data-industry="law">⚖️ Law Firm</button>
@@ -2723,7 +2722,7 @@
           </div>
           <div class="t1-mic-instructions">
             <div class="mic-title" id="m1-mic-title" style="font-size:22px; font-weight:700; color:white; margin-bottom:8px;">Say your business name</div>
-            <div class="mic-sub" id="m1-mic-sub" style="font-size:18px; color: rgba(255,255,255,0.65);">Hear Aria greet your callers — instantly.</div>
+            <div class="mic-sub" id="m1-mic-sub" style="font-size:18px; color: rgba(255,255,255,0.82);">Hear Aria greet your callers — instantly.</div>
           </div>
         </div>
         <div id="m1-personalised-response" style="display:none; margin-top:32px;" class="personalised-response">
@@ -2785,14 +2784,14 @@
         <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(11,234,181,0.12), rgba(8,145,178,0.12)); border:1px solid rgba(11,234,181,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
           <div style="font-size:14px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:16px;">LIKE WHAT YOU HEAR?</div>
           <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Speak to an AI Builder</h3>
-          <p style="font-size:18px; color: rgba(255,255,255,0.65); max-width:480px; margin:0 auto 28px;">They will design a custom AI Receptionist around your business — your voice, your brand, your workflow.</p>
+          <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">They will design a custom AI Receptionist around your business — your voice, your brand, your workflow.</p>
           <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px;">Talk to an AI Builder →</a>
         </div>
         <!-- Next table -->
         <div class="room-next-table" onclick="showView('table-2')" style="border-color: rgba(11,234,181,0.3);">
-          <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.45); margin-bottom:6px;">NEXT UP</div>
+          <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">NEXT UP</div>
           <div style="font-size:20px; font-weight:700; color:white;">Table 02 — AI Prospecting →</div>
-          <div style="font-size:16px; color: rgba(255,255,255,0.55); margin-top:4px;">Find the prospects who are ready to buy — before your competitors do.</div>
+          <div style="font-size:16px; color: rgba(255,255,255,0.78); margin-top:4px;">Find the prospects who are ready to buy — before your competitors do.</div>
         </div>
       </div>
     </div>
@@ -2805,53 +2804,53 @@
     <div id="view-table-2" class="lab-view">
 
     <!-- Table nav -->
-    <nav class="nav table-nav" style="--room-color: #F5C518;">
+    <nav class="nav table-nav" style="--room-color: #0BEAB5;">
       <div class="container">
         <button class="table-nav-back" onclick="showView('table-1')">← AI Receptionist</button>
         <div class="table-nav-breadcrumb">
-          <span class="table-nav-num" style="color:#F5C518;">02</span> AI Prospecting
+          <span class="table-nav-num" style="color:#0BEAB5;">02</span> AI Prospecting
         </div>
         <button class="table-nav-next" onclick="showView('table-3')">AI Workflows →</button>
       </div>
     </nav>
 
     <!-- Room colour stripe -->
-    <div style="height:4px; background: linear-gradient(90deg, #F5C518, #f59e0b); width:100%;"></div>
+    <div style="height:4px; background: linear-gradient(90deg, #0BEAB5, #09c99a); width:100%;"></div>
 
     <!-- Progress dots -->
     <div class="room-progress">
       <span class="room-dot" style="border-color:#0BEAB5;"></span>
-      <span class="room-dot active" style="background:#F5C518;"></span>
+      <span class="room-dot active" style="background:#0BEAB5;"></span>
       <span class="room-dot" style="border-color:#0BEAB5; opacity:0.4;"></span>
     </div>
 
     <!-- STEP 0: Room hero -->
-    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(245,197,24,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #1a1200 50%, #060d1a 100%);">
-      <div class="room-hero-num" style="color: rgba(245,197,24,0.07);">02</div>
+    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(11,234,181,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #001a16 50%, #060d1a 100%);">
+      <div class="room-hero-num" style="color: rgba(11,234,181,0.07);">02</div>
       <div class="room-hero-content">
-        <div class="room-eyebrow" style="color:#F5C518;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
+        <div class="room-eyebrow" style="color:#0BEAB5;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
         <h1 class="room-headline">Find the prospects who<br/>are ready to buy.</h1>
         <p class="room-subhead">Your AI Intelligence Engine scans the web for buying signals — news, events, and triggers that tell you exactly who to call today, and why they will listen.</p>
         <div class="room-hero-steps">
-          <div class="hero-step"><span class="hero-step-num" style="background:#F5C518; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
-          <div class="hero-step-arrow" style="color:#F5C518;">→</div>
-          <div class="hero-step"><span class="hero-step-num" style="background:#F5C518; color:#060d1a;">2</span><span>Enter a company</span></div>
-          <div class="hero-step-arrow" style="color:#F5C518;">→</div>
-          <div class="hero-step"><span class="hero-step-num" style="background:#F5C518; color:#060d1a;">3</span><span>Get your sales angle</span></div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
+          <div class="hero-step-arrow" style="color:#0BEAB5;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">2</span><span>Enter a company</span></div>
+          <div class="hero-step-arrow" style="color:#0BEAB5;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">3</span><span>Get your sales angle</span></div>
         </div>
-        <button class="room-start-btn" style="background:#F5C518; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Run intelligence search ↓</button>
+        <button class="room-start-btn" style="background:#0BEAB5; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Run intelligence search ↓</button>
       </div>
     </div>
 
     <!-- STEP 1: Intelligence search form -->
     <div class="room-step" id="t2-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0d0a00 100%);">
       <div class="room-step-header">
-        <div class="room-step-badge" style="background: rgba(245,197,24,0.12); color:#F5C518; border-color: rgba(245,197,24,0.3);">Step 1 of 2</div>
+        <div class="room-step-badge" style="background: rgba(11,234,181,0.12); color:#0BEAB5; border-color: rgba(11,234,181,0.3);">Step 1 of 2</div>
         <h2 class="room-step-title">Tell us what you sell and who to investigate</h2>
         <p class="room-step-desc">Enter a company domain — any business you want to sell to. Our AI will scan for recent news, events, and signals that create a buying opportunity for you right now.</p>
       </div>
       <div class="room-step-body">
-        <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(245,197,24,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
+        <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(11,234,181,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
           <div class="intel-form">
             <div class="intel-field-group">
               <div class="intel-field-label" style="font-size:16px; color: #444; margin-bottom:8px; font-weight:600;">I sell...</div>
@@ -2870,7 +2869,7 @@
               <div class="intel-field-label" style="font-size:16px; color: #444; margin-bottom:8px; font-weight:600;">Investigate this company</div>
               <input class="intel-input" id="m2-domain" type="text" placeholder="e.g. tesco.com or burgerking.co.uk" style="font-size:17px; padding:14px 18px; background: #f8f8f8; border:1px solid #ddd; color:#111; border-radius:10px; width:100%; box-sizing:border-box;" />
             </div>
-            <button class="intel-btn" id="m2-search-btn" style="background:#F5C518; color:#060d1a; font-size:18px; font-weight:800; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; margin-top:24px; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
+            <button class="intel-btn" id="m2-search-btn" style="background:#0BEAB5; color:#060d1a; font-size:18px; font-weight:800; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; margin-top:24px; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
               Run Intelligence Search
             </button>
@@ -2879,11 +2878,11 @@
 
         <!-- Results -->
         <div class="intel-result-wrap" id="m2-result-wrap" style="display:none; max-width:640px; margin:32px auto 0;">
-          <div style="background: rgba(245,197,24,0.08); border:1px solid rgba(245,197,24,0.25); border-radius:20px; padding:32px;">
-            <div style="font-size:13px; letter-spacing:0.12em; color:#F5C518; font-weight:700; margin-bottom:16px;">INTELLIGENCE FOUND</div>
+          <div style="background: rgba(11,234,181,0.08); border:1px solid rgba(11,234,181,0.25); border-radius:20px; padding:32px;">
+            <div style="font-size:13px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:16px;">INTELLIGENCE FOUND</div>
             <div class="intel-result-text" id="m2-result-text" style="font-size:17px; line-height:1.75; color: #222;"></div>
-            <div class="intel-result-angle" style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(245,197,24,0.2);">
-              <div style="font-size:13px; letter-spacing:0.12em; color:#F5C518; font-weight:700; margin-bottom:10px;">YOUR SALES ANGLE</div>
+            <div class="intel-result-angle" style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(11,234,181,0.2);">
+              <div style="font-size:13px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:10px;">YOUR SALES ANGLE</div>
               <div class="angle-text" id="m2-angle-text" style="font-size:18px; line-height:1.7; color:#111; font-weight:600;"></div>
             </div>
           </div>
@@ -2891,8 +2890,8 @@
 
         <!-- Take it with you -->
         <div style="max-width:640px; margin:32px auto 0;">
-          <div style="background: #ffffff; border:1px solid rgba(245,197,24,0.3); border-radius:16px; padding:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow: 0 2px 16px rgba(0,0,0,0.2);">
-            <div style="width:52px; height:52px; background:#F5C518; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <div style="background: #ffffff; border:1px solid rgba(11,234,181,0.3); border-radius:16px; padding:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow: 0 2px 16px rgba(0,0,0,0.2);">
+            <div style="width:52px; height:52px; background:#0BEAB5; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <svg viewBox="0 0 24 24" width="28" height="28" fill="#060d1a"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
             </div>
             <div style="flex:1; min-width:200px;">
@@ -2907,16 +2906,16 @@
         </div>
 
         <!-- CTA banner -->
-        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(245,197,24,0.10), rgba(245,158,11,0.08)); border:1px solid rgba(245,197,24,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
-          <div style="font-size:14px; letter-spacing:0.12em; color:#F5C518; font-weight:700; margin-bottom:16px;">WANT THIS EVERY DAY?</div>
+        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(11,234,181,0.10), rgba(11,234,181,0.08)); border:1px solid rgba(11,234,181,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
+          <div style="font-size:14px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:16px;">WANT THIS EVERY DAY?</div>
           <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Build your AI Prospecting pipeline</h3>
-          <p style="font-size:18px; color: rgba(255,255,255,0.65); max-width:480px; margin:0 auto 28px;">One of our AI Builders will show you exactly what a full pipeline looks like for your industry — and how many warm leads you could be generating every week.</p>
-          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#F5C518; color:#060d1a; border:none;">Talk to an AI Builder →</a>
+          <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">One of our AI Builders will show you exactly what a full pipeline looks like for your industry — and how many warm leads you could be generating every week.</p>
+          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#0BEAB5; color:#060d1a; border:none;">Talk to an AI Builder →</a>
         </div>
 
         <!-- Next table -->
-        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(245,197,24,0.3);">
-          <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.45); margin-bottom:6px;">NEXT UP</div>
+        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(11,234,181,0.3);">
+          <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">NEXT UP</div>
           <div style="font-size:20px; font-weight:700; color:white;">Table 03 — AI Workflows →</div>
           <div style="font-size:16px; color: rgba(255,255,255,0.55); margin-top:4px;">Your business, booking and onboarding while you sleep.</div>
         </div>
@@ -2947,7 +2946,7 @@
     <!-- Progress dots -->
     <div class="room-progress">
       <span class="room-dot" style="border-color:#0BEAB5;"></span>
-      <span class="room-dot" style="border-color:#F5C518;"></span>
+      <span class="room-dot" style="border-color:#0BEAB5;"></span>
       <span class="room-dot active" style="background: linear-gradient(135deg, #0BEAB5, #7C5CFC);"></span>
     </div>
 
@@ -2980,7 +2979,7 @@
         <div class="t3-chat-container" style="max-width:720px; margin:0 auto;">
           <!-- Scenario selector -->
           <div style="margin-bottom:24px;">
-            <div class="selector-label" style="color: rgba(255,255,255,0.5); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;">Choose a scenario</div>
+            <div class="selector-label" style="color: rgba(255,255,255,0.85); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:12px;">Choose a scenario</div>
             <div class="selector-tabs t3-tabs" style="gap:12px;">
               <button class="tab-btn active" data-scenario="plumber" style="font-size:16px; padding:12px 20px;">🔧 The Plumber</button>
               <button class="tab-btn" data-scenario="accountant" style="font-size:16px; padding:12px 20px;">📊 The Accountant</button>
@@ -3026,15 +3025,15 @@
           <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(11,234,181,0.08), rgba(124,92,252,0.08)); border:1px solid rgba(124,92,252,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
             <div style="font-size:14px; letter-spacing:0.12em; background: linear-gradient(90deg, #0BEAB5, #7C5CFC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-weight:700; margin-bottom:16px;">IMAGINE THIS IN YOUR BUSINESS</div>
             <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Your AI Workflow, live tomorrow</h3>
-            <p style="font-size:18px; color: rgba(255,255,255,0.65); max-width:480px; margin:0 auto 28px;">Our AI Builders will design the exact workflow your business needs. Let's start with a conversation.</p>
+            <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">Our AI Builders will design the exact workflow your business needs. Let's start with a conversation.</p>
             <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background: linear-gradient(135deg, #0BEAB5, #7C5CFC); border:none; color:white;">Talk to an AI Builder →</a>
           </div>
 
           <!-- Next: DemoDrop -->
           <div class="room-next-table" onclick="showView('demodrop')" style="border-color: rgba(124,92,252,0.3);">
-            <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.45); margin-bottom:6px;">FINAL EXPERIENCE</div>
+            <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">FINAL EXPERIENCE</div>
             <div style="font-size:20px; font-weight:700; color:white;">The DemoDrop — Your Business, Live →</div>
-            <div style="font-size:16px; color: rgba(255,255,255,0.55); margin-top:4px;">Hear Aria answer calls for your actual business — right now.</div>
+            <div style="font-size:16px; color: rgba(255,255,255,0.78); margin-top:4px;">Hear Aria answer calls for your actual business — right now.</div>
           </div>
         </div>
       </div>
@@ -3818,7 +3817,7 @@
       sendBtn.addEventListener('click', () => {
         const email = emailInput.value.trim();
         if (!email || !email.includes('@')) {
-          emailInput.style.borderColor = 'var(--cfg-gold)';
+          emailInput.style.borderColor = 'var(--cfg-teal)';
           return;
         }
         emailInput.style.borderColor = '';
@@ -3851,7 +3850,7 @@
       searchBtn.addEventListener('click', async () => {
         const domain = domainIn.value.trim();
         if (!domain) {
-          domainIn.style.borderColor = 'var(--cfg-gold)';
+          domainIn.style.borderColor = 'var(--cfg-teal)';
           domainIn.focus();
           return;
         }
@@ -3881,7 +3880,7 @@
           resultWrap.style.display = 'block';
           resultWrap.scrollIntoView({behavior:'smooth', block:'nearest'});
         } catch(e) {
-          resultText.innerHTML = `<span style="color:var(--cfg-gold)">Search failed: ${e.message}. Please check the company domain and try again.</span>`;
+          resultText.innerHTML = `<span style="color:var(--cfg-teal)">Search failed: ${e.message}. Please check the company domain and try again.</span>`;
           angleText.textContent = '';
           resultWrap.style.display = 'block';
         } finally {
@@ -4022,7 +4021,7 @@
       ddBtn.addEventListener('click', async () => {
         const name = ddName.value.trim();
         const url  = ddUrl.value.trim();
-        if (!name) { ddName.style.borderColor = 'var(--cfg-gold)'; ddName.focus(); return; }
+        if (!name) { ddName.style.borderColor = 'var(--cfg-teal)'; ddName.focus(); return; }
         ddName.style.borderColor = '';
 
         ddBtn.disabled = true;
