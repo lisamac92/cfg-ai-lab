@@ -15,6 +15,7 @@
       /* Brand */
       --cfg-navy:       #0F2D60;
       --cfg-teal:       #0BEAB5;
+      --cfg-coral:      #F07A5A;
 
       /* Neutrals — Dark Glassmorphism */
       --bg:             #060d1f;
@@ -1362,14 +1363,14 @@
     .intel-select option { background: #fff; color: #111; }
 
     .intel-select:focus,
-    .intel-input:focus { border-color: var(--cfg-teal); box-shadow: 0 0 0 3px rgba(11,234,181,0.15); }
+    .intel-input:focus { border-color: var(--cfg-coral); box-shadow: 0 0 0 3px rgba(240,122,90,0.15); }
 
     .intel-input::placeholder { color: rgba(200,215,255,0.4); }
 
     .intel-btn {
       width: 100%;
       height: 50px;
-      background: var(--cfg-teal);
+      background: var(--cfg-coral);
       color: #fff;
       font-family: var(--font-body);
       font-size: 17px;
@@ -1382,10 +1383,10 @@
       justify-content: center;
       gap: 8px;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 20px rgba(11,234,181,0.3);
+      box-shadow: 0 0 20px rgba(240,122,90,0.3);
     }
 
-    .intel-btn:hover { background: #09c99a; box-shadow: 0 0 28px rgba(11,234,181,0.5); }
+    .intel-btn:hover { background: #E8553E; box-shadow: 0 0 28px rgba(240,122,90,0.5); }
 
     .intel-result-wrap {
       background: rgba(0,0,0,0.2);
@@ -1400,7 +1401,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--cfg-teal);
+      color: var(--cfg-coral);
       margin-bottom: var(--s2);
     }
 
@@ -1421,7 +1422,7 @@
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--cfg-teal);
+      color: var(--cfg-coral);
       margin-bottom: 4px;
     }
 
@@ -2396,7 +2397,7 @@
     }
     .intel-field-group select:focus,
     .intel-field-group input:focus {
-      border-color: rgba(11,234,181,0.5) !important;
+      border-color: rgba(240,122,90,0.5) !important;
     }
 
     /* Table 3 chat bubbles */
@@ -2804,53 +2805,53 @@
     <div id="view-table-2" class="lab-view">
 
     <!-- Table nav -->
-    <nav class="nav table-nav" style="--room-color: #0BEAB5;">
+    <nav class="nav table-nav" style="--room-color: #F07A5A;">
       <div class="container">
         <button class="table-nav-back" onclick="showView('table-1')">← AI Receptionist</button>
         <div class="table-nav-breadcrumb">
-          <span class="table-nav-num" style="color:#0BEAB5;">02</span> AI Prospecting
+          <span class="table-nav-num" style="color:#F07A5A;">02</span> AI Prospecting
         </div>
         <button class="table-nav-next" onclick="showView('table-3')">AI Workflows →</button>
       </div>
     </nav>
 
     <!-- Room colour stripe -->
-    <div style="height:4px; background: linear-gradient(90deg, #0BEAB5, #09c99a); width:100%;"></div>
+    <div style="height:4px; background: linear-gradient(90deg, #F07A5A, #E8553E); width:100%;"></div>
 
     <!-- Progress dots -->
     <div class="room-progress">
-      <span class="room-dot" style="border-color:#0BEAB5;"></span>
-      <span class="room-dot active" style="background:#0BEAB5;"></span>
-      <span class="room-dot" style="border-color:#0BEAB5; opacity:0.4;"></span>
+      <span class="room-dot" style="border-color:#F07A5A;"></span>
+      <span class="room-dot active" style="background:#F07A5A;"></span>
+      <span class="room-dot" style="border-color:#F07A5A; opacity:0.4;"></span>
     </div>
 
     <!-- STEP 0: Room hero -->
-    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(11,234,181,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #001a16 50%, #060d1a 100%);">
-      <div class="room-hero-num" style="color: rgba(11,234,181,0.07);">02</div>
+    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(240,122,90,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #1a0800 50%, #060d1a 100%);">
+      <div class="room-hero-num" style="color: rgba(240,122,90,0.07);">02</div>
       <div class="room-hero-content">
-        <div class="room-eyebrow" style="color:#0BEAB5;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
+        <div class="room-eyebrow" style="color:#F07A5A;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
         <h1 class="room-headline">Find the prospects who<br/>are ready to buy.</h1>
         <p class="room-subhead">Your AI Intelligence Engine scans the web for buying signals — news, events, and triggers that tell you exactly who to call today, and why they will listen.</p>
         <div class="room-hero-steps">
-          <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
-          <div class="hero-step-arrow" style="color:#0BEAB5;">→</div>
-          <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">2</span><span>Enter a company</span></div>
-          <div class="hero-step-arrow" style="color:#0BEAB5;">→</div>
-          <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">3</span><span>Get your sales angle</span></div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
+          <div class="hero-step-arrow" style="color:#F07A5A;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">2</span><span>Enter a company</span></div>
+          <div class="hero-step-arrow" style="color:#F07A5A;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">3</span><span>Get your sales angle</span></div>
         </div>
-        <button class="room-start-btn" style="background:#0BEAB5; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Run intelligence search ↓</button>
+        <button class="room-start-btn" style="background:#F07A5A; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Run intelligence search ↓</button>
       </div>
     </div>
 
     <!-- STEP 1: Intelligence search form -->
     <div class="room-step" id="t2-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0d0a00 100%);">
       <div class="room-step-header">
-        <div class="room-step-badge" style="background: rgba(11,234,181,0.12); color:#0BEAB5; border-color: rgba(11,234,181,0.3);">Step 1 of 2</div>
+        <div class="room-step-badge" style="background: rgba(240,122,90,0.12); color:#F07A5A; border-color: rgba(240,122,90,0.3);">Step 1 of 2</div>
         <h2 class="room-step-title">Tell us what you sell and who to investigate</h2>
         <p class="room-step-desc">Enter a company domain — any business you want to sell to. Our AI will scan for recent news, events, and signals that create a buying opportunity for you right now.</p>
       </div>
       <div class="room-step-body">
-        <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(11,234,181,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
+        <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(240,122,90,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
           <div class="intel-form">
             <div class="intel-field-group">
               <div class="intel-field-label" style="font-size:16px; color: #444; margin-bottom:8px; font-weight:600;">I sell...</div>
@@ -2869,7 +2870,7 @@
               <div class="intel-field-label" style="font-size:16px; color: #444; margin-bottom:8px; font-weight:600;">Investigate this company</div>
               <input class="intel-input" id="m2-domain" type="text" placeholder="e.g. tesco.com or burgerking.co.uk" style="font-size:17px; padding:14px 18px; background: #f8f8f8; border:1px solid #ddd; color:#111; border-radius:10px; width:100%; box-sizing:border-box;" />
             </div>
-            <button class="intel-btn" id="m2-search-btn" style="background:#0BEAB5; color:#060d1a; font-size:18px; font-weight:800; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; margin-top:24px; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
+            <button class="intel-btn" id="m2-search-btn" style="background:#F07A5A; color:#060d1a; font-size:18px; font-weight:800; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; margin-top:24px; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
               Run Intelligence Search
             </button>
@@ -2878,11 +2879,11 @@
 
         <!-- Results -->
         <div class="intel-result-wrap" id="m2-result-wrap" style="display:none; max-width:640px; margin:32px auto 0;">
-          <div style="background: rgba(11,234,181,0.08); border:1px solid rgba(11,234,181,0.25); border-radius:20px; padding:32px;">
-            <div style="font-size:13px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:16px;">INTELLIGENCE FOUND</div>
+          <div style="background: rgba(240,122,90,0.08); border:1px solid rgba(240,122,90,0.25); border-radius:20px; padding:32px;">
+            <div style="font-size:13px; letter-spacing:0.12em; color:#F07A5A; font-weight:700; margin-bottom:16px;">INTELLIGENCE FOUND</div>
             <div class="intel-result-text" id="m2-result-text" style="font-size:17px; line-height:1.75; color: #222;"></div>
-            <div class="intel-result-angle" style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(11,234,181,0.2);">
-              <div style="font-size:13px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:10px;">YOUR SALES ANGLE</div>
+            <div class="intel-result-angle" style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(240,122,90,0.2);">
+              <div style="font-size:13px; letter-spacing:0.12em; color:#F07A5A; font-weight:700; margin-bottom:10px;">YOUR SALES ANGLE</div>
               <div class="angle-text" id="m2-angle-text" style="font-size:18px; line-height:1.7; color:#111; font-weight:600;"></div>
             </div>
           </div>
@@ -2890,8 +2891,8 @@
 
         <!-- Take it with you -->
         <div style="max-width:640px; margin:32px auto 0;">
-          <div style="background: #ffffff; border:1px solid rgba(11,234,181,0.3); border-radius:16px; padding:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow: 0 2px 16px rgba(0,0,0,0.2);">
-            <div style="width:52px; height:52px; background:#0BEAB5; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <div style="background: #ffffff; border:1px solid rgba(240,122,90,0.3); border-radius:16px; padding:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow: 0 2px 16px rgba(0,0,0,0.2);">
+            <div style="width:52px; height:52px; background:#F07A5A; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <svg viewBox="0 0 24 24" width="28" height="28" fill="#060d1a"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
             </div>
             <div style="flex:1; min-width:200px;">
@@ -2906,15 +2907,15 @@
         </div>
 
         <!-- CTA banner -->
-        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(11,234,181,0.10), rgba(11,234,181,0.08)); border:1px solid rgba(11,234,181,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
-          <div style="font-size:14px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:16px;">WANT THIS EVERY DAY?</div>
+        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(240,122,90,0.10), rgba(240,122,90,0.08)); border:1px solid rgba(240,122,90,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
+          <div style="font-size:14px; letter-spacing:0.12em; color:#F07A5A; font-weight:700; margin-bottom:16px;">WANT THIS EVERY DAY?</div>
           <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Build your AI Prospecting pipeline</h3>
           <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">One of our AI Builders will show you exactly what a full pipeline looks like for your industry — and how many warm leads you could be generating every week.</p>
-          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#0BEAB5; color:#060d1a; border:none;">Talk to an AI Builder →</a>
+          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#F07A5A; color:#060d1a; border:none;">Talk to an AI Builder →</a>
         </div>
 
         <!-- Next table -->
-        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(11,234,181,0.3);">
+        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(240,122,90,0.3);">
           <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">NEXT UP</div>
           <div style="font-size:20px; font-weight:700; color:white;">Table 03 — AI Workflows →</div>
           <div style="font-size:16px; color: rgba(255,255,255,0.55); margin-top:4px;">Your business, booking and onboarding while you sleep.</div>

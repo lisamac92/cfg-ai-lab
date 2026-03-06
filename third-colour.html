@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Third Colour Options — CFG AI Lab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #060d1f;
+      color: #f0f4ff;
+      padding: 48px 24px 80px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .intro {
+      font-size: 16px;
+      color: rgba(200,215,255,0.75);
+      max-width: 640px;
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+    .intro strong { color: #0BEAB5; }
+
+    /* ── Grid of options ── */
+    .options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 32px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .option {
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: #0d1628;
+    }
+
+    /* Top stripe — the third colour */
+    .option-stripe {
+      height: 5px;
+    }
+
+    .option-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .option-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      opacity: 0.6;
+    }
+
+    .option-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .option-hex {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: monospace;
+      opacity: 0.55;
+    }
+
+    .option-desc {
+      font-size: 14px;
+      color: rgba(200,215,255,0.72);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* Mini room preview */
+    .option-preview {
+      padding: 24px 28px 28px;
+    }
+
+    /* Nav bar preview */
+    .preview-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(6,13,31,0.8);
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .preview-nav-num {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-right: 8px;
+    }
+    .preview-nav-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(200,215,255,0.85);
+    }
+
+    /* Hero badge */
+    .preview-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .preview-heading {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+
+    /* Step numbers */
+    .preview-steps {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .preview-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #060d1f;
+      flex-shrink: 0;
+    }
+    .preview-step-text {
+      font-size: 13px;
+      color: rgba(200,215,255,0.8);
+    }
+    .preview-arrow {
+      font-size: 14px;
+      opacity: 0.4;
+    }
+
+    /* White card */
+    .preview-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+    .preview-card-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .preview-field {
+      background: #f4f6f9;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .preview-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Manrope', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: #060d1f;
+      cursor: default;
+      margin-top: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Swatch row */
+    .swatch-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .swatch {
+      flex: 1;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    /* Consultant pick badge */
+    .pick-badge {
+      display: inline-block;
+      background: #0BEAB5;
+      color: #060d1f;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    /* ── OPTION A: Copper ── */
+    .a .option-stripe { background: linear-gradient(90deg, #B87333, #D4956A); }
+    .a .option-name { color: #D4956A; }
+    .a .option-hex { color: #B87333; opacity: 0.8; }
+    .a .preview-eyebrow { color: #D4956A; }
+    .a .preview-nav-num { background: #D4956A; color: #060d1f; }
+    .a .preview-step-num { background: #D4956A; }
+    .a .preview-card-label { color: #B87333; }
+    .a .preview-btn { background: #D4956A; }
+
+    /* ── OPTION B: Warm Coral ── */
+    .b .option-stripe { background: linear-gradient(90deg, #E8553E, #F07A5A); }
+    .b .option-name { color: #F07A5A; }
+    .b .option-hex { color: #E8553E; opacity: 0.8; }
+    .b .preview-eyebrow { color: #F07A5A; }
+    .b .preview-nav-num { background: #F07A5A; color: #fff; }
+    .b .preview-step-num { background: #F07A5A; color: #fff; }
+    .b .preview-card-label { color: #E8553E; }
+    .b .preview-btn { background: #F07A5A; color: #fff; }
+
+    /* ── OPTION C: Amber (rich, not yellow) ── */
+    .c .option-stripe { background: linear-gradient(90deg, #D97706, #F59E0B); }
+    .c .option-name { color: #F59E0B; }
+    .c .option-hex { color: #D97706; opacity: 0.8; }
+    .c .preview-eyebrow { color: #F59E0B; }
+    .c .preview-nav-num { background: #F59E0B; color: #060d1f; }
+    .c .preview-step-num { background: #F59E0B; }
+    .c .preview-card-label { color: #D97706; }
+    .c .preview-btn { background: #F59E0B; }
+
+    /* ── OPTION D: Electric Violet ── */
+    .d .option-stripe { background: linear-gradient(90deg, #7C3AED, #A855F7); }
+    .d .option-name { color: #A855F7; }
+    .d .option-hex { color: #7C3AED; opacity: 0.8; }
+    .d .preview-eyebrow { color: #A855F7; }
+    .d .preview-nav-num { background: #A855F7; color: #fff; }
+    .d .preview-step-num { background: #A855F7; color: #fff; }
+    .d .preview-card-label { color: #7C3AED; }
+    .d .preview-btn { background: #A855F7; color: #fff; }
+
+    /* Full palette swatch */
+    .swatch-navy { background: #0F2D60; color: rgba(255,255,255,0.7); }
+    .swatch-teal { background: #0BEAB5; color: #060d1f; }
+  </style>
+</head>
+<body>
+
+  <h1>The Third Colour — Four Options</h1>
+  <p class="intro">
+    Your palette foundation is set: <strong>dark navy background</strong> + <strong>teal accent</strong> + <strong>white cards</strong>. The question is what the third colour is — used exclusively on Table 02 (AI Prospecting) to give it its own identity. Here are four serious options.
+  </p>
+
+  <div class="options">
+
+    <!-- OPTION A: Copper -->
+    <div class="option a">
+      <div class="option-stripe"></div>
+      <div class="option-header">
+        <div class="option-label">Option A</div>
+        <div class="option-name">Copper</div>
+        <div class="option-hex">#B87333 / #D4956A</div>
+        <div class="option-desc">
+          The classic metallic warm. Copper reads as <em>premium, grounded, and trustworthy</em> — it's the colour of quality hardware and financial tools. Unlike yellow-gold, copper has brown undertones that feel rich rather than cheap. Used by brands like Revolut (warm tier) and many fintech products.
+        </div>
+        <span class="pick-badge">My top recommendation</span>
+      </div>
+      <div class="option-preview">
+        <div class="preview-nav">
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">← AI Receptionist</span>
+          <span>
+            <span class="preview-nav-num">02</span>
+            <span class="preview-nav-label">AI Prospecting</span>
+          </span>
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">AI Workflows →</span>
+        </div>
+        <div class="preview-eyebrow">Table 02 · AI Prospecting</div>
+        <div class="preview-heading">Find the prospects<br>who are ready to buy.</div>
+        <div class="preview-steps">
+          <span class="preview-step-num">1</span>
+          <span class="preview-step-text">What you sell</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">2</span>
+          <span class="preview-step-text">Enter a company</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">3</span>
+          <span class="preview-step-text">Get your angle</span>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Tell us what you sell</div>
+          <div class="preview-field">Health &amp; Safety Consulting</div>
+          <div class="preview-field">e.g. tesco.com</div>
+          <button class="preview-btn">Run Intelligence Search</button>
+        </div>
+        <div class="swatch-row">
+          <div class="swatch swatch-navy">Navy</div>
+          <div class="swatch swatch-teal">Teal</div>
+          <div class="swatch" style="background:#D4956A; color:#060d1f;">Copper</div>
+          <div class="swatch" style="background:#fff; color:#333; border:1px solid #eee;">White</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION B: Warm Coral -->
+    <div class="option b">
+      <div class="option-stripe"></div>
+      <div class="option-header">
+        <div class="option-label">Option B</div>
+        <div class="option-name">Warm Coral</div>
+        <div class="option-hex">#E8553E / #F07A5A</div>
+        <div class="option-desc">
+          Bold, energetic, and impossible to miss. Coral creates strong contrast against both dark navy and teal — it signals <em>urgency and action</em>, which suits the "find your next prospect" message perfectly. Used by Stripe, Intercom, and many sales-focused SaaS products. More assertive than copper.
+        </div>
+      </div>
+      <div class="option-preview">
+        <div class="preview-nav">
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">← AI Receptionist</span>
+          <span>
+            <span class="preview-nav-num">02</span>
+            <span class="preview-nav-label">AI Prospecting</span>
+          </span>
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">AI Workflows →</span>
+        </div>
+        <div class="preview-eyebrow">Table 02 · AI Prospecting</div>
+        <div class="preview-heading">Find the prospects<br>who are ready to buy.</div>
+        <div class="preview-steps">
+          <span class="preview-step-num">1</span>
+          <span class="preview-step-text">What you sell</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">2</span>
+          <span class="preview-step-text">Enter a company</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">3</span>
+          <span class="preview-step-text">Get your angle</span>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Tell us what you sell</div>
+          <div class="preview-field">Health &amp; Safety Consulting</div>
+          <div class="preview-field">e.g. tesco.com</div>
+          <button class="preview-btn">Run Intelligence Search</button>
+        </div>
+        <div class="swatch-row">
+          <div class="swatch swatch-navy">Navy</div>
+          <div class="swatch swatch-teal">Teal</div>
+          <div class="swatch" style="background:#F07A5A; color:#fff;">Coral</div>
+          <div class="swatch" style="background:#fff; color:#333; border:1px solid #eee;">White</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION C: Rich Amber -->
+    <div class="option c">
+      <div class="option-stripe"></div>
+      <div class="option-header">
+        <div class="option-label">Option C</div>
+        <div class="option-name">Rich Amber</div>
+        <div class="option-hex">#D97706 / #F59E0B</div>
+        <div class="option-desc">
+          This is what gold <em>should</em> look like — deep amber with orange undertones, not the yellow-gold you had before. It reads as warm, confident, and premium without looking cheap. This is the colour used by Tailwind CSS, Linear, and many modern developer tools. The closest to your original intent, done properly.
+        </div>
+      </div>
+      <div class="option-preview">
+        <div class="preview-nav">
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">← AI Receptionist</span>
+          <span>
+            <span class="preview-nav-num">02</span>
+            <span class="preview-nav-label">AI Prospecting</span>
+          </span>
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">AI Workflows →</span>
+        </div>
+        <div class="preview-eyebrow">Table 02 · AI Prospecting</div>
+        <div class="preview-heading">Find the prospects<br>who are ready to buy.</div>
+        <div class="preview-steps">
+          <span class="preview-step-num">1</span>
+          <span class="preview-step-text">What you sell</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">2</span>
+          <span class="preview-step-text">Enter a company</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">3</span>
+          <span class="preview-step-text">Get your angle</span>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Tell us what you sell</div>
+          <div class="preview-field">Health &amp; Safety Consulting</div>
+          <div class="preview-field">e.g. tesco.com</div>
+          <button class="preview-btn">Run Intelligence Search</button>
+        </div>
+        <div class="swatch-row">
+          <div class="swatch swatch-navy">Navy</div>
+          <div class="swatch swatch-teal">Teal</div>
+          <div class="swatch" style="background:#F59E0B; color:#060d1f;">Amber</div>
+          <div class="swatch" style="background:#fff; color:#333; border:1px solid #eee;">White</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPTION D: Electric Violet -->
+    <div class="option d">
+      <div class="option-stripe"></div>
+      <div class="option-header">
+        <div class="option-label">Option D</div>
+        <div class="option-name">Electric Violet</div>
+        <div class="option-hex">#7C3AED / #A855F7</div>
+        <div class="option-desc">
+          Not warm, but worth seeing. Violet is the dominant AI colour of 2024–2025 — used by Notion, ElevenLabs, Perplexity, and Claude. It pairs beautifully with teal (complementary cool tones) and gives the prospecting table a distinctly <em>intelligent, data-driven</em> feel. Very premium, very now.
+        </div>
+      </div>
+      <div class="option-preview">
+        <div class="preview-nav">
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">← AI Receptionist</span>
+          <span>
+            <span class="preview-nav-num">02</span>
+            <span class="preview-nav-label">AI Prospecting</span>
+          </span>
+          <span style="font-size:13px; color:rgba(200,215,255,0.6);">AI Workflows →</span>
+        </div>
+        <div class="preview-eyebrow">Table 02 · AI Prospecting</div>
+        <div class="preview-heading">Find the prospects<br>who are ready to buy.</div>
+        <div class="preview-steps">
+          <span class="preview-step-num">1</span>
+          <span class="preview-step-text">What you sell</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">2</span>
+          <span class="preview-step-text">Enter a company</span>
+          <span class="preview-arrow">→</span>
+          <span class="preview-step-num">3</span>
+          <span class="preview-step-text">Get your angle</span>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-label">Tell us what you sell</div>
+          <div class="preview-field">Health &amp; Safety Consulting</div>
+          <div class="preview-field">e.g. tesco.com</div>
+          <button class="preview-btn">Run Intelligence Search</button>
+        </div>
+        <div class="swatch-row">
+          <div class="swatch swatch-navy">Navy</div>
+          <div class="swatch swatch-teal">Teal</div>
+          <div class="swatch" style="background:#A855F7; color:#fff;">Violet</div>
+          <div class="swatch" style="background:#fff; color:#333; border:1px solid #eee;">White</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="max-width:1100px; margin:48px auto 0; padding:32px; background:rgba(11,234,181,0.06); border:1px solid rgba(11,234,181,0.2); border-radius:16px;">
+    <div style="font-size:11px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#0BEAB5; margin-bottom:12px;">Consultant's note</div>
+    <p style="font-size:15px; color:rgba(200,215,255,0.82); line-height:1.75; max-width:760px;">
+      If I were advising you as a client, I would choose <strong style="color:#D4956A;">Option A — Copper</strong>. Here is why: your audience is business owners, not developers. Copper reads as <em>established, premium, and trustworthy</em> — it has the warmth of gold without the cheapness of yellow. It also creates a natural narrative: teal for "live and active" (Receptionist + Workflows) and copper for "intelligence and value" (Prospecting). That said, if you want something bolder and more energetic, <strong style="color:#F07A5A;">Coral (B)</strong> is the strongest alternative.
+    </p>
+  </div>
+
+</body>
+</html>
