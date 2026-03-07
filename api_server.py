@@ -205,5 +205,114 @@ Respond in this exact JSON format:
         return jsonify({"error": str(e)}), 500
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# GHL LEAD CAPTURE — AI Lab email bar submissions
+# ─────────────────────────────────────────────────────────────────────────────
+
+import subprocess
+
+EMAIL_SUBJECTS = {
+    'receptionist': 'Your AI Receptionist Summary — CFG AI Lab',
+    'prospecting':  'Your AI Prospecting Brief — CFG AI Lab',
+    'workflows':    'Your AI Workflow Confirmation — CFG AI Lab',
+}
+
+# Full HTML email bodies (embedded to avoid GHL template ID dependency)
+EMAIL_BODIES = {}
+
+def _load_email_bodies():
+    """Load email HTML from files at startup."""
+    import os
+    base = os.path.dirname(os.path.abspath(__file__))
+    for key, fname in [('receptionist', 'email_t1.html'),
+                       ('prospecting',  'email_t2.html'),
+                       ('workflows',    'email_t3.html')]:
+        fpath = os.path.join(base, fname)
+        if os.path.exists(fpath):
+            with open(fpath) as f:
+                EMAIL_BODIES[key] = f.read()
+        else:
+            # Fallback plain text
+            EMAIL_BODIES[key] = f'<p>Thank you for visiting the CFG AI Lab — {key} table.</p>'
+
+_load_email_bodies()
+
+
+def ghl_mcp(tool_name, payload):
+    """Call a GHL MCP tool server-side and return (data, error)."""
+    result = subprocess.run(
+        ['manus-mcp-cli', 'tool', 'call', tool_name,
+         '--server', 'manus-cfg-sales',
+         '--input', json.dumps(payload)],
+        capture_output=True, text=True, timeout=30
+    )
+    result_file = None
+    for line in result.stdout.split('\n'):
+        if 'Tool execution result saved to:' in line:
+            result_file = line.split('saved to: ')[1].strip()
+            break
+    if not result_file:
+        return None, 'No result file found'
+    try:
+        with open(result_file) as f:
+            raw = f.read().strip()
+        if raw.startswith('Error:'):
+            return None, raw[7:].strip()
+        data = json.loads(raw)
+        if not data.get('success'):
+            return None, str(data.get('data', {}).get('message', 'GHL error'))
+        return data.get('data', {}), None
+    except Exception as e:
+        return None, str(e)
+
+
+@app.route('/api/ghl-capture', methods=['POST'])
+def ghl_capture():
+    body  = request.get_json(force=True)
+    email = (body.get('email') or '').strip().lower()
+    table = (body.get('table') or 'receptionist').lower()
+    tag   = body.get('tag') or f'ai-lab-{table}'
+
+    if not email or '@' not in email:
+        return jsonify({'success': False, 'error': 'Invalid email'}), 400
+
+    # 1. Upsert contact in GHL with tags
+    contact_data, err = ghl_mcp('contacts_upsert-contact', {
+        'email': email,
+        'tags': [tag, 'cfg-ai-lab-event'],
+        'source': 'CFG AI Lab Event',
+    })
+    if err:
+        app.logger.error(f'GHL upsert error: {err}')
+        return jsonify({'success': False, 'error': f'Contact error: {err}'}), 500
+
+    contact_id = None
+    if contact_data:
+        contact = contact_data.get('contact') or contact_data
+        contact_id = contact.get('id') if isinstance(contact, dict) else None
+
+    if not contact_id:
+        app.logger.error(f'No contact ID returned: {contact_data}')
+        return jsonify({'success': False, 'error': 'Could not retrieve contact ID'}), 500
+
+    # 2. Send follow-up email via GHL conversations (using emailBody — confirmed working)
+    email_body = EMAIL_BODIES.get(table, EMAIL_BODIES.get('receptionist', ''))
+    subject    = EMAIL_SUBJECTS.get(table, 'Thanks for visiting the CFG AI Lab')
+
+    msg_data, msg_err = ghl_mcp('conversations_send-a-new-message', {
+        'type': 'Email',
+        'contactId': contact_id,
+        'emailFrom': 'hello@clickflowgrow.com',
+        'emailTo': email,
+        'subject': subject,
+        'html': email_body,
+        'emailBody': email_body,
+    })
+    if msg_err:
+        app.logger.warning(f'GHL email send warning: {msg_err}')
+
+    return jsonify({'success': True, 'contactId': contact_id})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)

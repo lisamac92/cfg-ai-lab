@@ -2900,8 +2900,8 @@
               <div style="font-size:16px; color: #666;">We'll send the full report to your inbox — ready to use.</div>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <input class="email-input" type="email" placeholder="your@email.co.uk" style="font-size:16px; padding:12px 16px;" />
-              <button class="send-btn" style="font-size:16px; padding:12px 20px; white-space:nowrap;">Send Brief</button>
+              <input class="email-input" id="m2-email" type="email" placeholder="your@email.co.uk" style="font-size:16px; padding:12px 16px;" />
+              <button class="send-btn" id="m2-send-btn" style="font-size:16px; padding:12px 20px; white-space:nowrap;">Send Brief</button>
             </div>
           </div>
         </div>
@@ -3017,8 +3017,8 @@
               <div style="font-size:16px; color: #666;">We'll send a summary of this interaction to your inbox.</div>
             </div>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <input class="email-input" type="email" placeholder="your@email.co.uk" style="font-size:16px; padding:12px 16px;" />
-              <button class="send-btn" style="font-size:16px; padding:12px 20px; white-space:nowrap;">Send Confirmation</button>
+              <input class="email-input" id="m3-email-capture" type="email" placeholder="your@email.co.uk" style="font-size:16px; padding:12px 16px;" />
+              <button class="send-btn" id="m3-send-email-btn" style="font-size:16px; padding:12px 20px; white-space:nowrap;">Send Confirmation</button>
             </div>
           </div>
 
@@ -3815,17 +3815,41 @@
       });
 
       // ── TAKEAWAY EMAIL ──────────────────────────────────────────
-      sendBtn.addEventListener('click', () => {
+      sendBtn.addEventListener('click', async () => {
         const email = emailInput.value.trim();
         if (!email || !email.includes('@')) {
-          emailInput.style.borderColor = 'var(--cfg-teal)';
+          emailInput.style.borderColor = '#ff4444';
+          emailInput.focus();
           return;
         }
         emailInput.style.borderColor = '';
-        sendBtn.textContent = 'Sent ✓';
+        sendBtn.textContent = 'Sending…';
         sendBtn.disabled = true;
-        // TODO: Wire to email service (e.g. Resend / Mailchimp)
-        console.log('Summary requested for:', email, 'Industry:', currentIndustry);
+        try {
+          const res = await fetch('/api/ghl-capture', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              email: email,
+              table: 'receptionist',
+              tag: 'ai-lab-receptionist',
+              industry: currentIndustry
+            })
+          });
+          const data = await res.json();
+          if (data.success) {
+            sendBtn.textContent = 'Sent ✓';
+            emailInput.value = '';
+          } else {
+            sendBtn.textContent = 'Try again';
+            sendBtn.disabled = false;
+            console.error('GHL capture error:', data.error);
+          }
+        } catch(err) {
+          sendBtn.textContent = 'Try again';
+          sendBtn.disabled = false;
+          console.error('Network error:', err);
+        }
       });
 
       // ── INIT ────────────────────────────────────────────────────
@@ -4415,6 +4439,90 @@
     }
   })();
   </script>
+
+
+    <!-- GHL Email Bar Wiring: Table 2 & Table 3 -->
+    <script>
+    (function() {
+      // TABLE 2 — AI Prospecting Brief
+      const t2Btn   = document.getElementById('m2-send-btn');
+      const t2Input = document.getElementById('m2-email');
+      if (t2Btn && t2Input) {
+        t2Btn.addEventListener('click', async () => {
+          const email = t2Input.value.trim();
+          if (!email || !email.includes('@')) {
+            t2Input.style.borderColor = '#ff4444';
+            t2Input.focus();
+            return;
+          }
+          t2Input.style.borderColor = '';
+          t2Btn.textContent = 'Sending…';
+          t2Btn.disabled = true;
+          try {
+            const res = await fetch('/api/ghl-capture', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                email: email,
+                table: 'prospecting',
+                tag: 'ai-lab-prospecting'
+              })
+            });
+            const data = await res.json();
+            if (data.success) {
+              t2Btn.textContent = 'Sent ✓';
+              t2Input.value = '';
+            } else {
+              t2Btn.textContent = 'Try again';
+              t2Btn.disabled = false;
+            }
+          } catch(err) {
+            t2Btn.textContent = 'Try again';
+            t2Btn.disabled = false;
+          }
+        });
+      }
+
+      // TABLE 3 — AI Workflows Confirmation
+      const t3Btn   = document.getElementById('m3-send-email-btn');
+      const t3Input = document.getElementById('m3-email-capture');
+      if (t3Btn && t3Input) {
+        t3Btn.addEventListener('click', async () => {
+          const email = t3Input.value.trim();
+          if (!email || !email.includes('@')) {
+            t3Input.style.borderColor = '#ff4444';
+            t3Input.focus();
+            return;
+          }
+          t3Input.style.borderColor = '';
+          t3Btn.textContent = 'Sending…';
+          t3Btn.disabled = true;
+          try {
+            const res = await fetch('/api/ghl-capture', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                email: email,
+                table: 'workflows',
+                tag: 'ai-lab-workflows'
+              })
+            });
+            const data = await res.json();
+            if (data.success) {
+              t3Btn.textContent = 'Sent ✓';
+              t3Input.value = '';
+            } else {
+              t3Btn.textContent = 'Try again';
+              t3Btn.disabled = false;
+            }
+          } catch(err) {
+            t3Btn.textContent = 'Try again';
+            t3Btn.disabled = false;
+          }
+        });
+      }
+    })();
+    </script>
 
 </body>
 </html>
