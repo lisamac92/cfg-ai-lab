@@ -2436,6 +2436,263 @@
       .hero-step { font-size: 15px; }
     }
 
+
+    /* ═══════════════════════════════════════════════════════════════
+       ANIMATION UPGRADES — All 9 effects
+    ═══════════════════════════════════════════════════════════════ */
+
+    /* ── 1. VOICE ORB ─────────────────────────────────────────────── */
+    .voice-orb-wrap {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .voice-orb-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(11,234,181,0.25);
+      animation: orb-ring-expand 2.4s ease-out infinite;
+    }
+    .voice-orb-ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
+    .voice-orb-ring:nth-child(2) { width: 80%;  height: 80%;  animation-delay: 0.4s; border-color: rgba(11,234,181,0.18); }
+    .voice-orb-ring:nth-child(3) { width: 60%;  height: 60%;  animation-delay: 0.8s; border-color: rgba(11,234,181,0.12); }
+    @keyframes orb-ring-expand {
+      0%   { transform: scale(0.85); opacity: 0.8; }
+      60%  { transform: scale(1.18); opacity: 0.2; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+    .voice-orb-core {
+      position: relative;
+      z-index: 2;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 38%, #1fffd4 0%, #0BEAB5 45%, #07c49a 100%);
+      box-shadow:
+        0 0 0 0 rgba(11,234,181,0.5),
+        0 0 40px rgba(11,234,181,0.3),
+        inset 0 2px 8px rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      color: #060d1a;
+    }
+    .voice-orb-core:hover {
+      transform: scale(1.06);
+      box-shadow:
+        0 0 0 20px rgba(11,234,181,0.08),
+        0 0 60px rgba(11,234,181,0.4),
+        inset 0 2px 8px rgba(255,255,255,0.3);
+    }
+    .voice-orb-core.orb-playing {
+      animation: orb-breathe 1.2s ease-in-out infinite;
+      box-shadow:
+        0 0 0 0 rgba(11,234,181,0.6),
+        0 0 80px rgba(11,234,181,0.5),
+        inset 0 2px 8px rgba(255,255,255,0.3);
+    }
+    @keyframes orb-breathe {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(11,234,181,0.6), 0 0 60px rgba(11,234,181,0.4), inset 0 2px 8px rgba(255,255,255,0.25);
+      }
+      50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 0 24px rgba(11,234,181,0.05), 0 0 100px rgba(11,234,181,0.6), inset 0 2px 8px rgba(255,255,255,0.35);
+      }
+    }
+    /* Orb bar visualiser (replaces waveform bars when orb is playing) */
+    .orb-bars {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      height: 32px;
+      position: absolute;
+      bottom: -44px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .orb-bars.active { opacity: 1; }
+    .orb-bar {
+      width: 4px;
+      border-radius: 2px;
+      background: #0BEAB5;
+      animation: orb-bar-dance 0.8s ease-in-out infinite;
+    }
+    .orb-bar:nth-child(1) { height: 8px;  animation-delay: 0s; }
+    .orb-bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+    .orb-bar:nth-child(3) { height: 28px; animation-delay: 0.2s; }
+    .orb-bar:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+    .orb-bar:nth-child(5) { height: 24px; animation-delay: 0.15s; }
+    .orb-bar:nth-child(6) { height: 12px; animation-delay: 0.25s; }
+    .orb-bar:nth-child(7) { height: 20px; animation-delay: 0.05s; }
+    @keyframes orb-bar-dance {
+      0%, 100% { transform: scaleY(0.4); }
+      50%       { transform: scaleY(1); }
+    }
+
+    /* ── 2. SCROLL-REVEAL ─────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── 3. 3D TILT SPOTLIGHT ─────────────────────────────────────── */
+    .tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+    .tilt-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.12) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .tilt-card:hover::after { opacity: 1; }
+
+    /* ── 4. PARTICLE HERO CANVAS ──────────────────────────────────── */
+    .hero-particle-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .room-hero { position: relative; overflow: hidden; }
+    .room-hero > *:not(.hero-particle-canvas) { position: relative; z-index: 1; }
+
+    /* ── 5. TYPEWRITER ────────────────────────────────────────────── */
+    .typewriter-text {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid currentColor;
+      animation: tw-cursor 0.7s step-end infinite;
+      max-width: 100%;
+    }
+    .typewriter-text.tw-done {
+      border-right: none;
+      animation: none;
+      white-space: normal;
+      overflow: visible;
+    }
+    @keyframes tw-cursor {
+      0%, 100% { border-color: currentColor; }
+      50%       { border-color: transparent; }
+    }
+
+    /* ── 6. ANIMATED GRADIENT BORDER ─────────────────────────────── */
+    .glow-border-active {
+      position: relative;
+    }
+    .glow-border-active::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      background: conic-gradient(
+        from var(--border-angle, 0deg),
+        transparent 0deg,
+        #0BEAB5 60deg,
+        transparent 120deg,
+        transparent 240deg,
+        #0BEAB5 300deg,
+        transparent 360deg
+      );
+      z-index: -1;
+      animation: border-spin 2s linear infinite;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .glow-border-active.border-on::before { opacity: 1; }
+    @keyframes border-spin {
+      to { --border-angle: 360deg; }
+    }
+    @property --border-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    /* Coral variant for Table 2 */
+    .glow-border-coral::before {
+      background: conic-gradient(
+        from var(--border-angle, 0deg),
+        transparent 0deg,
+        #F07A5A 60deg,
+        transparent 120deg,
+        transparent 240deg,
+        #F07A5A 300deg,
+        transparent 360deg
+      );
+    }
+
+    /* ── 7. ROOM TRANSITION ───────────────────────────────────────── */
+    .lab-view {
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .lab-view.view-exit {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+    }
+    .lab-view.view-enter {
+      animation: view-slide-in 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes view-slide-in {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── 8. NUDGE ARROW GLOW ──────────────────────────────────────── */
+    .room-scroll-nudge {
+      opacity: 0.85 !important;
+      text-shadow: 0 0 12px rgba(11,234,181,0.5);
+    }
+    .room-scroll-nudge span.nudge-arrow {
+      display: inline-block;
+      animation: nudge-bounce 1.6s ease-in-out infinite, nudge-glow 1.6s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(11,234,181,0.7));
+    }
+    @keyframes nudge-glow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(11,234,181,0.4)); }
+      50%       { filter: drop-shadow(0 0 12px rgba(11,234,181,0.9)); }
+    }
+
+    /* ── 9. ENTRANCE PARTICLE BURST ──────────────────────────────── */
+    .entrance-particle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      animation: particle-burst 0.9s ease-out forwards;
+    }
+    @keyframes particle-burst {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -2641,11 +2898,12 @@
     </div>
 
     <!-- STEP 0: Room hero -->
-    <div class="room-hero" style="background: radial-gradient(ellipse at 60% 40%, rgba(11,234,181,0.15) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #0a1f3d 50%, #060d1a 100%);">
+    <div class="room-hero" id="t1-hero" style="background: radial-gradient(ellipse at 60% 40%, rgba(11,234,181,0.15) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #0a1f3d 50%, #060d1a 100%);">
+      <canvas class="hero-particle-canvas" data-color="11,234,181"></canvas>
       <div class="room-hero-num" style="color: rgba(11,234,181,0.08);">01</div>
       <div class="room-hero-content">
         <div class="room-eyebrow" style="color:#0BEAB5;">Table 01 &nbsp;·&nbsp; AI Receptionist</div>
-        <h1 class="room-headline">Never miss a call.<br/>Never lose a lead.</h1>
+        <h1 class="room-headline"><span class="typewriter-text">Never miss a call.<br/>Never lose a lead.</span></h1>
         <p class="room-subhead">Your AI Receptionist answers every call — professionally, on-brand, 24 hours a day. Hear it handle a real call for a business just like yours.</p>
         <div class="room-hero-steps">
           <div class="hero-step"><span class="hero-step-num" style="background:#0BEAB5; color:#060d1a;">1</span><span>Pick your industry</span></div>
@@ -2659,13 +2917,13 @@
     </div>
 
     <!-- STEP 1: Choose your industry + listen -->
-    <div class="room-step" id="t1-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0a1a2e 100%);">
-      <div class="room-step-header">
+    <div class="room-step reveal" id="t1-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0a1a2e 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
         <div class="room-step-badge" style="background: rgba(11,234,181,0.15); color:#0BEAB5; border-color: rgba(11,234,181,0.3);">Step 1 of 3</div>
         <h2 class="room-step-title">Choose your industry and listen</h2>
         <p class="room-step-desc">Select the industry that is closest to your business. Then press the big play button and hear your AI Receptionist handle a real call.</p>
       </div>
-      <div class="room-step-body">
+      <div class="room-step-body reveal reveal-delay-2">
         <!-- Industry selector -->
         <div class="t1-industry-selector">
           <div class="selector-label" style="color: rgba(255,255,255,0.85); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px;">Choose your industry</div>
@@ -2678,13 +2936,23 @@
         <!-- Big play area -->
         <div class="t1-player-area">
           <div class="t1-play-centre">
-            <button class="t1-play-btn play-pulse" id="m1-play-btn">
-              <svg id="m1-play-icon" viewBox="0 0 24 24" width="40" height="40"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
-              <svg id="m1-pause-icon" viewBox="0 0 24 24" width="40" height="40" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
-            </button>
+            <div class="voice-orb-wrap" id="m1-orb-wrap">
+              <div class="voice-orb-ring"></div>
+              <div class="voice-orb-ring"></div>
+              <div class="voice-orb-ring"></div>
+              <button class="voice-orb-core" id="m1-play-btn">
+                <svg id="m1-play-icon" viewBox="0 0 24 24" width="36" height="36"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+                <svg id="m1-pause-icon" viewBox="0 0 24 24" width="36" height="36" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor"/></svg>
+              </button>
+              <div class="orb-bars" id="m1-orb-bars">
+                <div class="orb-bar"></div><div class="orb-bar"></div><div class="orb-bar"></div>
+                <div class="orb-bar"></div><div class="orb-bar"></div><div class="orb-bar"></div>
+                <div class="orb-bar"></div>
+              </div>
+            </div>
             <div class="click-here-label" id="m1-click-label" style="color:#0BEAB5;">tap to start</div>
           </div>
-          <div class="t1-waveform-area">
+          <div class="t1-waveform-area tilt-card glow-border-active">
             <div class="waveform" id="m1-waveform" style="height:64px;">
               <div class="waveform-bars" id="m1-bars"></div>
             </div>
@@ -2695,27 +2963,26 @@
           </div>
         </div>
         <!-- Transcript -->
-        <div class="t1-transcript-area">
+        <div class="t1-transcript-area tilt-card glow-border-active">
           <div class="transcript-wrap" id="m1-transcript" style="background: #ffffff; border-radius:16px; padding:24px; min-height:160px; box-shadow: 0 2px 16px rgba(0,0,0,0.25);">
             <div class="transcript-placeholder" style="color: #999; font-size:17px; text-align:center; padding:32px 0;">The conversation will appear here as it plays…</div>
           </div>
         </div>
         <!-- Scroll nudge -->
-        <div class="room-scroll-nudge" style="color:#0BEAB5;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        <div class="room-scroll-nudge" style="color:#0BEAB5;"><span class="nudge-arrow"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
           Scroll down for Step 2
         </div>
       </div>
     </div>
 
     <!-- STEP 2: Make it yours -->
-    <div class="room-step" id="t1-step2" style="background: linear-gradient(180deg, #0a1a2e 0%, #071525 100%);">
-      <div class="room-step-header">
+    <div class="room-step reveal" id="t1-step2" style="background: linear-gradient(180deg, #0a1a2e 0%, #071525 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
         <div class="room-step-badge" style="background: rgba(11,234,181,0.15); color:#0BEAB5; border-color: rgba(11,234,181,0.3);">Step 2 of 3</div>
         <h2 class="room-step-title">Now make it yours</h2>
         <p class="room-step-desc">Type your business name below. Aria will say it aloud — exactly as she would greet your callers — in under two seconds.</p>
       </div>
-      <div class="room-step-body">
+      <div class="room-step-body reveal reveal-delay-2">
         <div class="t1-name-input-wrap" id="m1-name-wrap">
           <div style="text-align:center; margin-bottom:20px;">
             <div class="mic-title" id="m1-mic-title" style="font-size:22px; font-weight:700; color:white; margin-bottom:8px;">Type your business name</div>
@@ -2790,21 +3057,20 @@
             <div id="m1-ghl-widget-wrap" style="display:none; margin-top:28px; border-radius:14px; overflow:hidden; border:1px solid rgba(11,234,181,0.25);"></div>
           </div>
         </div>
-        <div class="room-scroll-nudge" style="color:#0BEAB5; margin-top:32px;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+        <div class="room-scroll-nudge" style="color:#0BEAB5; margin-top:32px;"><span class="nudge-arrow"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
           Scroll down for Step 3
         </div>
       </div>
     </div>
 
     <!-- STEP 3: Take it with you + CTA -->
-    <div class="room-step" id="t1-step3" style="background: linear-gradient(180deg, #071525 0%, #060d1a 100%);">
-      <div class="room-step-header">
+    <div class="room-step reveal" id="t1-step3" style="background: linear-gradient(180deg, #071525 0%, #060d1a 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
         <div class="room-step-badge" style="background: rgba(11,234,181,0.15); color:#0BEAB5; border-color: rgba(11,234,181,0.3);">Step 3 of 3</div>
         <h2 class="room-step-title">Take this experience with you</h2>
         <p class="room-step-desc">Enter your email and we will send you a summary of this interaction — including the call transcript and a personalised proposal for your business.</p>
       </div>
-      <div class="room-step-body">
+      <div class="room-step-body reveal reveal-delay-2">
         <div class="t1-email-area" style="background:#ffffff; border-radius:20px; padding:40px; max-width:560px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3); border:1px solid rgba(11,234,181,0.2);">
           <div class="takeaway-icon email-pulse" id="m1-email-icon" style="width:64px; height:64px; font-size:28px; background:#0BEAB5; color:#060d1a; border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 24px;">
             <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
@@ -2860,10 +3126,11 @@
 
     <!-- STEP 0: Room hero -->
     <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(240,122,90,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #1a0800 50%, #060d1a 100%);">
+      <canvas class="hero-particle-canvas" data-color="240,122,90"></canvas>
       <div class="room-hero-num" style="color: rgba(240,122,90,0.07);">02</div>
       <div class="room-hero-content">
         <div class="room-eyebrow" style="color:#F07A5A;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
-        <h1 class="room-headline">Find the prospects who<br/>are ready to buy.</h1>
+        <h1 class="room-headline"><span class="typewriter-text">Find the prospects who<br/>are ready to buy.</span></h1>
         <p class="room-subhead">Your AI Intelligence Engine scans the web for buying signals — news, events, and triggers that tell you exactly who to call today, and why they will listen.</p>
         <div class="room-hero-steps">
           <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
@@ -2877,13 +3144,13 @@
     </div>
 
     <!-- STEP 1: Intelligence search form -->
-    <div class="room-step" id="t2-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0d0a00 100%);">
-      <div class="room-step-header">
+    <div class="room-step reveal" id="t2-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0d0a00 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
         <div class="room-step-badge" style="background: rgba(240,122,90,0.12); color:#F07A5A; border-color: rgba(240,122,90,0.3);">Step 1 of 2</div>
         <h2 class="room-step-title">Tell us what you sell and who to investigate</h2>
         <p class="room-step-desc">Enter a company domain — any business you want to sell to. Our AI will scan for recent news, events, and signals that create a buying opportunity for you right now.</p>
       </div>
-      <div class="room-step-body">
+      <div class="room-step-body reveal reveal-delay-2">
         <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(240,122,90,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
           <div class="intel-form">
             <div class="intel-field-group">
@@ -2986,10 +3253,11 @@
 
     <!-- STEP 0: Room hero -->
     <div class="room-hero" style="background: radial-gradient(ellipse at 70% 30%, rgba(124,92,252,0.15) 0%, transparent 50%), radial-gradient(ellipse at 30% 70%, rgba(11,234,181,0.10) 0%, transparent 50%), linear-gradient(160deg, #060d1a 0%, #0d0a1a 50%, #060d1a 100%);">
+      <canvas class="hero-particle-canvas" data-color="124,92,252"></canvas>
       <div class="room-hero-num" style="color: rgba(124,92,252,0.08);">03</div>
       <div class="room-hero-content">
         <div class="room-eyebrow" style="background: linear-gradient(90deg, #0BEAB5, #7C5CFC); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Table 03 &nbsp;·&nbsp; AI Workflows</div>
-        <h1 class="room-headline">Your business, handling<br/>things while you sleep.</h1>
+        <h1 class="room-headline"><span class="typewriter-text">Your business, handling<br/>things while you sleep.</span></h1>
         <p class="room-subhead">A customer books an appointment at midnight. A new client signs their contract on a Sunday. A table is reserved without a single phone call. Have a go — type something and see what happens.</p>
         <div class="room-hero-steps">
           <div class="hero-step"><span class="hero-step-num" style="background: linear-gradient(135deg,#0BEAB5,#7C5CFC); color:white;">1</span><span>Choose a scenario</span></div>
@@ -3003,13 +3271,13 @@
     </div>
 
     <!-- STEP 1: Chat interface -->
-    <div class="room-step" id="t3-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0a0a1a 100%);">
-      <div class="room-step-header">
+    <div class="room-step reveal" id="t3-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0a0a1a 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
         <div class="room-step-badge" style="background: rgba(124,92,252,0.15); color:#7C5CFC; border-color: rgba(124,92,252,0.3);">Live AI Chat</div>
         <h2 class="room-step-title">Choose a scenario and start typing</h2>
         <p class="room-step-desc">Select a business type below, then type anything — ask to book an appointment, get a quote, or start an onboarding. The AI will guide you through the entire process.</p>
       </div>
-      <div class="room-step-body">
+      <div class="room-step-body reveal reveal-delay-2">
         <div class="t3-chat-container" style="max-width:720px; margin:0 auto;">
           <!-- Scenario selector -->
           <div style="margin-bottom:24px;">
@@ -3021,7 +3289,7 @@
             </div>
           </div>
           <!-- Chat panel -->
-          <div class="chat-panel" style="background: #ffffff; border:2px solid rgba(124,92,252,0.3); border-radius:20px; overflow:hidden; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
+          <div class="chat-panel" tilt-card style="background: #ffffff; border:2px solid rgba(124,92,252,0.3); border-radius:20px; overflow:hidden; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
             <div class="chat-header" style="background: rgba(124,92,252,0.08); border-bottom:1px solid rgba(124,92,252,0.15); padding:20px 24px; display:flex; align-items:center; gap:16px;">
               <div class="chat-avatar" style="width:48px; height:48px; background: linear-gradient(135deg, #0BEAB5, #7C5CFC); border-radius:12px; display:flex; align-items:center; justify-content:center;">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
@@ -4621,6 +4889,302 @@
       }
     })();
     </script>
+
+
+  <script>
+  /* ═══════════════════════════════════════════════════════════════
+     ANIMATION UPGRADES JS
+  ═══════════════════════════════════════════════════════════════ */
+
+  // ── 1. ORB: sync playing state ──────────────────────────────────
+  (function() {
+    const orbCore = document.getElementById('m1-play-btn');
+    const orbBars = document.getElementById('m1-orb-bars');
+    if (!orbCore) return;
+
+    // Patch the existing play button click to also toggle orb state
+    const origClick = orbCore.onclick;
+    // We observe class changes on the button to sync orb state
+    const observer = new MutationObserver(() => {
+      // The existing JS adds/removes 'play-pulse' — we use audio element state instead
+      const audio = document.getElementById('m1-audio');
+      if (audio && !audio.paused) {
+        orbCore.classList.add('orb-playing');
+        if (orbBars) orbBars.classList.add('active');
+      } else {
+        orbCore.classList.remove('orb-playing');
+        if (orbBars) orbBars.classList.remove('active');
+      }
+    });
+    // Poll audio state (simpler than patching existing JS)
+    setInterval(() => {
+      const audio = document.getElementById('m1-audio');
+      if (!audio) return;
+      if (!audio.paused) {
+        orbCore.classList.add('orb-playing');
+        if (orbBars) orbBars.classList.add('active');
+      } else {
+        orbCore.classList.remove('orb-playing');
+        if (orbBars) orbBars.classList.remove('active');
+      }
+    }, 300);
+  })();
+
+  // ── 2. SCROLL-REVEAL ────────────────────────────────────────────
+  (function() {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  })();
+
+  // ── 3. 3D TILT ──────────────────────────────────────────────────
+  (function() {
+    function initTilt(card) {
+      card.addEventListener('mousemove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        const cx = r.width / 2;
+        const cy = r.height / 2;
+        const rotX = ((y - cy) / cy) * -6;
+        const rotY = ((x - cx) / cx) * 6;
+        card.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.015)`;
+        card.style.setProperty('--mx', (x / r.width * 100) + '%');
+        card.style.setProperty('--my', (y / r.height * 100) + '%');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    }
+    document.querySelectorAll('.tilt-card').forEach(initTilt);
+  })();
+
+  // ── 4. PARTICLE HERO BACKGROUNDS ────────────────────────────────
+  (function() {
+    document.querySelectorAll('.hero-particle-canvas').forEach(canvas => {
+      const color = canvas.dataset.color || '11,234,181';
+      const parent = canvas.parentElement;
+      canvas.width  = parent.offsetWidth  || 1200;
+      canvas.height = parent.offsetHeight || 600;
+      const ctx = canvas.getContext('2d');
+      const N = 55;
+      const particles = Array.from({length: N}, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.8 + 0.4,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        a: Math.random() * 0.5 + 0.15
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw connections
+        for (let i = 0; i < N; i++) {
+          for (let j = i + 1; j < N; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(${color},${0.12 * (1 - dist/120)})`;
+              ctx.lineWidth = 0.8;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        // Draw dots
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${color},${p.a})`;
+          ctx.fill();
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < 0) p.x = canvas.width;
+          if (p.x > canvas.width) p.x = 0;
+          if (p.y < 0) p.y = canvas.height;
+          if (p.y > canvas.height) p.y = 0;
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+
+      // Resize
+      window.addEventListener('resize', () => {
+        canvas.width  = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+      });
+    });
+  })();
+
+  // ── 5. TYPEWRITER ────────────────────────────────────────────────
+  (function() {
+    function typewrite(el) {
+      // Preserve br tags — convert to a token, type the text, restore
+      const rawHTML = el.innerHTML;
+      // Split on <br/> or <br> to get segments
+      const segments = rawHTML.split(/<br\s*\/?>/i);
+      // Build a flat char array with newline markers
+      const chars = [];
+      segments.forEach((seg, idx) => {
+        // Strip any remaining HTML tags for safety
+        const text = seg.replace(/<[^>]+>/g, '').trim();
+        for (const ch of text) chars.push({type:'char', val:ch});
+        if (idx < segments.length - 1) chars.push({type:'br'});
+      });
+
+      el.innerHTML = '';
+      el.style.whiteSpace = 'normal';
+      el.style.overflow = 'visible';
+      el.style.borderRight = '3px solid currentColor';
+      let i = 0;
+      const speed = Math.max(22, Math.min(50, 2400 / chars.length));
+
+      function tick() {
+        if (i < chars.length) {
+          const c = chars[i++];
+          if (c.type === 'br') {
+            el.appendChild(document.createElement('br'));
+          } else {
+            el.appendChild(document.createTextNode(c.val));
+          }
+          setTimeout(tick, speed);
+        } else {
+          el.style.borderRight = 'none';
+          el.classList.add('tw-done');
+        }
+      }
+      // Only start when the hero is visible
+      const io = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setTimeout(tick, 500);
+          io.disconnect();
+        }
+      }, { threshold: 0.2 });
+      io.observe(el.closest('.room-hero') || el);
+    }
+    document.querySelectorAll('.typewriter-text').forEach(typewrite);
+  })();
+
+  // ── 6. ANIMATED GRADIENT BORDER ─────────────────────────────────
+  (function() {
+    // Activate glow border when audio plays (Table 1 waveform card)
+    setInterval(() => {
+      const audio = document.getElementById('m1-audio');
+      const waveCard = document.querySelector('.t1-waveform-area');
+      const transcriptCard = document.querySelector('.t1-transcript-area');
+      if (!audio) return;
+      if (!audio.paused) {
+        waveCard && waveCard.classList.add('border-on');
+        transcriptCard && transcriptCard.classList.add('border-on');
+      } else {
+        waveCard && waveCard.classList.remove('border-on');
+        transcriptCard && transcriptCard.classList.remove('border-on');
+      }
+    }, 400);
+
+    // Activate on Table 2 form submit
+    const t2Form = document.querySelector('.intel-form-card');
+    if (t2Form) {
+      t2Form.classList.add('glow-border-active', 'glow-border-coral');
+      const t2Btn = document.getElementById('m2-search-btn');
+      if (t2Btn) {
+        t2Btn.addEventListener('click', () => {
+          t2Form.classList.add('border-on');
+          setTimeout(() => t2Form.classList.remove('border-on'), 4000);
+        });
+      }
+    }
+
+    // Activate on Table 3 chat send
+    const t3Panel = document.querySelector('.chat-panel');
+    if (t3Panel) {
+      t3Panel.classList.add('glow-border-active');
+      const t3Btn = document.getElementById('m3-send-btn');
+      if (t3Btn) {
+        t3Btn.addEventListener('click', () => {
+          t3Panel.classList.add('border-on');
+          setTimeout(() => t3Panel.classList.remove('border-on'), 3000);
+        });
+      }
+    }
+  })();
+
+  // ── 7. SMOOTH ROOM TRANSITIONS ──────────────────────────────────
+  (function() {
+    // Patch the showView function to add transition classes
+    const origShowView = window.showView;
+    if (typeof origShowView === 'function') {
+      window.showView = function(id) {
+        const current = document.querySelector('.lab-view.active-view');
+        if (current) {
+          current.classList.add('view-exit');
+          setTimeout(() => {
+            current.classList.remove('view-exit');
+            origShowView(id);
+            const next = document.getElementById(id);
+            if (next) {
+              next.classList.add('view-enter');
+              setTimeout(() => next.classList.remove('view-enter'), 500);
+            }
+          }, 280);
+        } else {
+          origShowView(id);
+        }
+      };
+    }
+  })();
+
+  // ── 9. ENTRANCE PARTICLE BURST ──────────────────────────────────
+  (function() {
+    function burst(cx, cy, color) {
+      const count = 22;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'entrance-particle';
+        const angle = (i / count) * Math.PI * 2;
+        const dist  = 60 + Math.random() * 120;
+        p.style.cssText = `
+          left: ${cx}px; top: ${cy}px;
+          background: ${color};
+          --px: ${Math.cos(angle) * dist}px;
+          --py: ${Math.sin(angle) * dist}px;
+          animation-duration: ${0.6 + Math.random() * 0.5}s;
+        `;
+        document.body.appendChild(p);
+        p.addEventListener('animationend', () => p.remove());
+      }
+    }
+
+    // Fire burst when the "Enter the Lab" button is clicked
+    document.querySelectorAll('.enter-btn, [onclick*="view-lobby"], [onclick*="showView"]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const r = btn.getBoundingClientRect();
+        burst(r.left + r.width/2, r.top + r.height/2, '#0BEAB5');
+      });
+    });
+
+    // Also fire when any room-start-btn is clicked
+    document.querySelectorAll('.room-start-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const r = btn.getBoundingClientRect();
+        const color = btn.style.background.includes('F07A5A') ? '#F07A5A' : '#0BEAB5';
+        burst(r.left + r.width/2, r.top + r.height/2, color);
+      });
+    });
+  })();
+
+  </script>
 
 </body>
 </html>
