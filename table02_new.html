@@ -1,0 +1,205 @@
+    <!-- ============================================================
+         VIEW: TABLE 2 — AI PROSPECTING (REDESIGNED)
+    ============================================================ -->
+    <div id="view-table-2" class="lab-view">
+
+    <!-- Table nav -->
+    <nav class="nav table-nav" style="--room-color: #EC8A01;">
+      <div class="container">
+        <button class="table-nav-back" onclick="showView('table-1')">← AI Receptionist</button>
+        <div class="table-nav-breadcrumb">
+          <span class="table-nav-num" style="color:#EC8A01;">02</span> AI Prospecting
+        </div>
+        <button class="table-nav-next" onclick="showView('table-3')">AI Workflows →</button>
+      </div>
+    </nav>
+
+    <!-- Room colour stripe -->
+    <div style="height:4px; background: linear-gradient(90deg, #EC8A01, #d47a00); width:100%;"></div>
+
+    <!-- HERO -->
+    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(236,138,1,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #1a0800 50%, #060d1a 100%);">
+      <canvas class="hero-particle-canvas" data-color="240,122,90"></canvas>
+      <div class="room-hero-num" style="color: rgba(236,138,1,0.07);">02</div>
+      <div class="room-hero-content">
+        <div class="room-eyebrow" style="color:#EC8A01;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
+        <h1 class="room-headline"><span class="typewriter-text">Find the people<br/>ready to buy — now.</span></h1>
+        <p class="room-subhead">No LinkedIn. No Facebook ads. No cold guesswork. Just tell us who you want to reach — and watch your AI engine surface real, actionable contacts in seconds.</p>
+        <div class="room-hero-steps">
+          <div class="hero-step"><span class="hero-step-num" style="background:#EC8A01; color:#060d1a;">1</span><span>Tell us who to find</span></div>
+          <div class="hero-step-arrow" style="color:#EC8A01;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#EC8A01; color:#060d1a;">2</span><span>See live results</span></div>
+          <div class="hero-step-arrow" style="color:#EC8A01;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#EC8A01; color:#060d1a;">3</span><span>Enrich &amp; personalise</span></div>
+        </div>
+        <button class="room-start-btn" style="background:#EC8A01; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Start your search ↓</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: SEARCH CRITERIA ── -->
+    <div class="room-step reveal" id="t2-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0d0a00 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
+        <div class="room-step-badge" style="background: rgba(236,138,1,0.12); color:#EC8A01; border-color: rgba(236,138,1,0.3);">Step 1 of 3</div>
+        <h2 class="room-step-title">Who are you hunting?</h2>
+        <p class="room-step-desc">Tell us the role, industry, and location of your ideal prospect. Your AI engine will surface real contacts — no databases, no guesswork.</p>
+      </div>
+      <div class="room-step-body reveal reveal-delay-2">
+
+        <!-- Search form card -->
+        <div class="t2-search-card">
+          <div class="t2-field-row">
+            <div class="t2-field">
+              <label class="t2-label">Target role</label>
+              <select class="t2-select" id="t2-role">
+                <option value="Managing Director">Managing Director</option>
+                <option value="Head of HR">Head of HR</option>
+                <option value="Finance Director">Finance Director</option>
+                <option value="Operations Manager">Operations Manager</option>
+                <option value="Marketing Director">Marketing Director</option>
+                <option value="IT Director">IT Director</option>
+                <option value="Sales Director">Sales Director</option>
+                <option value="CEO">CEO / Founder</option>
+                <option value="Procurement Manager">Procurement Manager</option>
+              </select>
+            </div>
+            <div class="t2-field">
+              <label class="t2-label">Industry</label>
+              <select class="t2-select" id="t2-industry">
+                <option value="Professional Services">Professional Services</option>
+                <option value="Construction & Property">Construction &amp; Property</option>
+                <option value="Healthcare & Pharma">Healthcare &amp; Pharma</option>
+                <option value="Retail & E-commerce">Retail &amp; E-commerce</option>
+                <option value="Technology & SaaS">Technology &amp; SaaS</option>
+                <option value="Financial Services">Financial Services</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Hospitality & Leisure">Hospitality &amp; Leisure</option>
+                <option value="Education">Education</option>
+                <option value="Legal Services">Legal Services</option>
+              </select>
+            </div>
+            <div class="t2-field">
+              <label class="t2-label">Location</label>
+              <select class="t2-select" id="t2-location">
+                <option value="London">London</option>
+                <option value="Manchester">Manchester</option>
+                <option value="Birmingham">Birmingham</option>
+                <option value="Leeds">Leeds</option>
+                <option value="Bristol">Bristol</option>
+                <option value="Edinburgh">Edinburgh</option>
+                <option value="Glasgow">Glasgow</option>
+                <option value="Liverpool">Liverpool</option>
+                <option value="Sheffield">Sheffield</option>
+                <option value="UK-wide">UK-wide</option>
+              </select>
+            </div>
+          </div>
+          <button class="t2-search-btn" id="t2-search-btn" onclick="t2RunSearch()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            Find My Prospects
+          </button>
+        </div>
+
+        <!-- ── STEP 2: RESULTS ── -->
+        <div id="t2-results-section" style="display:none; margin-top:48px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <div style="font-size:13px; letter-spacing:0.12em; color:#EC8A01; font-weight:700; margin-bottom:4px;">LIVE RESULTS</div>
+              <h3 id="t2-results-headline" style="font-size:22px; font-weight:800; color:white; margin:0;"></h3>
+            </div>
+            <div id="t2-scan-badge" class="t2-scan-badge">
+              <span class="t2-scan-dot"></span>
+              <span>Scanning database…</span>
+            </div>
+          </div>
+
+          <!-- Lead cards grid -->
+          <div class="t2-leads-grid" id="t2-leads-grid"></div>
+
+          <!-- Enrichment panel (hidden until a lead is clicked) -->
+          <div id="t2-enrich-panel" style="display:none; margin-top:40px;">
+            <div class="t2-enrich-card">
+              <div class="t2-enrich-header">
+                <div>
+                  <div style="font-size:12px; letter-spacing:0.12em; color:#EC8A01; font-weight:700; margin-bottom:6px;">AI ENRICHMENT</div>
+                  <div id="t2-enrich-name" style="font-size:22px; font-weight:800; color:white;"></div>
+                  <div id="t2-enrich-meta" style="font-size:15px; color:rgba(200,215,255,0.7); margin-top:4px;"></div>
+                </div>
+                <div id="t2-enrich-loading" class="t2-enrich-spinner" style="display:none;">
+                  <div class="t2-spinner"></div>
+                  <span style="font-size:14px; color:rgba(200,215,255,0.6);">Enriching…</span>
+                </div>
+              </div>
+
+              <div id="t2-enrich-content" style="display:none;">
+                <!-- Data points -->
+                <div class="t2-data-points" id="t2-data-points"></div>
+
+                <!-- Insight -->
+                <div class="t2-insight-block">
+                  <div class="t2-insight-label">Company Insight</div>
+                  <div id="t2-insight-text" class="t2-insight-text"></div>
+                </div>
+
+                <!-- Outreach -->
+                <div class="t2-outreach-block">
+                  <div class="t2-outreach-label">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="#EC8A01"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    Personalised Opening Line
+                  </div>
+                  <div class="t2-subject-line" id="t2-subject-line"></div>
+                  <div id="t2-outreach-text" class="t2-outreach-text"></div>
+                  <button class="t2-copy-btn" onclick="t2CopyOutreach()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    Copy opening line
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── STEP 3: LEAD CAPTURE ── -->
+          <div id="t2-capture-section" style="display:none; margin-top:48px;">
+            <div style="height:1px; background: linear-gradient(90deg, transparent, rgba(11,234,181,0.25), transparent); margin-bottom:48px;"></div>
+            <div class="room-step-badge" style="background: rgba(236,138,1,0.12); color:#EC8A01; border-color: rgba(236,138,1,0.3); display:inline-flex; margin-bottom:20px;">Step 3 of 3</div>
+            <h3 style="font-size:28px; font-weight:800; color:white; margin-bottom:12px;">Want your 25 free leads?</h3>
+            <p style="font-size:17px; color:rgba(200,215,255,0.75); max-width:520px; margin-bottom:32px;">We'll send you 25 real, verified contacts matching your exact criteria — ready to reach out to today. No credit card. No catch.</p>
+
+            <div class="t2-capture-form">
+              <input type="text" id="t2-cap-name" class="t2-cap-input" placeholder="Your name" />
+              <input type="email" id="t2-cap-email" class="t2-cap-input" placeholder="your@email.co.uk" />
+              <button class="t2-cap-btn" id="t2-cap-btn" onclick="t2SubmitCapture()">
+                Send me 25 free leads →
+              </button>
+            </div>
+            <div id="t2-cap-success" style="display:none; margin-top:20px;">
+              <div style="background:rgba(11,234,181,0.08); border:1px solid rgba(11,234,181,0.25); border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:14px;">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="#0BEAB5"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                <div>
+                  <div style="font-size:16px; font-weight:700; color:white;">You're on the list.</div>
+                  <div style="font-size:14px; color:rgba(200,215,255,0.7); margin-top:2px;">Your 25 leads are being compiled. Check your inbox shortly.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /t2-results-section -->
+
+        <!-- CTA banner -->
+        <div class="room-cta-banner" id="t2-cta-banner" style="background: linear-gradient(135deg, rgba(236,138,1,0.10), rgba(236,138,1,0.08)); border:1px solid rgba(236,138,1,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:64px;">
+          <div style="font-size:14px; letter-spacing:0.12em; color:#EC8A01; font-weight:700; margin-bottom:16px;">WANT THIS RUNNING EVERY DAY?</div>
+          <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Your AI Prospecting pipeline, live in 48 hours</h3>
+          <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">Fresh leads, enriched and ready to contact — delivered to your CRM automatically. One of our AI Builders will show you exactly what this looks like for your business.</p>
+          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#EC8A01; color:#060d1a; border:none;">Talk to an AI Builder →</a>
+        </div>
+
+        <!-- Next table -->
+        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(236,138,1,0.3);">
+          <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">NEXT UP</div>
+          <div style="font-size:20px; font-weight:700; color:white;">Table 03 — AI Workflows →</div>
+          <div style="font-size:16px; color: rgba(255,255,255,0.55); margin-top:4px;">Your business, booking and onboarding while you sleep.</div>
+        </div>
+
+      </div>
+    </div><!-- /t2-step1 -->
+
+    </div><!-- /view-table-2 -->

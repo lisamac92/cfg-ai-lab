@@ -2,6 +2,8 @@
 CFG AI Lab — Backend API Server
 Handles:
   POST /api/intelligence  — Module 2: AI Prospecting intelligence brief
+  POST /api/leads         — Module 2 (new): AI Prospecting live lead search
+  POST /api/enrich        — Module 2 (new): AI Prospecting lead enrichment
   POST /api/chat          — Module 3: AI Workflow chat
 """
 
@@ -17,7 +19,132 @@ CORS(app)
 client = OpenAI()  # uses OPENAI_API_KEY + base_url from environment
 
 # ─────────────────────────────────────────────────────────────────────────────
-# MODULE 2 — AI INTELLIGENCE BRIEF
+# MODULE 2 — AI PROSPECTING: LIVE LEAD SEARCH
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/leads', methods=['POST'])
+def leads():
+    """Generate 5 hyper-realistic UK B2B leads based on role, industry, location."""
+    data     = request.get_json(force=True)
+    role     = data.get('role', 'Managing Director').strip()
+    industry = data.get('industry', 'Professional Services').strip()
+    location = data.get('location', 'London').strip()
+
+    system_prompt = """You are a B2B lead generation engine. You generate hyper-realistic UK business contact records.
+Every lead must look completely authentic — real-sounding British names, real company naming conventions, plausible domains, and realistic job titles.
+Never use obviously fake names like "John Smith" or "Jane Doe". Use varied, culturally diverse British names.
+Email addresses must follow real corporate patterns (e.g. first.last@company.co.uk, f.lastname@company.com).
+Partially mask emails: show first 2 chars of local part, then dots, then domain (e.g. "ma...@meridian-group.co.uk").
+Company names should sound like real UK SMEs or mid-market companies — not generic."""
+
+    user_prompt = f"""Generate exactly 5 realistic UK B2B leads for:
+- Target role: {role}
+- Industry: {industry}
+- Location: {location}
+
+Respond ONLY with a valid JSON array of exactly 5 objects. Each object must have these exact keys:
+{{
+  "name": "Full name",
+  "title": "Exact job title (may vary slightly from target role)",
+  "company": "Company name",
+  "location": "UK city or town",
+  "email_masked": "Partially masked email (e.g. ma...@meridian-group.co.uk)",
+  "email_full": "Full email address (not shown to user, used for enrichment)",
+  "company_size": "e.g. 45 employees",
+  "linkedin_hint": "A plausible LinkedIn URL slug (e.g. /in/marcus-aldridge-hr)"
+}}
+
+Return ONLY the JSON array, no other text."""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": user_prompt}
+            ],
+            temperature=0.85,
+            max_tokens=900
+        )
+        raw = response.choices[0].message.content.strip()
+        # Extract JSON array
+        match = re.search(r'\[.*\]', raw, re.DOTALL)
+        if match:
+            leads_list = json.loads(match.group())
+            return jsonify({"leads": leads_list})
+        else:
+            return jsonify({"error": "Could not parse leads", "raw": raw}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODULE 2 — AI PROSPECTING: LEAD ENRICHMENT
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/enrich', methods=['POST'])
+def enrich():
+    """Enrich a single lead with company insight + personalised outreach message."""
+    data     = request.get_json(force=True)
+    name     = data.get('name', '').strip()
+    title    = data.get('title', '').strip()
+    company  = data.get('company', '').strip()
+    location = data.get('location', '').strip()
+    industry = data.get('industry', 'Professional Services').strip()
+    role     = data.get('role', '').strip()
+
+    system_prompt = """You are an elite B2B sales intelligence analyst and copywriter.
+Given a lead's details, you produce:
+1. A sharp, specific company insight (1-2 sentences) — something plausible and relevant that a salesperson would want to know
+2. A hyper-personalised cold outreach opening line (1-2 sentences) — specific to this person, their role, their company, and their likely challenges
+3. A suggested subject line for a cold email
+
+Be specific. Be credible. Sound like a real intelligence report, not a generic template.
+Use British English. Do not use bullet points in the outreach line."""
+
+    user_prompt = f"""Lead details:
+- Name: {name}
+- Job title: {title}
+- Company: {company}
+- Location: {location}
+- Industry: {industry}
+- I am targeting this person because they are a: {role}
+
+Generate the enrichment data. Respond ONLY with valid JSON in this exact format:
+{{
+  "company_insight": "1-2 sentence specific insight about this company or person",
+  "outreach_line": "1-2 sentence personalised cold outreach opening",
+  "subject_line": "A compelling cold email subject line (under 8 words)",
+  "data_points": [
+    "A specific data point about the company (e.g. headcount, recent news, tech stack hint)",
+    "Another specific data point",
+    "A third data point"
+  ]
+}}"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4.1-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": user_prompt}
+            ],
+            temperature=0.75,
+            max_tokens=400
+        )
+        raw = response.choices[0].message.content.strip()
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if match:
+            result = json.loads(match.group())
+            return jsonify(result)
+        else:
+            return jsonify({"error": "Could not parse enrichment", "raw": raw}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MODULE 2 — AI INTELLIGENCE BRIEF (legacy endpoint, kept for compatibility)
 # ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/api/intelligence', methods=['POST'])
@@ -64,7 +191,6 @@ Respond in this exact JSON format:
             max_tokens=500
         )
         raw = response.choices[0].message.content.strip()
-        # Extract JSON from the response
         match = re.search(r'\{.*\}', raw, re.DOTALL)
         if match:
             result = json.loads(match.group())
@@ -320,7 +446,6 @@ def ghl_capture():
         return jsonify({'success': False, 'error': 'Could not retrieve contact ID'}), 500
 
     # 2. Send follow-up email via GHL conversations
-    # Map table keys to email templates
     table_key = table if table in EMAIL_BODIES else 'receptionist'
     email_body = EMAIL_BODIES.get(table_key, EMAIL_BODIES.get('receptionist', ''))
     subject    = EMAIL_SUBJECTS.get(table_key, 'Thanks for visiting the CFG AI Lab — ClickFlow Grow')
@@ -361,16 +486,6 @@ def _cleanup_sessions():
 
 @app.route('/api/voice-webhook', methods=['POST'])
 def voice_webhook():
-    """
-    Called by a GHL Workflow when a Voice AI call ends.
-    Payload (from GHL): {
-      "transcript": "full call transcript text",
-      "session_id": "unique session ID passed as a custom variable to the widget",
-      "contact_id": "GHL contact ID if already known"
-    }
-    We parse the transcript with GPT to extract the BUSINESS OWNER's details,
-    upsert them in GHL CRM, and store in the session store for the page to poll.
-    """
     data = request.get_json(force=True)
     transcript = (data.get('transcript') or '').strip()
     session_id = (data.get('session_id') or '').strip()
@@ -381,7 +496,6 @@ def voice_webhook():
     if not session_id:
         return jsonify({'success': False, 'error': 'No session_id provided'}), 400
 
-    # Use GPT to extract the business owner's contact details from the transcript
     extract_prompt = """You are a data extraction assistant. Read this voice call transcript between an AI receptionist demo assistant (Aria) and a business owner.
 
 Extract ONLY the business owner's personal contact details — NOT the demo business they described.
@@ -416,7 +530,6 @@ Respond ONLY with valid JSON in this exact format:
     except Exception as e:
         app.logger.error(f'GPT extraction error: {e}')
 
-    # Build contact payload for GHL upsert
     contact_payload = {
         'tags': ['aria-demo-call', 'cfg-ai-lab-event', 'voice-ai-lead'],
         'source': 'CFG AI Lab — Aria Voice Demo',
@@ -432,7 +545,6 @@ Respond ONLY with valid JSON in this exact format:
     if extracted.get('company'):
         contact_payload['companyName'] = extracted['company']
 
-    # Only upsert if we have at least an email or phone
     contact_id = ghl_contact_id
     if extracted.get('email') or extracted.get('phone'):
         contact_data, err = ghl_mcp('contacts_upsert-contact', contact_payload)
@@ -442,7 +554,6 @@ Respond ONLY with valid JSON in this exact format:
             contact = contact_data.get('contact') or contact_data if contact_data else {}
             contact_id = contact.get('id') if isinstance(contact, dict) else contact_id
 
-    # Store in session store for the page to poll
     _cleanup_sessions()
     with _call_sessions_lock:
         _call_sessions[session_id] = {
@@ -460,11 +571,6 @@ Respond ONLY with valid JSON in this exact format:
 
 @app.route('/api/poll-call-data', methods=['GET'])
 def poll_call_data():
-    """
-    The page polls this endpoint every 3 seconds while the voice widget is active.
-    Returns the extracted contact data when available, so the booking form can auto-fill.
-    Query param: session_id
-    """
     session_id = request.args.get('session_id', '').strip()
     if not session_id:
         return jsonify({'ready': False, 'error': 'No session_id'}), 400
@@ -487,7 +593,6 @@ def index():
 
 @app.route('/<path:path>')
 def static_files(path):
-    # Don't intercept API routes
     if path.startswith('api/'):
         return jsonify({'error': 'Not found'}), 404
     full = os.path.join(STATIC_DIR, path)
