@@ -1,5 +1,5 @@
 # CFG AI Lab — Project Checklist
-**Last updated:** March 2026  
+**Last updated:** March 12, 2026  
 **Live URL (sandbox):** https://8080-idglvrmshignkf4wht6zv-6a341fe9.us2.manus.computer  
 **GitHub:** https://github.com/lisamac92/cfg-ai-lab
 
@@ -21,6 +21,13 @@
 - [x] Pulsing teal rings around the Talk to Aria widget
 - [x] Mint green divider lines between Step 1 / Step 2 / Step 3
 - [x] Widget pill properly sized — 380×72px, white text, large mic button
+- [x] **Table 02 REBUILT** — new Option C demo flow: search → live results → enrich → CTA
+  - [x] Three dropdowns: Target Role (×9), Industry (×10), Location (×10 UK)
+  - [x] 5 AI-generated hyper-realistic UK leads with masked emails (animated reveal)
+  - [x] One-click enrichment: company insight + personalised opening line + copy button
+  - [x] "Want 25 free leads?" lead capture → GHL CRM
+  - [x] Backend: `/api/leads` and `/api/enrich` endpoints via OpenAI
+  - [x] Fixed TDZ bug (let → var for state variables)
 
 ---
 
@@ -68,20 +75,23 @@
 
 ## 🟡 TIER 3 — Table Improvements (polish before event)
 
-### 7. Table 01 — AI Receptionist
+### 7. Table 01 — AI Receptionist ✅ COMPLETE (minor items remain)
 - [ ] **Confirm industry tabs** — currently Plumbing / Law / Estate Agency — right for the audience?
 - [ ] **Confirm audio files** — pre-recorded demo calls final and matched to each industry?
 - [ ] **Step 2 business name input** — currently generates a text greeting; consider upgrading to live voice call
 
-### 8. Table 02 — AI Prospecting (IN PROGRESS)
-- [ ] **Review and improve the full Table 02 experience**
-- [ ] **Email body improvement** — update email_t2.html to include the actual intelligence brief generated on screen
-- [ ] **"My key sales trigger is..."** placeholder — confirm wording is clear for event visitors
-- [ ] **Step 3 result display** — review design and copy quality
+### 8. Table 02 — AI Prospecting ✅ COMPLETE (minor items remain)
+- [ ] **Confirm "25 free leads" offer** — is this what ClickFlow Leads actually delivers?
+- [ ] **Provide GHL calendar link** for "Talk to an AI Builder" button
+- [ ] Consider adding a "New search" / reset button after results appear
+- [ ] Consider showing a "What this costs without AI" time/cost counter
 
-### 9. Table 03 — AI Workflows
-- [ ] **Confirm scenario tabs** — Plumber / Accountant / Restaurant — right for the audience?
-- [ ] **"Get your booking confirmation" email** — confirm email_t3.html content is correct
+### 9. Table 03 — AI Workflows 🔄 IN DESIGN
+- [ ] **Approve Table 03 concept** — see `TABLE03_PROPOSAL.md` for full options
+- [ ] **Confirm 3-4 business scenarios** for the selector (suggested: Restaurant, Accountant, Trades, Estate Agent)
+- [ ] **Provide GHL calendar link** for "Book a Workflow Audit" CTA
+- [ ] **Confirm colour scheme** — currently purple/violet for Table 03
+- [ ] **Build Table 03** once concept is approved
 
 ### 10. DemoDrop Experience
 - [ ] **Test the full DemoDrop flow** — business name + website → AI greeting → activation panel
@@ -133,3 +143,16 @@
 | Brand colour (teal) | `#0BEAB5` |
 | Stripe payment link | **PLACEHOLDER — needs replacing** |
 | Booking calendar URL | **PLACEHOLDER — needs replacing** |
+
+---
+
+## 📁 Key Files
+
+| File | Purpose |
+|---|---|
+| `index.html` | Full site — all three tables |
+| `api_server.py` | Flask backend — all API endpoints |
+| `ARIA_PROMPT.md` | GHL Voice AI system prompt for Aria |
+| `GHL_SETUP_GUIDE.md` | Step-by-step GHL configuration guide |
+| `TABLE03_PROPOSAL.md` | Table 03 concept options and recommendation |
+| `PROJECT_CHECKLIST.md` | This file — living project tracker |
