@@ -15,7 +15,7 @@
       /* Brand */
       --cfg-navy:       #0F2D60;
       --cfg-teal:       #0BEAB5;
-      --cfg-coral:      #F07A5A;
+      --cfg-coral:      #EC8A01;
 
       /* Neutrals — Dark Glassmorphism */
       --bg:             #060d1f;
@@ -80,166 +80,357 @@
     img { display: block; max-width: 100%; }
 
     /* ============================================================
-       CANVAS DOOR ENTRANCE — PERSPECTIVE SWING
-       All door drawing is handled by JavaScript/Canvas.
-       This block only handles the container and overlay UI.
+       GLASS DOOR ENTRANCE — APPLE STORE AESTHETIC
+       Interior background image visible through frosted glass panels.
+       Doors slide apart on click, revealing the lab inside.
     ============================================================ */
+
+    /* ── Outer shell ── */
     #entrance {
       position: fixed;
       inset: 0;
       z-index: 1000;
       overflow: hidden;
-      background: #0a2050;
+      background: #050810;
     }
 
-    /* The canvas fills the entire entrance */
-    #door-canvas {
+    /* ── Interior background image — always visible behind the doors ── */
+    #entrance-interior {
       position: absolute;
       inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
+      background: url('interior_bg.jpg') center center / cover no-repeat;
+      transform: scale(1.04);
+      transition: transform 2.8s cubic-bezier(0.16,1,0.3,1),
+                  filter 2.8s cubic-bezier(0.16,1,0.3,1);
+      /* Brighter so you can clearly see the people inside */
+      filter: brightness(0.88) saturate(1.0);
+    }
+    #entrance-interior.doors-open {
+      transform: scale(1.0);
+      filter: brightness(1.15) saturate(1.15);
+    }
+
+    /* Walk-in zoom — interior rushes toward viewer as if walking through */
+    #entrance-interior.walk-in {
+      transform: scale(1.35) !important;
+      transition: transform 3.5s cubic-bezier(0.16,1,0.3,1),
+                  filter 2.8s cubic-bezier(0.16,1,0.3,1) !important;
+    }
+
+    /* ── Exterior dark surround (building facade) ── */
+    #entrance-facade {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      /* Dark vignette around the glass opening */
+      background:
+        linear-gradient(to right, #050810 0%, transparent 22%, transparent 78%, #050810 100%),
+        linear-gradient(to bottom, #050810 0%, transparent 8%, transparent 88%, #050810 100%);
+      z-index: 2;
+    }
+
+    /* ── Door panels container ── */
+    #door-panels {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+    }
+
+    /* ── Individual glass door panel ── */
+    .door-panel {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      will-change: transform;
+      transition: transform 2.2s cubic-bezier(0.16,1,0.3,1);
+      overflow: hidden;
+    }
+    .door-panel.left  { left: 0;   transform-origin: left center; }
+    .door-panel.right { right: 0;  transform-origin: right center; }
+
+    /* Open state — slide apart */
+    .door-panel.left.open  { transform: translateX(-100%); }
+    .door-panel.right.open { transform: translateX(100%); }
+
+    /* Glass fill — very light frosted glass so interior is clearly visible */
+    .door-glass {
+      position: absolute;
+      inset: 0;
+      /* Minimal tint — just enough to read as glass, not a wall */
+      background: linear-gradient(
+        160deg,
+        rgba(180,200,230,0.06) 0%,
+        rgba(140,170,210,0.09) 40%,
+        rgba(100,140,190,0.07) 70%,
+        rgba(80,120,175,0.06) 100%
+      );
+      /* Gentle blur — like real glass, not frosted */
+      backdrop-filter: blur(3px) saturate(1.05);
+      -webkit-backdrop-filter: blur(3px) saturate(1.05);
+    }
+
+    /* Thin aluminium frame lines */
+    .door-frame {
+      position: absolute;
+      inset: 0;
+      border-left:  1.5px solid rgba(255,255,255,0.22);
+      border-right: 1.5px solid rgba(255,255,255,0.22);
+      pointer-events: none;
+    }
+    .door-panel.left  .door-frame { border-right: 2px solid rgba(255,255,255,0.35); }
+    .door-panel.right .door-frame { border-left:  2px solid rgba(255,255,255,0.35); }
+
+    /* Glass reflection — diagonal light streak */
+    .door-reflection {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        115deg,
+        transparent 30%,
+        rgba(255,255,255,0.07) 45%,
+        rgba(255,255,255,0.13) 50%,
+        rgba(255,255,255,0.07) 55%,
+        transparent 70%
+      );
       pointer-events: none;
     }
 
-    /* Content overlay sits above the canvas */
+    /* Horizontal aluminium top and bottom rail */
+    .door-rail-top, .door-rail-bottom {
+      position: absolute;
+      left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(to bottom,
+        rgba(200,215,235,0.5),
+        rgba(160,180,210,0.3)
+      );
+      pointer-events: none;
+    }
+    .door-rail-top    { top: 0; }
+    .door-rail-bottom { bottom: 0; }
+
+    /* Pull handle — amber-gold vertical bar */
+    .door-handle {
+      position: absolute;
+      top: 50%;
+      width: 5px;
+      height: 18vh;
+      min-height: 80px;
+      max-height: 160px;
+      transform: translateY(-50%);
+      border-radius: 3px;
+      background: linear-gradient(
+        to right,
+        #b86800,
+        #EC8A01 30%,
+        #ffc04a 50%,
+        #EC8A01 70%,
+        #b86800
+      );
+      box-shadow: 0 2px 12px rgba(236,138,1,0.45), 0 0 4px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+    .door-panel.left  .door-handle { right: 14%; }
+    .door-panel.right .door-handle { left:  14%; }
+
+    /* Centre seam glow — thin amber line where doors meet */
+    #door-seam {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-50%);
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(236,138,1,0.6) 20%,
+        rgba(255,200,80,0.9) 50%,
+        rgba(236,138,1,0.6) 80%,
+        transparent
+      );
+      filter: blur(1.5px);
+      z-index: 4;
+      transition: opacity 0.6s ease;
+    }
+    #door-seam.hidden { opacity: 0; }
+
+    /* ── Signage above the doors ── */
+    #entrance-signage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: linear-gradient(to bottom, rgba(5,8,16,0.92), rgba(5,8,16,0.0));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .signage-logo-mark {
+      width: 28px; height: 28px;
+      background: var(--cfg-teal);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .signage-logo-mark svg { width: 16px; height: 16px; fill: #fff; }
+    .signage-logo-text {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Pavement / ground reflection strip ── */
+    #entrance-ground {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 120px;
+      background: linear-gradient(to top,
+        rgba(5,8,16,0.95) 0%,
+        rgba(5,8,16,0.6) 40%,
+        transparent 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* ── CTA overlay — full-height flex, content pinned to bottom third ── */
     .entrance-content {
       position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;   /* pin to bottom */
       text-align: center;
       z-index: 10;
-      padding: var(--s4);
+      padding: 0 24px 8vh;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-
     .entrance-content.fade-out {
       opacity: 0;
+      transform: translateY(12px);
       pointer-events: none;
     }
 
-    .entrance-logo-wrap {
+    /* ── CTA pill — wide, bold, centred at the bottom of the screen ── */
+    .entrance-cta-pill {
+      width: 100%;
+      max-width: 680px;
+      background: rgba(4,6,14,0.72);
+      backdrop-filter: blur(28px) saturate(1.2);
+      -webkit-backdrop-filter: blur(28px) saturate(1.2);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 28px;
+      padding: 36px 52px 40px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      margin-bottom: var(--s6);
-    }
-
-    .entrance-logo-mark {
-      width: 36px;
-      height: 36px;
-      background: var(--cfg-teal);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .entrance-logo-mark svg {
-      width: 20px;
-      height: 20px;
-      fill: #fff;
-    }
-
-    .entrance-logo-text {
-      font-family: var(--font-head);
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.01em;
+      gap: 0;
     }
 
     .entrance-eyebrow {
       font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--cfg-teal);
-      margin-bottom: var(--s3);
+      color: #EC8A01;
+      margin-bottom: 14px;
     }
 
     .entrance-headline {
       font-family: var(--font-head);
-      font-size: clamp(32px, 5vw, 52px);
-      font-weight: 800;
+      font-size: clamp(28px, 4.5vw, 48px);
+      font-weight: 900;
       color: #fff;
       line-height: 1.15;
       letter-spacing: -0.03em;
-      margin-bottom: var(--s3);
-      max-width: 660px;
+      margin-bottom: 12px;
     }
 
     .entrance-sub {
-      font-size: 20px;
-      color: rgba(255,255,255,0.82);
-      margin-bottom: var(--s7);
+      font-size: clamp(14px, 1.6vw, 17px);
+      color: rgba(255,255,255,0.68);
+      margin-bottom: 28px;
+      line-height: 1.65;
       max-width: 480px;
-      line-height: 1.7;
     }
 
     .btn-enter {
       pointer-events: auto !important;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: transparent;
-      border: 1.5px solid rgba(255,255,255,0.5);
+      gap: 12px;
+      background: #EC8A01;
+      border: none;
       color: #fff;
       font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: 600;
-      padding: 16px 40px;
-      border-radius: var(--radius);
+      font-size: clamp(15px, 1.8vw, 18px);
+      font-weight: 800;
+      padding: 18px 48px;
+      border-radius: 50px;
       cursor: pointer;
       letter-spacing: 0.01em;
-      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+      box-shadow: 0 4px 32px rgba(236,138,1,0.45), 0 0 0 0 rgba(236,138,1,0);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
     }
-
     .btn-enter:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.8);
+      background: #f59d1a;
+      box-shadow: 0 6px 40px rgba(236,138,1,0.65), 0 0 0 4px rgba(236,138,1,0.18);
+      transform: translateY(-1px);
     }
-
-    .btn-enter:active { transform: scale(1.02); }
-
+    .btn-enter:active { transform: scale(0.98) translateY(0); }
     .btn-enter .arrow {
       display: inline-block;
       transition: transform 0.2s var(--ease-std);
     }
+    .btn-enter:hover .arrow { transform: translateX(6px); }
 
-    .btn-enter:hover .arrow { transform: translateX(4px); }
+    /* Legacy canvas — hidden, kept for compatibility */
+    #door-canvas { display: none; }
 
     /* Subtle teal accent line at bottom of entrance */
-    .entrance-accent {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--cfg-teal), transparent);
-      opacity: 0.6;
-      z-index: 10;
-    }
+    .entrance-accent { display: none; }
 
     /* ============================================================
        MAIN CONTENT REVEAL
     ============================================================ */
     #main-content {
       opacity: 0;
-      transform: scale(0.985);
-      transition: opacity 0.9s 0.3s var(--ease-std),
-                  transform 0.9s 0.3s var(--ease-std);
+      /* No scale transform — the entrance zoom handles the walk-in feel */
+      transition: opacity 1.2s var(--ease-std);
     }
 
     #main-content.visible {
       opacity: 1;
-      transform: scale(1);
     }
+
+    /* Warm amber wash that overlays the lab on entry, then fades away */
+    #entry-wash {
+      position: fixed;
+      inset: 0;
+      z-index: 999;           /* just below entrance (1000), above main content */
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse at 50% 40%,
+        rgba(236,138,1,0.38) 0%,
+        rgba(20,10,4,0.55) 60%,
+        rgba(5,8,16,0.85) 100%
+      );
+      opacity: 0;
+      transition: opacity 1.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    #entry-wash.active  { opacity: 1; }
+    #entry-wash.fading  { opacity: 0; }
 
     /* ============================================================
        NAVIGATION
@@ -1057,9 +1248,12 @@
        GENIUS BAR CTA
     ============================================================ */
     /* ===== TABLE PLACARDS (Option C) ===== */
+    /* ============================================================
+       EXPERIENCE STATION CARDS (replaces old placard design)
+    ============================================================ */
     .placard-section {
       background: var(--bg-page);
-      padding: 72px 24px 80px;
+      padding: 72px 24px 96px;
       border-bottom: 1px solid var(--border);
     }
 
@@ -1082,164 +1276,117 @@
       margin-bottom: 56px;
     }
 
+    /* Three-column grid of experience station cards */
     .placard-row {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 32px;
-      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1100px;
       margin: 0 auto;
-      flex-wrap: wrap;
+    }
+    @media (max-width: 860px) {
+      .placard-row { grid-template-columns: 1fr; max-width: 480px; }
     }
 
+    /* ── Station card wrapper ── */
     .placard-wrap {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
       cursor: pointer;
       text-decoration: none;
-      transition: transform 0.25s ease;
-    }
-
-    .placard-wrap:hover {
-      transform: translateY(-6px);
-    }
-
-    .placard-wrap:hover .placard-card {
-      box-shadow: 0 24px 64px rgba(15,45,96,0.18), 0 4px 16px rgba(15,45,96,0.1);
-    }
-
-    .placard-card {
-      width: 240px;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.2);
-      transition: box-shadow 0.25s ease;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(12px);
+      background: #0a0f1e;
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.3);
+      transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+                  box-shadow 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .placard-wrap:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 24px 72px rgba(0,0,0,0.65), 0 4px 16px rgba(0,0,0,0.3);
     }
 
-    .placard-top {
-      padding: 28px 24px 20px;
+    /* ── Photo hero — the table surface image ── */
+    .station-photo {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .placard-wrap:hover .station-photo {
+      transform: scale(1.04);
+    }
+
+    /* ── Colour accent bar at top of photo ── */
+    .station-accent-bar {
+      height: 3px;
+      width: 100%;
+      flex-shrink: 0;
+    }
+    .placard-1 .station-accent-bar { background: #0BEAB5; }
+    .placard-2 .station-accent-bar { background: #EC8A01; }
+    .placard-3 .station-accent-bar { background: #7B6FFF; }
+
+    /* ── Text content below the photo ── */
+    .placard-card {
+      padding: 24px 24px 28px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      flex: 1;
     }
-
-    .placard-1 .placard-top { background: var(--cfg-navy); }
-    .placard-2 .placard-top { background: var(--cfg-teal); }
-    .placard-3 .placard-top { background: var(--cfg-teal); }
 
     .placard-table-label {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .placard-1 .placard-table-label { color: rgba(255,255,255,0.85); }
-    .placard-2 .placard-table-label { color: rgba(255,255,255,0.85); }
-    .placard-3 .placard-table-label { color: rgba(255,255,255,0.85); }
-
-    .placard-number {
-      font-family: 'Manrope', sans-serif;
-      font-size: 60px;
-      font-weight: 800;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .placard-1 .placard-number { color: rgba(255,255,255,0.30); }
-    .placard-2 .placard-number { color: rgba(255,255,255,0.30); }
-    .placard-3 .placard-number { color: rgba(255,255,255,0.30); }
+    .placard-1 .placard-table-label { color: #0BEAB5; }
+    .placard-2 .placard-table-label { color: #EC8A01; }
+    .placard-3 .placard-table-label { color: #7B6FFF; }
 
     .placard-station-name {
       font-family: 'Manrope', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      text-align: center;
-    }
-    .placard-1 .placard-station-name { color: #fff; }
-    .placard-2 .placard-station-name { color: #fff; }
-    .placard-3 .placard-station-name { color: #fff; }
-
-    .placard-body {
-      padding: 20px 20px 24px;
-      text-align: center;
-      background: rgba(255,255,255,0.04);
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 10px;
     }
 
     .placard-desc {
-      font-size: 15px;
-      color: rgba(255,255,255,0.75);
-      line-height: 1.6;
-      margin-bottom: 16px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 20px;
     }
 
     .placard-cta {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 15px;
-      font-weight: 600;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: gap 0.2s ease;
     }
-    .placard-1 .placard-cta { color: rgba(255,255,255,0.9); }
-    .placard-2 .placard-cta { color: rgba(255,255,255,0.9); }
-    .placard-3 .placard-cta { color: rgba(255,255,255,0.9); }
+    .placard-wrap:hover .placard-cta { gap: 12px; }
+    .placard-1 .placard-cta { color: #0BEAB5; }
+    .placard-2 .placard-cta { color: #EC8A01; }
+    .placard-3 .placard-cta { color: #7B6FFF; }
 
-    .placard-pole {
-      width: 3px;
-      height: 36px;
-      border-radius: 2px;
-    }
+    /* Hide old SVG pendant and number elements */
+    .pendant-svg { display: none; }
+    .placard-number { display: none; }
+    .placard-top { display: none; }
+    .placard-body { display: none; }
 
-
-    /* ── Pendant Light ── */
-    /* Cable drops from the top of the section */
-    .pendant-cable {
-      /* SVG pendant lamp */
-    }
-
-    .pendant-svg {
-      width: 100px;
-      height: 180px;
-      display: block;
-      margin: 0 auto;
-      overflow: visible;
-      flex-shrink: 0;
-    }
-
-    .placard-base-REMOVED {
-      width: 56px;
-      height: 7px;
-      border-radius: 4px;
-      opacity: 0.25;
-    }
-    .placard-1 .placard-base { background: var(--cfg-navy); }
-    .placard-2 .placard-base { background: var(--cfg-teal); }
-    .placard-3 .placard-base { background: var(--cfg-teal); }
-
-    .placard-table-line {
-      width: 100%;
-      max-width: 900px;
-      margin: 32px auto 0;
-      height: 2px;
-      background: linear-gradient(to right, transparent, var(--border), var(--border), transparent);
-      position: relative;
-    }
-    .placard-table-line::before {
-      content: 'EXPERIENCE TABLE';
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      color: var(--border);
-      white-space: nowrap;
-    }
+    .placard-table-line { display: none; }
 
     /* ===== GENIUS BAR ===== */
     .genius-bar {
@@ -1364,7 +1511,7 @@
     .intel-select option { background: #fff; color: #111; }
 
     .intel-select:focus,
-    .intel-input:focus { border-color: var(--cfg-coral); box-shadow: 0 0 0 3px rgba(240,122,90,0.15); }
+    .intel-input:focus { border-color: var(--cfg-coral); box-shadow: 0 0 0 3px rgba(236,138,1,0.15); }
 
     .intel-input::placeholder { color: rgba(200,215,255,0.4); }
 
@@ -1384,10 +1531,10 @@
       justify-content: center;
       gap: 8px;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 20px rgba(240,122,90,0.3);
+      box-shadow: 0 0 20px rgba(236,138,1,0.3);
     }
 
-    .intel-btn:hover { background: #E8553E; box-shadow: 0 0 28px rgba(240,122,90,0.5); }
+    .intel-btn:hover { background: #d47a00; box-shadow: 0 0 28px rgba(236,138,1,0.5); }
 
     .intel-result-wrap {
       background: rgba(0,0,0,0.2);
@@ -2035,6 +2182,332 @@
     }
     .demodrop-activate-btn:hover { background: #09c99a; }
     /* ============================================================
+       AI BUILDER PAGE — GENIUS BAR STYLE
+    ============================================================ */
+    .aib-section {
+      min-height: calc(100vh - 60px);
+      background: var(--bg-page);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+    }
+
+    .aib-inner {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 64px;
+      max-width: 1100px;
+      width: 100%;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .aib-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* ── Portrait column ── */
+    .aib-portrait-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      position: sticky;
+      top: 80px;
+    }
+    .aib-portrait-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+    }
+    .aib-portrait {
+      width: 100%;
+      border-radius: 24px;
+      display: block;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .aib-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(236,138,1,0.92);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .aib-intro {
+      text-align: center;
+      max-width: 320px;
+    }
+    .aib-intro-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .aib-intro-role {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #EC8A01;
+      margin-bottom: 12px;
+    }
+    .aib-intro-bio {
+      font-size: 15px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+    }
+
+    /* ── iPad form column ── */
+    .aib-form-col {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .aib-ipad {
+      width: 100%;
+      max-width: 560px;
+      background: #1a1a2e;
+      border-radius: 28px;
+      box-shadow: 0 32px 96px rgba(0,0,0,0.7),
+                  0 0 0 1px rgba(255,255,255,0.08),
+                  inset 0 1px 0 rgba(255,255,255,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .aib-ipad-chrome {
+      background: #141420;
+      padding: 14px 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .aib-ipad-camera {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2a2a3e;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .aib-ipad-screen {
+      padding: 28px 32px 24px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .aib-ipad-bar {
+      background: #141420;
+      padding: 12px 0;
+      display: flex;
+      justify-content: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .aib-ipad-bar::after {
+      content: '';
+      display: block;
+      width: 120px;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+    }
+
+    /* ── Screen header ── */
+    .aib-screen-header {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .aib-screen-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #EC8A01;
+      margin-bottom: 16px;
+    }
+    .aib-screen-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .aib-screen-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+    }
+
+    /* ── Form fields ── */
+    .aib-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .aib-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 500px) {
+      .aib-field-row { grid-template-columns: 1fr; }
+    }
+    .aib-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .aib-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .aib-input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 15px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .aib-input::placeholder { color: rgba(255,255,255,0.25); }
+    .aib-input:focus {
+      border-color: #EC8A01;
+      background: rgba(236,138,1,0.06);
+    }
+    .aib-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* ── Interest chips ── */
+    .aib-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .aib-chip {
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Inter', sans-serif;
+    }
+    .aib-chip:hover {
+      border-color: #EC8A01;
+      color: #EC8A01;
+      background: rgba(236,138,1,0.08);
+    }
+    .aib-chip.selected {
+      border-color: #EC8A01;
+      background: rgba(236,138,1,0.15);
+      color: #EC8A01;
+    }
+
+    /* ── Submit button ── */
+    .aib-submit {
+      width: 100%;
+      padding: 14px;
+      background: #EC8A01;
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 20px rgba(236,138,1,0.35);
+      margin-top: 4px;
+    }
+    .aib-submit:hover {
+      background: #d47a00;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(236,138,1,0.45);
+    }
+    .aib-submit:active { transform: translateY(0); }
+    .aib-privacy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── Success state ── */
+    .aib-success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 32px 0;
+      gap: 12px;
+    }
+    .aib-success-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(11,234,181,0.15);
+      border: 2px solid #0BEAB5;
+      color: #0BEAB5;
+      font-size: 24px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .aib-success-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .aib-success-body {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      max-width: 320px;
+    }
+    .aib-back-btn {
+      margin-top: 8px;
+      padding: 10px 24px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.7);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease;
+    }
+    .aib-back-btn:hover { background: rgba(255,255,255,0.1); }
+
+    /* ============================================================
        ROOM LAYOUT — Full-width step-by-step design
     ============================================================ */
 
@@ -2398,7 +2871,7 @@
     }
     .intel-field-group select:focus,
     .intel-field-group input:focus {
-      border-color: rgba(240,122,90,0.5) !important;
+      border-color: rgba(236,138,1,0.5) !important;
     }
 
     /* Table 3 chat bubbles */
@@ -2640,10 +3113,10 @@
       background: conic-gradient(
         from var(--border-angle, 0deg),
         transparent 0deg,
-        #F07A5A 60deg,
+        #EC8A01 60deg,
         transparent 120deg,
         transparent 240deg,
-        #F07A5A 300deg,
+        #EC8A01 300deg,
         transparent 360deg
       );
     }
@@ -2694,6 +3167,30 @@
       0%   { transform: translate(0,0) scale(1); opacity: 1; }
       100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
     }
+  /* === GHL VOICE AI WIDGET OVERRIDES === */
+  /* Hide the avatar photo from the GHL widget */
+  [data-widget-id="69b2e92d6a7fada2ec2e45f7"] .hl-chat-widget-avatar,
+  .hl-chat-widget-avatar,
+  #chat-widget-container .hl-chat-widget-avatar img,
+  #chat-widget-container img[alt="Avatar"] {
+    display: none !important;
+  }
+  /* Style the widget container to blend with the dark site */
+  #chat-widget-container {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  /* Teal call button override (in case GHL injects its own colour) */
+  #chat-widget-container .hl-chat-widget-call-btn,
+  #chat-widget-container button[class*="call"] {
+    background-color: #0BEAB5 !important;
+    border-color: #0BEAB5 !important;
+  }
+  /* Remove the "Powered by" branding padding if needed */
+  #chat-widget-container .hl-chat-widget-powered {
+    opacity: 0.4;
+    font-size: 11px;
+  }
   </style>
 </head>
 <body>
@@ -2707,28 +3204,69 @@
        SLIDING DOORS ENTRANCE
   ============================================================ -->
     <div id="entrance">
-      <canvas id="door-canvas"></canvas>
-    <div class="entrance-content">
-      <div class="entrance-logo-wrap">
-        <div class="entrance-logo-mark">
+      <!-- Legacy canvas (hidden) -->
+      <canvas id="door-canvas" style="display:none"></canvas>
+
+      <!-- Interior background — the lab seen through the glass -->
+      <div id="entrance-interior"></div>
+
+      <!-- Building facade vignette -->
+      <div id="entrance-facade"></div>
+
+      <!-- Ground reflection strip -->
+      <div id="entrance-ground"></div>
+
+      <!-- Signage bar at top -->
+      <div id="entrance-signage">
+        <div class="signage-logo-mark">
           <svg viewBox="0 0 20 20"><path d="M10 2L2 7v6l8 5 8-5V7L10 2zm0 2.5L16 8l-6 3.75L4 8l6-3.5z"/></svg>
         </div>
-        <span class="entrance-logo-text">ClickFlow Grow</span>
+        <span class="signage-logo-text">ClickFlow Grow &mdash; AI Lab</span>
       </div>
-      <div class="entrance-eyebrow">Welcome to the AI Lab</div>
-      <h1 class="entrance-headline">See what AI can do<br/>for your business.</h1>
-      <p class="entrance-sub">Have a play. No commitment, no jargon — just you and the technology.</p>
-      <button class="btn-enter" id="enterBtn">
-        Enter the Lab
-        <span class="arrow">→</span>
-      </button>
+
+      <!-- Glass door panels -->
+      <div id="door-panels">
+        <div class="door-panel left" id="door-left">
+          <div class="door-glass"></div>
+          <div class="door-reflection"></div>
+          <div class="door-frame"></div>
+          <div class="door-rail-top"></div>
+          <div class="door-rail-bottom"></div>
+          <div class="door-handle"></div>
+        </div>
+        <div class="door-panel right" id="door-right">
+          <div class="door-glass"></div>
+          <div class="door-reflection"></div>
+          <div class="door-frame"></div>
+          <div class="door-rail-top"></div>
+          <div class="door-rail-bottom"></div>
+          <div class="door-handle"></div>
+        </div>
+      </div>
+
+      <!-- Centre seam glow -->
+      <div id="door-seam"></div>
+
+      <!-- CTA overlay -->
+      <div class="entrance-content">
+        <div class="entrance-cta-pill">
+          <div class="entrance-eyebrow">Welcome to the AI Lab</div>
+          <h1 class="entrance-headline">See what AI can do<br>for your business.</h1>
+          <p class="entrance-sub">No commitment, no jargon — just you and the technology.</p>
+          <button class="btn-enter" id="enterBtn">
+            Enter the Lab
+            <span class="arrow">→</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="entrance-accent"></div>
-  </div>
 
   <!-- ============================================================
        MAIN LAB CONTENT
   ============================================================ -->
+  <!-- Warm amber wash overlay — bridges entrance warmth to lab coolness -->
+  <div id="entry-wash"></div>
+
   <div id="main-content">
 
     <!-- ============================================================
@@ -2746,11 +3284,12 @@
           <span class="nav-logo-text">ClickFlow Grow</span>
         </a>
         <div class="nav-links">
+          <a href="#" onclick="event.preventDefault(); showView('lobby')" class="nav-link">Home</a>
           <a href="#" onclick="event.preventDefault(); showView('table-1')" class="nav-link">AI Receptionist</a>
           <a href="#" onclick="event.preventDefault(); showView('table-2')" class="nav-link">AI Prospecting</a>
           <a href="#" onclick="event.preventDefault(); showView('table-3')" class="nav-link">AI Workflows</a>
         </div>
-        <a href="#" class="nav-cta">Speak to an AI Builder →</a>
+        <a href="#" onclick="event.preventDefault(); showView('ai-builder')" class="nav-cta">Speak to an AI Builder →</a>
       </div>
     </nav>
 
@@ -2762,7 +3301,7 @@
         <p class="hero-sub reveal">Three hands-on experiences built for real business owners. Have a play — we think you'll be surprised.</p>
         <div class="hero-actions reveal">
           <a href="#" onclick="event.preventDefault(); document.getElementById('view-lobby').scrollIntoView({behavior:'smooth', block:'end'})" class="btn-primary">Explore the Tables ↓</a>
-          <a href="#" class="btn-secondary">Speak to an AI Builder</a>
+          <a href="#" onclick="event.preventDefault(); showView('ai-builder')" class="btn-secondary">Speak to an AI Builder</a>
         </div>
       </div>
     </section>
@@ -2776,98 +3315,43 @@
 
       <div class="placard-row">
 
-        <!-- Table 1 — AI Receptionist -->
+        <!-- Table 01 — AI Receptionist -->
         <a href="#" onclick="event.preventDefault(); showView('table-1')" class="placard-wrap placard-1">
-          <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-            <!-- Cable -->
-            <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
-            <!-- Ceiling rose -->
-            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#0F2D60"/>
-            <!-- Dome shade: narrow at top, wide bowl at bottom -->
-            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#0F2D60"/>
-            <!-- Inner rim highlight -->
-            <ellipse cx="50" cy="140" rx="28" ry="5" fill="#1a4080" opacity="0.8"/>
-            <!-- Light glow cone below shade -->
-            <defs>
-              <radialGradient id="glow1" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stop-color="#0F2D60" stop-opacity="0.18"/>
-                <stop offset="100%" stop-color="#0F2D60" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow1)"/>
-          </svg>
+          <div class="station-accent-bar"></div>
+          <img src="table01_surface.jpg" alt="AI Receptionist experience station" class="station-photo">
           <div class="placard-card">
-            <div class="placard-top">
-              <div class="placard-table-label">Table</div>
-              <div class="placard-number">01</div>
-              <div class="placard-station-name">AI Receptionist</div>
-            </div>
-            <div class="placard-body">
-              <div class="placard-desc">Hear AI answer a call for your business — 24 hours a day, 7 days a week.</div>
-              <div class="placard-cta">Visit this table →</div>
-            </div>
+            <div class="placard-table-label">Table 01 &nbsp;&middot;&nbsp; AI Receptionist</div>
+            <div class="placard-station-name">Your AI answers every call.</div>
+            <div class="placard-desc">Hear AI handle a real call for a business just like yours — 24 hours a day, 7 days a week. No scripts. No hold music.</div>
+            <div class="placard-cta">Step up to this table &nbsp;&rarr;</div>
           </div>
         </a>
 
-        <!-- Table 2 — AI Prospecting -->
+        <!-- Table 02 — AI Prospecting -->
         <a href="#" onclick="event.preventDefault(); showView('table-2')" class="placard-wrap placard-2">
-          <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-            <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
-            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#0BEAB5"/>
-            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#0BEAB5"/>
-            <ellipse cx="50" cy="140" rx="28" ry="5" fill="#F7D060" opacity="0.8"/>
-            <defs>
-              <radialGradient id="glow2" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stop-color="#0BEAB5" stop-opacity="0.18"/>
-                <stop offset="100%" stop-color="#0BEAB5" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow2)"/>
-          </svg>
+          <div class="station-accent-bar"></div>
+          <img src="table02_surface.jpg" alt="AI Prospecting experience station" class="station-photo">
           <div class="placard-card">
-            <div class="placard-top">
-              <div class="placard-table-label">Table</div>
-              <div class="placard-number">02</div>
-              <div class="placard-station-name">AI Prospecting</div>
-            </div>
-            <div class="placard-body">
-              <div class="placard-desc">Find the prospects who are ready to buy — before your competitors do.</div>
-              <div class="placard-cta">Visit this table →</div>
-            </div>
+            <div class="placard-table-label">Table 02 &nbsp;&middot;&nbsp; AI Prospecting</div>
+            <div class="placard-station-name">Find who's ready to buy — today.</div>
+            <div class="placard-desc">Your AI scans the web for buying signals and tells you exactly who to call, and why they'll listen. Enter any company and watch it work.</div>
+            <div class="placard-cta">Step up to this table &nbsp;&rarr;</div>
           </div>
         </a>
 
-        <!-- Table 3 — AI Workflows -->
+        <!-- Table 03 — AI Workflows -->
         <a href="#" onclick="event.preventDefault(); showView('table-3')" class="placard-wrap placard-3">
-          <svg class="pendant-svg" viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
-            <line x1="50" y1="0" x2="50" y2="80" stroke="#aaa" stroke-width="1.5"/>
-            <ellipse cx="50" cy="80" rx="8" ry="4" fill="#0BEAB5"/>
-            <path d="M38,84 Q30,120 22,140 L78,140 Q70,120 62,84 Z" fill="#0BEAB5"/>
-            <ellipse cx="50" cy="140" rx="28" ry="5" fill="#3df5c9" opacity="0.8"/>
-            <defs>
-              <radialGradient id="glow3" cx="50%" cy="0%" r="100%">
-                <stop offset="0%" stop-color="#0BEAB5" stop-opacity="0.38"/>
-                <stop offset="100%" stop-color="#0BEAB5" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <ellipse cx="50" cy="150" rx="40" ry="50" fill="url(#glow3)"/>
-          </svg>
+          <div class="station-accent-bar"></div>
+          <img src="table03_surface.jpg" alt="AI Workflows experience station" class="station-photo">
           <div class="placard-card">
-            <div class="placard-top">
-              <div class="placard-table-label">Table</div>
-              <div class="placard-number">03</div>
-              <div class="placard-station-name">AI Workflows</div>
-            </div>
-            <div class="placard-body">
-              <div class="placard-desc">Your business booking, onboarding, and following up — while you sleep.</div>
-              <div class="placard-cta">Visit this table →</div>
-            </div>
+            <div class="placard-table-label">Table 03 &nbsp;&middot;&nbsp; AI Workflows</div>
+            <div class="placard-station-name">Your business runs while you sleep.</div>
+            <div class="placard-desc">Booking, onboarding, follow-up — all automated. Have a real conversation with the AI and complete an actual task. Right now.</div>
+            <div class="placard-cta">Step up to this table &nbsp;&rarr;</div>
           </div>
         </a>
 
       </div>
-
-      <div class="placard-table-line"></div>
     </section>
 
     </div><!-- /view-lobby -->
@@ -3010,86 +3494,129 @@
           <div class="personalised-text" id="m1-personalised-text" style="font-size:20px; line-height:1.7; color:#111;"></div>
           <audio id="m1-personalised-audio" style="display:none"></audio>
         </div>
-        <!-- Activation offer (shown after Layer 2 completes) -->
+        <!-- Email transcript CTA (shown after Layer 2 completes) -->
         <div id="m1-layer3" style="display:none; margin-top:40px;">
-          <div class="activation-panel" style="background: #ffffff; border:2px solid rgba(11,234,181,0.4); border-radius:20px; padding:40px; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
-            <div class="activation-headline" style="font-size:28px; font-weight:800; color:#111; margin-bottom:12px;">Activate your AI Receptionist</div>
-            <div class="activation-desc" style="font-size:18px; color: #555; margin-bottom:28px;">We'll fully install the agent, customise the script for your business, and give you a 14-day no-obligation trial of the live service.</div>
-            <div class="activation-pricing" style="display:flex; gap:32px; margin-bottom:28px;">
-              <div class="price-item">
-                <div class="price-label" style="font-size:14px; color: #888; margin-bottom:4px;">One-time setup</div>
-                <div class="price-value" style="font-size:36px; font-weight:900; color:#0BEAB5;">£600</div>
+          <div class="activation-panel" style="background: rgba(11,234,181,0.06); border:1px solid rgba(11,234,181,0.25); border-radius:16px; padding:28px 32px; box-shadow: none;">
+            <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:200px;">
+                <div style="font-size:13px; letter-spacing:0.1em; color:#0BEAB5; font-weight:700; margin-bottom:6px;">TAKE THIS WITH YOU</div>
+                <div style="font-size:17px; color:#fff; font-weight:600; margin-bottom:4px;">Get the call transcript</div>
+                <div style="font-size:15px; color:rgba(255,255,255,0.65);">We'll email you a summary of this demo — free.</div>
               </div>
-              <div class="price-divider" style="width:1px; background: #e0e0e0;"></div>
-              <div class="price-item">
-                <div class="price-label" style="font-size:14px; color: #888; margin-bottom:4px;">Monthly retainer</div>
-                <div class="price-value" style="font-size:36px; font-weight:900; color:#0BEAB5;">£499<span style="font-size:18px; font-weight:400;">/mo</span></div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <input class="email-input" id="m1-email" type="email" placeholder="your@email.co.uk" style="padding:12px 16px; border-radius:10px; border:1px solid rgba(11,234,181,0.35); background:rgba(255,255,255,0.06); color:#fff; font-size:15px; font-family:inherit; outline:none; min-width:220px;" />
+                <button class="send-btn" id="m1-send-btn" style="padding:12px 22px; font-size:15px; white-space:nowrap; border-radius:10px;">Send Transcript</button>
               </div>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:28px;">
-              <div style="color: #333; font-size:16px;">✓ Full installation &amp; script customisation</div>
-              <div style="color: #333; font-size:16px;">✓ 14-day no-obligation live trial</div>
-              <div style="color: #333; font-size:16px;">✓ One-to-one strategy call with an AI Builder</div>
-              <div style="color: #333; font-size:16px;">✓ Ongoing monitoring &amp; support</div>
-            </div>
-            <a href="#" class="btn-activate" id="m1-activate-btn" style="background:#0BEAB5; color:#060d1a; font-size:18px; padding:16px 40px; border-radius:12px; font-weight:800; display:inline-block; text-decoration:none;">Activate for £600 →</a>
-            <div style="margin-top:12px; font-size:14px; color: #aaa;">Secure payment via Stripe. Cancel anytime after the trial.</div>
-          </div>
-        </div>
-        <!-- Stage 3: Build it for real -->
-        <div id="m1-stage3-card" style="display:none; margin-top:32px;">
-          <div style="background:#ffffff; border:2px solid rgba(11,234,181,0.4); border-radius:20px; padding:36px; box-shadow:0 4px 32px rgba(0,0,0,0.25);">
-            <div style="font-size:13px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:10px;">STAGE 3 — SEE IT TRAINED ON YOUR BUSINESS</div>
-            <h3 style="font-size:24px; font-weight:800; color:#111; margin:0 0 12px;">Want Aria trained on your actual business?</h3>
-            <p style="font-size:17px; color:#555; margin:0 0 24px; line-height:1.6;">Enter your website URL. We'll scrape your site, build a knowledge base, and show you a live AI receptionist that already knows your services, your hours, and your FAQs.</p>
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
-              <input type="url" id="m1-website-url"
-                placeholder="https://yourbusiness.com"
-                style="flex:1; min-width:220px; padding:14px 18px; border-radius:10px; border:2px solid rgba(11,234,181,0.35);
-                       background:#f9f9fb; color:#111; font-size:16px; font-family:inherit; outline:none;" />
-              <button id="m1-build-btn"
-                style="padding:14px 28px; border-radius:10px; background:#0BEAB5; color:#060d1a;
-                       font-size:16px; font-weight:800; border:none; cursor:pointer; font-family:inherit; white-space:nowrap;">
-                Build my AI →
-              </button>
-            </div>
-            <div id="m1-build-status" style="margin-top:14px; font-size:15px; color:#555; min-height:22px;"></div>
-            <!-- GHL chat widget will be injected here -->
-            <div id="m1-ghl-widget-wrap" style="display:none; margin-top:28px; border-radius:14px; overflow:hidden; border:1px solid rgba(11,234,181,0.25);"></div>
           </div>
         </div>
         <div class="room-scroll-nudge" style="color:#0BEAB5; margin-top:32px;"><span class="nudge-arrow"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></span>
-          Scroll down for Step 3
+          Scroll down to go deeper
         </div>
       </div>
     </div>
 
-    <!-- STEP 3: Take it with you + CTA -->
+    <!-- STEP 3: Live Voice Demo -->
     <div class="room-step reveal" id="t1-step3" style="background: linear-gradient(180deg, #071525 0%, #060d1a 100%);">
       <div class="room-step-header reveal reveal-delay-1">
         <div class="room-step-badge" style="background: rgba(11,234,181,0.15); color:#0BEAB5; border-color: rgba(11,234,181,0.3);">Step 3 of 3</div>
-        <h2 class="room-step-title">Take this experience with you</h2>
-        <p class="room-step-desc">Enter your email and we will send you a summary of this interaction — including the call transcript and a personalised proposal for your business.</p>
+        <h2 class="room-step-title">Talk to Aria — live, right now</h2>
+        <p class="room-step-desc">No setup. No form. Just click the button below and Aria will introduce herself, ask you two quick questions about your business, and then answer your next words as if she's your own AI receptionist. In under 60 seconds, you'll hear exactly what your callers would hear.</p>
       </div>
       <div class="room-step-body reveal reveal-delay-2">
-        <div class="t1-email-area" style="background:#ffffff; border-radius:20px; padding:40px; max-width:560px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3); border:1px solid rgba(11,234,181,0.2);">
-          <div class="takeaway-icon email-pulse" id="m1-email-icon" style="width:64px; height:64px; font-size:28px; background:#0BEAB5; color:#060d1a; border-radius:16px; display:flex; align-items:center; justify-content:center; margin:0 auto 24px;">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+
+        <!-- Step 3: Voice-first layout -->
+        <div id="t1-dd-form" style="max-width:640px; margin:0 auto;">
+
+          <!-- PRIMARY: Voice widget (hero action) -->
+          <div style="background: linear-gradient(135deg, #060d1a, #0a1e35); border:2px solid rgba(11,234,181,0.35); border-radius:24px; padding:44px 36px; text-align:center; margin-bottom:24px;">
+            <div style="width:80px; height:80px; background:rgba(11,234,181,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; border:2px solid rgba(11,234,181,0.3); box-shadow:0 0 40px rgba(11,234,181,0.15);">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="#0BEAB5"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+            </div>
+            <div style="font-size:22px; font-weight:800; color:#fff; margin-bottom:10px;">Talk to Aria — live</div>
+            <div style="font-size:16px; color:rgba(255,255,255,0.65); margin-bottom:28px; max-width:400px; margin-left:auto; margin-right:auto; line-height:1.6;">Aria will ask you two quick questions, then immediately answer as your own AI receptionist.</div>
+            <!-- GHL Voice AI Widget (live) -->
+            <div id="t1-ghl-voice-widget" style="display:flex; justify-content:center; align-items:center; min-height:80px;"></div>
+            <script
+              src="https://beta.leadconnectorhq.com/loader.js"
+              data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
+              data-widget-id="69b2e92d6a7fada2ec2e45f7">
+            </script>
           </div>
-          <div class="takeaway-form" style="display:flex; gap:12px; max-width:480px; margin:0 auto;">
-            <input class="email-input" id="m1-email" type="email" placeholder="your@email.co.uk" style="flex:1; font-size:17px; padding:14px 18px; background:#f5f5f7; border:1px solid #ddd; color:#111;" />
-            <button class="send-btn" id="m1-send-btn" style="font-size:17px; padding:14px 24px; white-space:nowrap;">Send Summary</button>
+
+          <!-- SECONDARY: Optional website context (collapsed by default) -->
+          <details style="margin-bottom:24px;">
+            <summary style="cursor:pointer; font-size:14px; color:rgba(11,234,181,0.8); font-weight:700; letter-spacing:0.06em; list-style:none; display:flex; align-items:center; gap:8px; padding:12px 0;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+              Want a written summary too? Enter your details below
+            </summary>
+            <div style="background: rgba(255,255,255,0.03); border:1px solid rgba(11,234,181,0.15); border-radius:16px; padding:28px; margin-top:12px;">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+            <div>
+              <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.55); letter-spacing:0.08em; margin-bottom:8px;">YOUR BUSINESS NAME</div>
+              <input id="t1-dd-name" type="text" placeholder="e.g. Apex Plumbers" value=""
+                style="width:100%; padding:13px 16px; border-radius:10px; border:1px solid rgba(11,234,181,0.3); background:rgba(255,255,255,0.06); color:#fff; font-size:16px; font-family:inherit; outline:none; box-sizing:border-box;" />
+            </div>
+            <div>
+              <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.55); letter-spacing:0.08em; margin-bottom:8px;">YOUR WEBSITE</div>
+              <input id="t1-dd-url" type="text" placeholder="e.g. apexplumbers.co.uk"
+                style="width:100%; padding:13px 16px; border-radius:10px; border:1px solid rgba(11,234,181,0.3); background:rgba(255,255,255,0.06); color:#fff; font-size:16px; font-family:inherit; outline:none; box-sizing:border-box;" />
+            </div>
           </div>
+          <div style="margin-bottom:20px;">
+            <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.55); letter-spacing:0.08em; margin-bottom:8px;">YOUR INDUSTRY</div>
+            <select id="t1-dd-industry"
+              style="width:100%; padding:13px 16px; border-radius:10px; border:1px solid rgba(11,234,181,0.3); background:#0d1e35; color:#fff; font-size:16px; font-family:inherit; outline:none; cursor:pointer;">
+              <option value="plumbing">Plumbing &amp; Heating</option>
+              <option value="law">Legal Services</option>
+              <option value="estate agency">Estate Agency</option>
+              <option value="dental">Dental Practice</option>
+              <option value="accountancy">Accountancy</option>
+              <option value="restaurant">Restaurant / Hospitality</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <button id="t1-dd-btn"
+            style="width:100%; padding:16px; border-radius:12px; background:#0BEAB5; color:#060d1a; font-size:17px; font-weight:800; border:none; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:10px; transition:background 0.2s;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            Build My Personalised Demo
+          </button>
+              <div id="t1-dd-status" style="margin-top:14px; font-size:15px; color:rgba(255,255,255,0.6); text-align:center; min-height:22px;"></div>
+            </div>
+          </details>
+
+        <!-- DemoDrop result (hidden until built) -->
+        <div id="t1-dd-result" style="display:none; margin-top:32px; max-width:600px; margin-left:auto; margin-right:auto;">
+
+          <!-- Knowledge base card -->
+          <div style="background:rgba(11,234,181,0.06); border:1px solid rgba(11,234,181,0.25); border-radius:16px; padding:28px; margin-bottom:24px;">
+            <div style="font-size:11px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:12px;">YOUR AI RECEPTIONIST IS READY</div>
+            <div id="t1-dd-greeting" style="font-size:18px; color:#fff; line-height:1.6; font-style:italic; margin-bottom:16px;"></div>
+            <div id="t1-dd-services" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;"></div>
+            <div id="t1-dd-hours" style="font-size:14px; color:rgba(255,255,255,0.5);"></div>
+          </div>
+
+          <!-- Voice widget result (shown after DemoDrop build) -->
+          <div id="t1-voice-widget" style="margin-bottom:24px;" data-session-id="">
+            <div style="background:rgba(11,234,181,0.06); border:1px solid rgba(11,234,181,0.3); border-radius:16px; padding:20px; text-align:center;">
+              <div style="font-size:13px; letter-spacing:0.1em; color:#0BEAB5; font-weight:700; margin-bottom:8px;">YOUR AI RECEPTIONIST IS READY TO SPEAK</div>
+              <p style="font-size:14px; color:rgba(255,255,255,0.65); margin:0 0 4px; line-height:1.5;">Use the widget above to start your live voice demo with Aria.</p>
+            </div>
+          </div>
+
+        </div><!-- /t1-dd-result -->
+        </div><!-- /t1-dd-form -->
+
+        <!-- Book a call CTA (always visible in Step 3) -->
+        <div style="background:linear-gradient(135deg, rgba(11,234,181,0.1), rgba(8,145,178,0.1)); border:1px solid rgba(11,234,181,0.2); border-radius:20px; padding:36px; text-align:center; max-width:640px; margin:24px auto 0;">  
+          <div style="font-size:12px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:12px;">READY TO MAKE THIS YOURS?</div>
+          <h3 style="font-size:26px; font-weight:800; color:#fff; margin:0 0 12px;">Book a call with an AI Builder</h3>
+          <p style="font-size:16px; color:rgba(255,255,255,0.75); max-width:420px; margin:0 auto 24px; line-height:1.6;">They'll build a version of this for your actual business — your voice, your brand, your callers. Live within days.</p>
+          <button id="t1-book-cta" onclick="window._t1BookClick && window._t1BookClick()" style="padding:14px 36px; border-radius:50px; background:#EC8A01; color:#fff; font-size:17px; font-weight:800; border:none; cursor:pointer; font-family:inherit; transition:background 0.2s; box-shadow:0 0 0 0 rgba(236,138,1,0.5);">Book a Call with an AI Builder →</button>
         </div>
-        <!-- Full-width CTA -->
-        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(11,234,181,0.12), rgba(8,145,178,0.12)); border:1px solid rgba(11,234,181,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
-          <div style="font-size:14px; letter-spacing:0.12em; color:#0BEAB5; font-weight:700; margin-bottom:16px;">LIKE WHAT YOU HEAR?</div>
-          <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Speak to an AI Builder</h3>
-          <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">They will design a custom AI Receptionist around your business — your voice, your brand, your workflow.</p>
-          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px;">Talk to an AI Builder →</a>
-        </div>
+
         <!-- Next table -->
-        <div class="room-next-table" onclick="showView('table-2')" style="border-color: rgba(11,234,181,0.3);">
+        <div class="room-next-table" onclick="showView('table-2')" style="border-color: rgba(11,234,181,0.3); margin-top:40px;">
           <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">NEXT UP</div>
           <div style="font-size:20px; font-weight:700; color:white;">Table 02 — AI Prospecting →</div>
           <div style="font-size:16px; color: rgba(255,255,255,0.78); margin-top:4px;">Find the prospects who are ready to buy — before your competitors do.</div>
@@ -3105,54 +3632,54 @@
     <div id="view-table-2" class="lab-view">
 
     <!-- Table nav -->
-    <nav class="nav table-nav" style="--room-color: #F07A5A;">
+    <nav class="nav table-nav" style="--room-color: #EC8A01;">
       <div class="container">
         <button class="table-nav-back" onclick="showView('table-1')">← AI Receptionist</button>
         <div class="table-nav-breadcrumb">
-          <span class="table-nav-num" style="color:#F07A5A;">02</span> AI Prospecting
+          <span class="table-nav-num" style="color:#EC8A01;">02</span> AI Prospecting
         </div>
         <button class="table-nav-next" onclick="showView('table-3')">AI Workflows →</button>
       </div>
     </nav>
 
     <!-- Room colour stripe -->
-    <div style="height:4px; background: linear-gradient(90deg, #F07A5A, #E8553E); width:100%;"></div>
+    <div style="height:4px; background: linear-gradient(90deg, #EC8A01, #d47a00); width:100%;"></div>
 
     <!-- Progress dots -->
     <div class="room-progress">
-      <span class="room-dot" style="border-color:#F07A5A;"></span>
-      <span class="room-dot active" style="background:#F07A5A;"></span>
-      <span class="room-dot" style="border-color:#F07A5A; opacity:0.4;"></span>
+      <span class="room-dot" style="border-color:#EC8A01;"></span>
+      <span class="room-dot active" style="background:#EC8A01;"></span>
+      <span class="room-dot" style="border-color:#EC8A01; opacity:0.4;"></span>
     </div>
 
     <!-- STEP 0: Room hero -->
-    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(240,122,90,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #1a0800 50%, #060d1a 100%);">
+    <div class="room-hero" style="background: radial-gradient(ellipse at 40% 40%, rgba(236,138,1,0.12) 0%, transparent 60%), linear-gradient(160deg, #060d1a 0%, #1a0800 50%, #060d1a 100%);">
       <canvas class="hero-particle-canvas" data-color="240,122,90"></canvas>
-      <div class="room-hero-num" style="color: rgba(240,122,90,0.07);">02</div>
+      <div class="room-hero-num" style="color: rgba(236,138,1,0.07);">02</div>
       <div class="room-hero-content">
-        <div class="room-eyebrow" style="color:#F07A5A;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
+        <div class="room-eyebrow" style="color:#EC8A01;">Table 02 &nbsp;·&nbsp; AI Prospecting</div>
         <h1 class="room-headline"><span class="typewriter-text">Find the prospects who<br/>are ready to buy.</span></h1>
         <p class="room-subhead">Your AI Intelligence Engine scans the web for buying signals — news, events, and triggers that tell you exactly who to call today, and why they will listen.</p>
         <div class="room-hero-steps">
-          <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
-          <div class="hero-step-arrow" style="color:#F07A5A;">→</div>
-          <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">2</span><span>Enter a company</span></div>
-          <div class="hero-step-arrow" style="color:#F07A5A;">→</div>
-          <div class="hero-step"><span class="hero-step-num" style="background:#F07A5A; color:#060d1a;">3</span><span>Get your sales angle</span></div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#EC8A01; color:#060d1a;">1</span><span>Tell us what you sell</span></div>
+          <div class="hero-step-arrow" style="color:#EC8A01;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#EC8A01; color:#060d1a;">2</span><span>Enter a company</span></div>
+          <div class="hero-step-arrow" style="color:#EC8A01;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background:#EC8A01; color:#060d1a;">3</span><span>Get your sales angle</span></div>
         </div>
-        <button class="room-start-btn" style="background:#F07A5A; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Run intelligence search ↓</button>
+        <button class="room-start-btn" style="background:#EC8A01; color:#060d1a;" onclick="document.getElementById('t2-step1').scrollIntoView({behavior:'smooth'})">Run intelligence search ↓</button>
       </div>
     </div>
 
     <!-- STEP 1: Intelligence search form -->
     <div class="room-step reveal" id="t2-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0d0a00 100%);">
       <div class="room-step-header reveal reveal-delay-1">
-        <div class="room-step-badge" style="background: rgba(240,122,90,0.12); color:#F07A5A; border-color: rgba(240,122,90,0.3);">Step 1 of 2</div>
+        <div class="room-step-badge" style="background: rgba(236,138,1,0.12); color:#EC8A01; border-color: rgba(236,138,1,0.3);">Step 1 of 2</div>
         <h2 class="room-step-title">Tell us what you sell and who to investigate</h2>
         <p class="room-step-desc">Enter a company domain — any business you want to sell to. Our AI will scan for recent news, events, and signals that create a buying opportunity for you right now.</p>
       </div>
       <div class="room-step-body reveal reveal-delay-2">
-        <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(240,122,90,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
+        <div class="t2-form-card" style="background: #ffffff; border:2px solid rgba(236,138,1,0.35); border-radius:20px; padding:40px; max-width:640px; margin:0 auto; box-shadow: 0 4px 32px rgba(0,0,0,0.3);">
           <div class="intel-form">
             <div class="intel-field-group">
               <div class="intel-field-label" style="font-size:16px; color: #444; margin-bottom:8px; font-weight:600;">I sell...</div>
@@ -3171,7 +3698,7 @@
               <div class="intel-field-label" style="font-size:16px; color: #444; margin-bottom:8px; font-weight:600;">Investigate this company</div>
               <input class="intel-input" id="m2-domain" type="text" placeholder="e.g. tesco.com or burgerking.co.uk" style="font-size:17px; padding:14px 18px; background: #f8f8f8; border:1px solid #ddd; color:#111; border-radius:10px; width:100%; box-sizing:border-box;" />
             </div>
-            <button class="intel-btn" id="m2-search-btn" style="background:#F07A5A; color:#060d1a; font-size:18px; font-weight:800; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; margin-top:24px; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
+            <button class="intel-btn" id="m2-search-btn" style="background:#EC8A01; color:#060d1a; font-size:18px; font-weight:800; padding:16px 32px; border-radius:12px; border:none; cursor:pointer; margin-top:24px; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
               Run Intelligence Search
             </button>
@@ -3180,11 +3707,11 @@
 
         <!-- Results -->
         <div class="intel-result-wrap" id="m2-result-wrap" style="display:none; max-width:640px; margin:32px auto 0;">
-          <div style="background: rgba(240,122,90,0.08); border:1px solid rgba(240,122,90,0.25); border-radius:20px; padding:32px;">
-            <div style="font-size:13px; letter-spacing:0.12em; color:#F07A5A; font-weight:700; margin-bottom:16px;">INTELLIGENCE FOUND</div>
+          <div style="background: rgba(236,138,1,0.08); border:1px solid rgba(236,138,1,0.25); border-radius:20px; padding:32px;">
+            <div style="font-size:13px; letter-spacing:0.12em; color:#EC8A01; font-weight:700; margin-bottom:16px;">INTELLIGENCE FOUND</div>
             <div class="intel-result-text" id="m2-result-text" style="font-size:17px; line-height:1.75; color: #222;"></div>
-            <div class="intel-result-angle" style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(240,122,90,0.2);">
-              <div style="font-size:13px; letter-spacing:0.12em; color:#F07A5A; font-weight:700; margin-bottom:10px;">YOUR SALES ANGLE</div>
+            <div class="intel-result-angle" style="margin-top:24px; padding-top:24px; border-top:1px solid rgba(236,138,1,0.2);">
+              <div style="font-size:13px; letter-spacing:0.12em; color:#EC8A01; font-weight:700; margin-bottom:10px;">YOUR SALES ANGLE</div>
               <div class="angle-text" id="m2-angle-text" style="font-size:18px; line-height:1.7; color:#111; font-weight:600;"></div>
             </div>
           </div>
@@ -3192,8 +3719,8 @@
 
         <!-- Take it with you -->
         <div style="max-width:640px; margin:32px auto 0;">
-          <div style="background: #ffffff; border:1px solid rgba(240,122,90,0.3); border-radius:16px; padding:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow: 0 2px 16px rgba(0,0,0,0.2);">
-            <div style="width:52px; height:52px; background:#F07A5A; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <div style="background: #ffffff; border:1px solid rgba(236,138,1,0.3); border-radius:16px; padding:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; box-shadow: 0 2px 16px rgba(0,0,0,0.2);">
+            <div style="width:52px; height:52px; background:#EC8A01; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <svg viewBox="0 0 24 24" width="28" height="28" fill="#060d1a"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
             </div>
             <div style="flex:1; min-width:200px;">
@@ -3208,15 +3735,15 @@
         </div>
 
         <!-- CTA banner -->
-        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(240,122,90,0.10), rgba(240,122,90,0.08)); border:1px solid rgba(240,122,90,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
-          <div style="font-size:14px; letter-spacing:0.12em; color:#F07A5A; font-weight:700; margin-bottom:16px;">WANT THIS EVERY DAY?</div>
+        <div class="room-cta-banner" style="background: linear-gradient(135deg, rgba(236,138,1,0.10), rgba(236,138,1,0.08)); border:1px solid rgba(236,138,1,0.2); border-radius:20px; padding:48px; text-align:center; margin-top:48px;">
+          <div style="font-size:14px; letter-spacing:0.12em; color:#EC8A01; font-weight:700; margin-bottom:16px;">WANT THIS EVERY DAY?</div>
           <h3 style="font-size:32px; font-weight:800; color:white; margin-bottom:12px;">Build your AI Prospecting pipeline</h3>
           <p style="font-size:18px; color: rgba(255,255,255,0.82); max-width:480px; margin:0 auto 28px;">One of our AI Builders will show you exactly what a full pipeline looks like for your industry — and how many warm leads you could be generating every week.</p>
-          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#F07A5A; color:#060d1a; border:none;">Talk to an AI Builder →</a>
+          <a href="#" class="btn-genius" style="font-size:18px; padding:16px 40px; background:#EC8A01; color:#060d1a; border:none;">Talk to an AI Builder →</a>
         </div>
 
         <!-- Next table -->
-        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(240,122,90,0.3);">
+        <div class="room-next-table" onclick="showView('table-3')" style="border-color: rgba(236,138,1,0.3);">
           <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">NEXT UP</div>
           <div style="font-size:20px; font-weight:700; color:white;">Table 03 — AI Workflows →</div>
           <div style="font-size:16px; color: rgba(255,255,255,0.55); margin-top:4px;">Your business, booking and onboarding while you sleep.</div>
@@ -3433,19 +3960,192 @@
 
     </div><!-- /view-demodrop -->
 
+    <!-- ============================================================
+         VIEW: AI BUILDER — GENIUS BAR
+    ============================================================ -->
+    <div id="view-ai-builder" class="lab-view">
+    <nav class="nav table-nav">
+      <div class="container">
+        <button class="table-nav-back" onclick="showView('lobby')">← Back to the Lab</button>
+        <div class="table-nav-breadcrumb">Speak to an AI Builder</div>
+        <div></div>
+      </div>
+    </nav>
+
+    <section class="aib-section">
+      <div class="aib-inner">
+
+        <!-- LEFT — AI Builder portrait -->
+        <div class="aib-portrait-col">
+          <div class="aib-portrait-wrap">
+            <img src="ai_builder.jpg" alt="Your AI Builder" class="aib-portrait">
+            <div class="aib-badge">AI Builder</div>
+          </div>
+          <div class="aib-intro">
+            <div class="aib-intro-name">Hi, I'm Alex.</div>
+            <div class="aib-intro-role">Your AI Builder at ClickFlow Grow</div>
+            <div class="aib-intro-bio">I help business owners like you find out exactly what AI can do for their business — and then I build it. Fill in the form and I'll be in touch within the hour.</div>
+          </div>
+        </div>
+
+        <!-- RIGHT — iPad-style form -->
+        <div class="aib-form-col">
+          <div class="aib-ipad">
+            <!-- iPad chrome -->
+            <div class="aib-ipad-chrome">
+              <div class="aib-ipad-camera"></div>
+            </div>
+            <!-- iPad screen -->
+            <div class="aib-ipad-screen">
+              <div class="aib-screen-header">
+                <div class="aib-screen-logo">
+                  <svg viewBox="0 0 20 20" width="16" height="16"><path d="M10 2L2 7v6l8 5 8-5V7L10 2zm0 2.5L16 8l-6 3.75L4 8l6-3.5z" fill="#EC8A01"/></svg>
+                  ClickFlow Grow
+                </div>
+                <div class="aib-screen-title">How can we help?</div>
+                <div class="aib-screen-sub">Tell Alex a bit about your business and what you'd like to explore. He'll come back to you with a plan.</div>
+              </div>
+
+              <div class="aib-form" id="aib-form">
+                <div class="aib-field-row">
+                  <div class="aib-field">
+                    <label class="aib-label">Your name</label>
+                    <input class="aib-input" id="aib-name" type="text" placeholder="e.g. Sarah Johnson" autocomplete="name">
+                  </div>
+                  <div class="aib-field">
+                    <label class="aib-label">Your business</label>
+                    <input class="aib-input" id="aib-biz" type="text" placeholder="e.g. Apex Plumbers" autocomplete="organization">
+                  </div>
+                </div>
+                <div class="aib-field">
+                  <label class="aib-label">Email address</label>
+                  <input class="aib-input" id="aib-email" type="email" placeholder="e.g. sarah@apexplumbers.co.uk" autocomplete="email">
+                </div>
+                <div class="aib-field">
+                  <label class="aib-label">Phone number <span style="opacity:0.5">(optional)</span></label>
+                  <input class="aib-input" id="aib-phone" type="tel" placeholder="e.g. 07700 900123" autocomplete="tel">
+                </div>
+                <div class="aib-field">
+                  <label class="aib-label">What are you most interested in?</label>
+                  <div class="aib-chips" id="aib-chips">
+                    <button type="button" class="aib-chip" data-val="AI Receptionist">AI Receptionist</button>
+                    <button type="button" class="aib-chip" data-val="AI Prospecting">AI Prospecting</button>
+                    <button type="button" class="aib-chip" data-val="AI Workflows">AI Workflows</button>
+                    <button type="button" class="aib-chip" data-val="Not sure yet">Not sure yet</button>
+                    <button type="button" class="aib-chip" data-val="All of it">All of it</button>
+                  </div>
+                </div>
+                <div class="aib-field">
+                  <label class="aib-label">Anything else you'd like to say? <span style="opacity:0.5">(optional)</span></label>
+                  <textarea class="aib-input aib-textarea" id="aib-note" placeholder="e.g. We're a busy dental practice and we miss a lot of calls after hours…" rows="3"></textarea>
+                </div>
+                <button class="aib-submit" id="aib-submit">Send to Alex →</button>
+                <div class="aib-privacy">No spam. No sales pressure. Just a real conversation about what's possible.</div>
+              </div>
+
+              <!-- Success state -->
+              <div class="aib-success" id="aib-success" style="display:none">
+                <div class="aib-success-icon">✓</div>
+                <div class="aib-success-title">Alex has your message.</div>
+                <div class="aib-success-body">You'll hear from him within the hour. In the meantime, feel free to keep exploring the lab.</div>
+                <button class="aib-back-btn" onclick="showView('lobby')">← Back to the Lab</button>
+              </div>
+            </div>
+            <!-- iPad home bar -->
+            <div class="aib-ipad-bar"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    </div><!-- /view-ai-builder -->
+
   </div><!-- /main-content -->
 
   <script>
     // ============================================================
-    // CANVAS PERSPECTIVE DOOR ANIMATION
+    // GLASS DOOR ENTRANCE — CSS SLIDE ANIMATION
     // ============================================================
-    (function() {
-      const canvas = document.getElementById('door-canvas');
-      const ctx = canvas.getContext('2d');
-      const enterBtn = document.getElementById('enterBtn');
-      const entranceContent = document.querySelector('.entrance-content');
-      const entrance = document.getElementById('entrance');
+    window.addEventListener('load', function() { (function() {
+      const enterBtn    = document.getElementById('enterBtn');
+      const entrance    = document.getElementById('entrance');
       const mainContent = document.getElementById('main-content');
+      const doorLeft    = document.getElementById('door-left');
+      const doorRight   = document.getElementById('door-right');
+      const doorSeam    = document.getElementById('door-seam');
+      const interior    = document.getElementById('entrance-interior');
+      const entranceContent = document.querySelector('.entrance-content');
+
+      const entryWash = document.getElementById('entry-wash');
+      let opened = false;
+
+      enterBtn.addEventListener('click', function() {
+        if (opened) return;
+        opened = true;
+
+        // ── CINEMATIC WALK-IN SEQUENCE ──
+        //
+        // t=0      CTA fades out, seam hides
+        // t=0      Doors begin sliding apart (2.2s)
+        // t=0      Interior begins zooming in (walk-forward feel, 3.5s)
+        // t=1.4s   Warm amber wash fades IN over main content
+        // t=2.0s   Main content becomes visible (opacity 0→1)
+        // t=2.2s   Entrance begins dissolving away (opacity 1→0)
+        // t=2.8s   Amber wash begins fading OUT
+        // t=4.6s   Entrance element removed from DOM
+
+        // Step 1 — CTA pill and seam
+        entranceContent.classList.add('fade-out');
+        doorSeam.classList.add('hidden');
+
+        // Step 2 — Doors slide apart + interior zoom
+        doorLeft.classList.add('open');
+        doorRight.classList.add('open');
+        interior.classList.add('walk-in');   // zoom-forward class (added below)
+        interior.classList.add('doors-open'); // brighten
+
+        // Step 3 — Amber wash appears (warm bridge)
+        setTimeout(function() {
+          entryWash.classList.add('active');
+        }, 1400);
+
+        // Step 4 — Main content fades in
+        setTimeout(function() {
+          mainContent.classList.add('visible');
+        }, 2000);
+
+        // Step 5 — Entrance dissolves away
+        setTimeout(function() {
+          entrance.style.transition = 'opacity 0.8s ease';
+          entrance.style.opacity = '0';
+        }, 2200);
+
+        // Step 6 — Amber wash fades out (cool lab colour emerges)
+        setTimeout(function() {
+          entryWash.classList.remove('active');
+          entryWash.classList.add('fading');
+        }, 2800);
+
+        // Step 7 — Remove entrance from DOM
+        setTimeout(function() {
+          entrance.style.display = 'none';
+          entryWash.style.display = 'none';
+        }, 4600);
+      });
+
+      // Legacy canvas stub — kept so old references don't throw
+      const canvas = document.getElementById('door-canvas');
+      const ctx = canvas ? canvas.getContext('2d') : null;
+      function resize() {}
+      function drawDoor() {}
+      function drawBackground() {}
+      // end of stubs
+
+      // ── ORIGINAL CANVAS CODE BELOW (now unused) ──
+      if (false) { (function() {
+      const _enterBtn = null;
+      const _entrance = null;
+      const _mainContent = null;
 
       // Size canvas to full viewport
       function resize() {
@@ -3726,21 +4426,19 @@
         }
       }
 
-      // Initial static render
-      requestAnimationFrame(render);
+      // Draw the static closed-door state once on load — no loop
+      (function staticDraw() {
+        const W = canvas.width, H = canvas.height;
+        ctx.clearRect(0, 0, W, H);
+        drawBackground(0);
+        drawDoor('left', 0);
+        drawDoor('right', 0);
+      })();
 
-      enterBtn.addEventListener('click', () => {
-        if (animating) return;
-        // Fade out the text overlay
-        entranceContent.classList.add('fade-out');
-        // Start door animation after brief delay
-        setTimeout(() => {
-          animating = true;
-          startTime = null;
-          requestAnimationFrame(render);
-        }, 200);
-      });
-    })();
+      // Button click — start the animation loop
+      // (old enterBtn handler — dead code)
+    })(); } // end if(false) dead code block
+    })(); }); // end window.load wrapper
 
     // ============================================================
     // MODULE 1: AI RECEPTIONIST — INTERACTIVE LOGIC
@@ -3811,7 +4509,8 @@
       const transcriptEl = document.getElementById('m1-transcript');
       const layer2El     = document.getElementById('t1-step2');
       const layer3El     = document.getElementById('m1-layer3');
-      const micBtn       = document.getElementById('m1-mic-btn');
+      const micBtn       = document.getElementById('m1-biz-name-btn');
+      const bizNameInput = document.getElementById('m1-biz-name-input');
       const micTitle     = document.getElementById('m1-mic-title');
       const micSub       = document.getElementById('m1-mic-sub');
       const persResp     = document.getElementById('m1-personalised-response');
@@ -3991,49 +4690,28 @@
           loadIndustry(btn.dataset.industry);
         });
       });
-
-      // ── LAYER 2: MICROPHONE ─────────────────────────────────────
-      let recognition = null;
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-      micBtn.addEventListener('click', startListening);
-      micBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') startListening(); });
-
-      function startListening() {
-        if (layer2Done) return;
-        if (!SpeechRecognition) {
-          // Fallback: prompt for text input
-          const name = prompt('Please type your business name:');
-          if (name) handleBusinessName(name.trim());
-          return;
-        }
-        recognition = new SpeechRecognition();
-        recognition.lang = 'en-GB';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        micBtn.classList.add('listening');
-        micTitle.textContent = 'Listening...';
-        micSub.textContent = 'Say your business name now.';
-
-        recognition.onresult = (e) => {
-          const name = e.results[0][0].transcript;
+      // ── LAYER 2: BUSINESS NAME TEXT INPUT ────────────────────────────────
+      if (micBtn) {
+        micBtn.addEventListener('click', function() {
+          if (layer2Done) return;
+          const name = (bizNameInput ? bizNameInput.value : '').trim();
+          if (!name) {
+            if (bizNameInput) { bizNameInput.style.borderColor = '#ff4444'; bizNameInput.focus(); }
+            return;
+          }
+          if (bizNameInput) bizNameInput.style.borderColor = '';
           handleBusinessName(name);
-        };
-        recognition.onerror = () => {
-          micBtn.classList.remove('listening');
-          micTitle.textContent = 'Could not hear you — try again.';
-          micSub.textContent = 'Make sure your microphone is allowed.';
-        };
-        recognition.onend = () => {
-          micBtn.classList.remove('listening');
-        };
-        recognition.start();
+        });
+      }
+      if (bizNameInput) {
+        bizNameInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { if (micBtn) micBtn.click(); }
+        });
       }
 
       function handleBusinessName(name) {
         layer2Done = true;
-        micBtn.classList.remove('listening');
+        if (micBtn) micBtn.classList.remove('listening');
         micTitle.textContent = '"' + name + '"';
         micSub.textContent = 'Aria is responding...';
 
@@ -4165,11 +4843,7 @@
               // Show widget area — GHL embed code will be inserted here once bot is set up
               if (widgetWrap) {
                 widgetWrap.style.display = 'block';
-                widgetWrap.innerHTML = \`<div style="padding:40px; text-align:center; background:#f0fdf8; border-radius:14px;">
-                  <div style="font-size:40px; margin-bottom:16px;">🤖</div>
-                  <div style="font-size:20px; font-weight:700; color:#111; margin-bottom:8px;">Your AI is being built</div>
-                  <div style="font-size:16px; color:#555;">We are training Aria on <strong>\${url}</strong>.<br>Check your email in 60 seconds for your live demo link.</div>
-                </div>\`;
+                widgetWrap.innerHTML = '<div style="padding:40px; text-align:center; background:#f0fdf8; border-radius:14px;"><div style="font-size:40px; margin-bottom:16px;">&#x1F916;</div><div style="font-size:20px; font-weight:700; color:#111; margin-bottom:8px;">Your AI is being built</div><div style="font-size:16px; color:#555;">We are training Aria on <strong>' + url + '</strong>.<br>Check your email in 60 seconds for your live demo link.</div></div>';
                 widgetWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
               }
             }, 3000);
@@ -4477,6 +5151,9 @@
     })();
 
 
+  /* TABLE 01 STEP 3 handler is now lazy-inited inside showView('table-1') above */
+
+
   /* ============================================================
      PARTICLE FIELD + CURSOR GLOW
   ============================================================ */
@@ -4752,6 +5429,59 @@
       }, 380);
     }
 
+    // Lazy-init Table 01 Step 3 handler when table-1 becomes active
+    if (name === 'table-1' && !window._t1DdInited) {
+      window._t1DdInited = true;
+      setTimeout(() => {
+        const t1DdBtn      = document.getElementById('t1-dd-btn');
+        const t1DdName     = document.getElementById('t1-dd-name');
+        const t1DdUrl      = document.getElementById('t1-dd-url');
+        const t1DdIndustry = document.getElementById('t1-dd-industry');
+        const t1DdStatus   = document.getElementById('t1-dd-status');
+        const t1DdResult   = document.getElementById('t1-dd-result');
+        const t1DdGreeting = document.getElementById('t1-dd-greeting');
+        const t1DdServices = document.getElementById('t1-dd-services');
+        const t1DdHours    = document.getElementById('t1-dd-hours');
+        const t1VoiceBizName = document.getElementById('t1-voice-biz-name');
+        const t1VoiceBtnName = document.getElementById('t1-voice-btn-name');
+        if (!t1DdBtn) return;
+        // Pre-fill from Step 2 if available
+        const bizIn = document.getElementById('m1-biz-name-input');
+        if (bizIn && bizIn.value) t1DdName.value = bizIn.value;
+        t1DdBtn.addEventListener('click', async () => {
+          const name     = t1DdName.value.trim();
+          const url      = t1DdUrl.value.trim();
+          const industry = t1DdIndustry ? t1DdIndustry.value : 'business';
+          if (!name) { t1DdName.style.borderColor='#0BEAB5'; t1DdName.focus(); t1DdStatus.textContent='Please enter your business name.'; return; }
+          t1DdName.style.borderColor = '';
+          t1DdBtn.disabled = true;
+          t1DdBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="spin-icon"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Building your personalised demo...';
+          t1DdStatus.textContent = 'Scanning your business and building your AI receptionist...';
+          t1DdResult.style.display = 'none';
+          try {
+            const res = await fetch('/api/demodrop', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ business_name: name, website_url: url, industry: industry }) });
+            const kb = await res.json();
+            if (kb.error) throw new Error(kb.error);
+            t1DdGreeting.textContent = '\u201c' + (kb.greeting||'') + '\u201d';
+            t1DdServices.innerHTML = (kb.services||[]).map(s => '<span style="padding:5px 12px;background:rgba(11,234,181,0.12);border:1px solid rgba(11,234,181,0.3);border-radius:20px;font-size:13px;color:#0BEAB5;font-weight:600;">' + s + '</span>').join('');
+            t1DdHours.textContent = kb.hours ? '\u23f0 ' + kb.hours : '';
+            const displayName = kb.business_name || name;
+            if (t1VoiceBizName) t1VoiceBizName.textContent = 'Talk to Aria \u2014 ' + displayName;
+            if (t1VoiceBtnName) t1VoiceBtnName.textContent = displayName;
+            t1DdResult.style.display = 'block';
+            t1DdResult.scrollIntoView({ behavior:'smooth', block:'nearest' });
+            t1DdStatus.textContent = '';
+            t1DdBtn.disabled = false;
+            t1DdBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg> Rebuild Demo';
+          } catch(e) {
+            t1DdBtn.disabled = false;
+            t1DdBtn.innerHTML = 'Try Again';
+            t1DdStatus.textContent = 'Something went wrong \u2014 please try again.';
+          }
+        });
+      }, 400);
+    }
+
     // Fade in next after a brief pause
     setTimeout(() => {
       next.classList.add('active-view');
@@ -4804,6 +5534,215 @@
     } else {
       observeAll();
     }
+  })();
+  </script>
+
+  <!-- AI Builder page — chip selection + form submit -->
+  <script>
+  (function() {
+    // Chip toggle
+    document.querySelectorAll('.aib-chip').forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        chip.classList.toggle('selected');
+      });
+    });
+
+    // Form submit
+    var submitBtn = document.getElementById('aib-submit');
+    if (!submitBtn) return;
+
+    submitBtn.addEventListener('click', function() {
+      var name    = (document.getElementById('aib-name').value || '').trim();
+      var biz     = (document.getElementById('aib-biz').value || '').trim();
+      var email   = (document.getElementById('aib-email').value || '').trim();
+      var note    = (document.getElementById('aib-note').value || '').trim();
+      var chips   = Array.from(document.querySelectorAll('.aib-chip.selected')).map(function(c) { return c.dataset.val; });
+
+      if (!email || !email.includes('@')) {
+        document.getElementById('aib-email').focus();
+        document.getElementById('aib-email').style.borderColor = '#ff4444';
+        setTimeout(function() { document.getElementById('aib-email').style.borderColor = ''; }, 2000);
+        return;
+      }
+
+      submitBtn.textContent = 'Sending…';
+      submitBtn.disabled = true;
+
+      var tags = ['ai-lab-builder-enquiry', 'cfg-ai-lab-event'];
+      chips.forEach(function(c) { tags.push('interest-' + c.toLowerCase().replace(/\s+/g, '-')); });
+
+      fetch('/api/ghl-capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          name: name,
+          company: biz,
+          tags: tags,
+          source: 'CFG AI Lab — AI Builder Enquiry',
+          note: note
+        })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        document.getElementById('aib-form').style.display = 'none';
+        document.getElementById('aib-success').style.display = 'flex';
+      })
+      .catch(function() {
+        submitBtn.textContent = 'Try again';
+        submitBtn.disabled = false;
+      });
+    });
+  })();
+  </script>
+
+  <!-- Voice AI polling, session management, and AI Builder form auto-fill -->
+  <script>
+  (function() {
+    // ── Session ID: unique per page load, used to correlate the GHL webhook with this browser session
+    var _sessionId = 'alab-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+    window._ariaSessionId = _sessionId;
+
+    // ── Polling state
+    var _pollInterval = null;
+    var _pollReady    = false;
+    var _prefillData  = null;
+
+    // ── Start polling when the voice widget becomes visible
+    window._startAriaPoll = function() {
+      if (_pollInterval || _pollReady) return;
+      // Stamp the session ID onto the voice widget container (for GHL custom variable)
+      var widget = document.getElementById('t1-voice-widget');
+      if (widget) widget.setAttribute('data-session-id', _sessionId);
+
+      _pollInterval = setInterval(function() {
+        fetch('/api/poll-call-data?session_id=' + encodeURIComponent(_sessionId))
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (data.ready) {
+              _pollReady = true;
+              _prefillData = data;
+              clearInterval(_pollInterval);
+              _pollInterval = null;
+              _onCallDataReady(data);
+            }
+          })
+          .catch(function() {}); // silent fail — keep polling
+      }, 3000);
+    };
+
+    // ── Stop polling
+    window._stopAriaPoll = function() {
+      if (_pollInterval) { clearInterval(_pollInterval); _pollInterval = null; }
+    };
+
+    // ── Called when call data arrives — pulse the book CTA button
+    function _onCallDataReady(data) {
+      var bookBtn = document.getElementById('t1-book-cta');
+      if (bookBtn) {
+        // Pulse the button with a glowing amber animation
+        bookBtn.style.animation = 'none';
+        bookBtn.style.boxShadow = '0 0 0 0 rgba(236,138,1,0.8)';
+        bookBtn.style.transition = 'box-shadow 0.3s';
+        var pulseCount = 0;
+        var pulseTimer = setInterval(function() {
+          pulseCount++;
+          bookBtn.style.boxShadow = pulseCount % 2 === 0
+            ? '0 0 0 0 rgba(236,138,1,0.8)'
+            : '0 0 30px 10px rgba(236,138,1,0.4)';
+          if (pulseCount >= 6) clearInterval(pulseTimer);
+        }, 400);
+        // Keep a steady glow after the pulse
+        setTimeout(function() {
+          bookBtn.style.boxShadow = '0 0 20px 6px rgba(236,138,1,0.35)';
+        }, 2600);
+      }
+    }
+
+    // ── Book CTA click: navigate to AI Builder and pre-fill the form
+    window._t1BookClick = function() {
+      // Store prefill data for the AI Builder form
+      if (_prefillData) {
+        window._ariaPreFill = _prefillData;
+      }
+      if (typeof showView === 'function') showView('ai-builder');
+    };
+
+    // ── Voice button click: start the GHL widget (or show placeholder message)
+    window._t1VoiceClick = function() {
+      // Start polling immediately when they click the voice button
+      window._startAriaPoll();
+      var status = document.getElementById('t1-voice-status');
+      if (status) status.textContent = 'Connecting to Aria… (live widget coming soon)';
+      // TODO: When GHL widget ID is configured, inject the widget script here
+    };
+
+    // ── When AI Builder view loads, pre-fill the form if data is available
+    var _origShowView = window.showView;
+    if (typeof _origShowView === 'function') {
+      // Hook into showView to detect when ai-builder view is shown
+      // We use a MutationObserver on the view instead to avoid overriding showView
+    }
+
+    // ── MutationObserver: watch for ai-builder view becoming active
+    var _aibObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'class') {
+          var el = m.target;
+          if (el.id === 'view-ai-builder' && el.classList.contains('active-view')) {
+            _prefillAiBuilderForm();
+          }
+        }
+      });
+    });
+    var aibView = document.getElementById('view-ai-builder');
+    if (aibView) _aibObserver.observe(aibView, { attributes: true });
+
+    // ── Pre-fill the AI Builder form with data from the Aria call
+    function _prefillAiBuilderForm() {
+      var data = window._ariaPreFill || _prefillData;
+      if (!data) return;
+
+      var nameEl  = document.getElementById('aib-name');
+      var bizEl   = document.getElementById('aib-biz');
+      var emailEl = document.getElementById('aib-email');
+      var phoneEl = document.getElementById('aib-phone');
+
+      // Only pre-fill if the field is currently empty (don’t overwrite manual input)
+      if (nameEl  && !nameEl.value  && data.first_name) nameEl.value  = data.first_name + (data.last_name ? ' ' + data.last_name : '');
+      if (bizEl   && !bizEl.value   && data.company)    bizEl.value   = data.company;
+      if (emailEl && !emailEl.value && data.email)      emailEl.value = data.email;
+      if (phoneEl && !phoneEl.value && data.phone)      phoneEl.value = data.phone;
+
+      // Auto-select the AI Receptionist chip since they’ve just had that demo
+      var chips = document.querySelectorAll('.aib-chip');
+      chips.forEach(function(chip) {
+        if (chip.dataset.val === 'AI Receptionist') chip.classList.add('selected');
+      });
+
+      // Add a subtle highlight to show the fields were auto-filled
+      [nameEl, bizEl, emailEl, phoneEl].forEach(function(el) {
+        if (el && el.value) {
+          el.style.borderColor = '#EC8A01';
+          el.style.background  = 'rgba(236,138,1,0.08)';
+          setTimeout(function() {
+            el.style.borderColor = '';
+            el.style.background  = '';
+          }, 3000);
+        }
+      });
+
+      // Show a subtle banner above the form
+      var form = document.getElementById('aib-form');
+      if (form && !document.getElementById('aib-prefill-banner')) {
+        var banner = document.createElement('div');
+        banner.id = 'aib-prefill-banner';
+        banner.style.cssText = 'background:rgba(236,138,1,0.12); border:1px solid rgba(236,138,1,0.35); border-radius:12px; padding:12px 16px; margin-bottom:16px; font-size:14px; color:rgba(255,255,255,0.85); line-height:1.5;';
+        banner.innerHTML = '✨ <strong>Aria filled this in for you</strong> — your details from the demo call are already here. Just check them over and hit send.';
+        form.insertBefore(banner, form.firstChild);
+      }
+    }
+
   })();
   </script>
 
@@ -5179,13 +6118,81 @@
     document.querySelectorAll('.room-start-btn').forEach(btn => {
       btn.addEventListener('click', function(e) {
         const r = btn.getBoundingClientRect();
-        const color = btn.style.background.includes('F07A5A') ? '#F07A5A' : '#0BEAB5';
+        const color = btn.style.background.includes('EC8A01') ? '#EC8A01' : '#0BEAB5';
         burst(r.left + r.width/2, r.top + r.height/2, color);
       });
     });
   })();
 
-  </script>
+   </script>
 
+  <!-- GHL Widget Shadow DOM Style Injection — hides avatar and branding, styles to match site -->
+  <script>
+  (function() {
+    function injectWidgetStyles() {
+      var chatWidget = document.querySelector('chat-widget');
+      if (!chatWidget) return false;
+      var shadow = chatWidget.shadowRoot;
+      if (!shadow) return false;
+      var style = shadow.querySelector('style');
+      if (!style) return false;
+      // Check if already injected
+      if (style.textContent.indexOf('profile-picture-hidden') !== -1) return true;
+      style.textContent += `
+        /* AI Lab custom overrides — profile-picture-hidden */
+        .lc_text-widget--profile-picture { display: none !important; }
+        .lc_text-widget--agency-branding { display: none !important; }
+        .lc_text-widget--embedded {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+        .lc_text-widget--horizontal {
+          background: transparent !important;
+          padding: 0 !important;
+          gap: 0 !important;
+        }
+        .lc_text-widget--text {
+          color: #ffffff !important;
+          font-weight: 700 !important;
+          font-size: 18px !important;
+        }
+        .icon.widget-open-icon {
+          background-color: #0BEAB5 !important;
+          border-color: #0BEAB5 !important;
+        }
+        .icon.widget-open-icon img.circular-image {
+          filter: brightness(0) invert(1) !important;
+        }
+      `;
+      return true;
+    }
+
+    // Try immediately, then poll until the widget loads
+    if (!injectWidgetStyles()) {
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        if (injectWidgetStyles() || attempts > 30) {
+          clearInterval(timer);
+        }
+      }, 300);
+    }
+
+    // Also start polling when the user scrolls into Step 3
+    var step3 = document.getElementById('t1-step3');
+    if (step3 && window.IntersectionObserver) {
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            window._startAriaPoll && window._startAriaPoll();
+            injectWidgetStyles();
+          }
+        });
+      }, { threshold: 0.3 });
+      obs.observe(step3);
+    }
+  })();
+  </script>
 </body>
 </html>

@@ -6,11 +6,12 @@ Handles:
 """
 
 import os, json, re
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from openai import OpenAI
 
-app = Flask(__name__)
+STATIC_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='')
 CORS(app)
 
 client = OpenAI()  # uses OPENAI_API_KEY + base_url from environment
@@ -268,20 +269,43 @@ def ghl_mcp(tool_name, payload):
 
 @app.route('/api/ghl-capture', methods=['POST'])
 def ghl_capture():
-    body  = request.get_json(force=True)
-    email = (body.get('email') or '').strip().lower()
-    table = (body.get('table') or 'receptionist').lower()
-    tag   = body.get('tag') or f'ai-lab-{table}'
+    body    = request.get_json(force=True)
+    email   = (body.get('email') or '').strip().lower()
+    table   = (body.get('table') or 'receptionist').lower()
+    name    = (body.get('name') or '').strip()
+    company = (body.get('company') or '').strip()
+    note    = (body.get('note') or '').strip()
+    source  = (body.get('source') or 'CFG AI Lab Event').strip()
+
+    # Support both a single tag string and a tags array
+    tags_input = body.get('tags')
+    if isinstance(tags_input, list):
+        tags = tags_input
+    elif tags_input:
+        tags = [str(tags_input)]
+    else:
+        tags = [f'ai-lab-{table}', 'cfg-ai-lab-event']
 
     if not email or '@' not in email:
         return jsonify({'success': False, 'error': 'Invalid email'}), 400
 
-    # 1. Upsert contact in GHL with tags
-    contact_data, err = ghl_mcp('contacts_upsert-contact', {
+    # Build contact payload
+    contact_payload = {
         'email': email,
-        'tags': [tag, 'cfg-ai-lab-event'],
-        'source': 'CFG AI Lab Event',
-    })
+        'tags': tags,
+        'source': source,
+    }
+    if name:
+        # Split name into first/last if possible
+        parts = name.split(' ', 1)
+        contact_payload['firstName'] = parts[0]
+        if len(parts) > 1:
+            contact_payload['lastName'] = parts[1]
+    if company:
+        contact_payload['companyName'] = company
+
+    # 1. Upsert contact in GHL with tags
+    contact_data, err = ghl_mcp('contacts_upsert-contact', contact_payload)
     if err:
         app.logger.error(f'GHL upsert error: {err}')
         return jsonify({'success': False, 'error': f'Contact error: {err}'}), 500
@@ -295,9 +319,11 @@ def ghl_capture():
         app.logger.error(f'No contact ID returned: {contact_data}')
         return jsonify({'success': False, 'error': 'Could not retrieve contact ID'}), 500
 
-    # 2. Send follow-up email via GHL conversations (using emailBody — confirmed working)
-    email_body = EMAIL_BODIES.get(table, EMAIL_BODIES.get('receptionist', ''))
-    subject    = EMAIL_SUBJECTS.get(table, 'Thanks for visiting the CFG AI Lab')
+    # 2. Send follow-up email via GHL conversations
+    # Map table keys to email templates
+    table_key = table if table in EMAIL_BODIES else 'receptionist'
+    email_body = EMAIL_BODIES.get(table_key, EMAIL_BODIES.get('receptionist', ''))
+    subject    = EMAIL_SUBJECTS.get(table_key, 'Thanks for visiting the CFG AI Lab — ClickFlow Grow')
 
     msg_data, msg_err = ghl_mcp('conversations_send-a-new-message', {
         'type': 'Email',
@@ -314,5 +340,161 @@ def ghl_capture():
     return jsonify({'success': True, 'contactId': contact_id})
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# VOICE AI WEBHOOK — receives post-call data from GHL workflow
+# ─────────────────────────────────────────────────────────────────────────────
+
+import time, threading
+
+# In-memory session store: { session_id: { 'name': ..., 'email': ..., 'phone': ..., 'ts': ... } }
+_call_sessions = {}
+_call_sessions_lock = threading.Lock()
+
+def _cleanup_sessions():
+    """Remove sessions older than 30 minutes."""
+    cutoff = time.time() - 1800
+    with _call_sessions_lock:
+        expired = [k for k, v in _call_sessions.items() if v.get('ts', 0) < cutoff]
+        for k in expired:
+            del _call_sessions[k]
+
+
+@app.route('/api/voice-webhook', methods=['POST'])
+def voice_webhook():
+    """
+    Called by a GHL Workflow when a Voice AI call ends.
+    Payload (from GHL): {
+      "transcript": "full call transcript text",
+      "session_id": "unique session ID passed as a custom variable to the widget",
+      "contact_id": "GHL contact ID if already known"
+    }
+    We parse the transcript with GPT to extract the BUSINESS OWNER's details,
+    upsert them in GHL CRM, and store in the session store for the page to poll.
+    """
+    data = request.get_json(force=True)
+    transcript = (data.get('transcript') or '').strip()
+    session_id = (data.get('session_id') or '').strip()
+    ghl_contact_id = (data.get('contact_id') or '').strip()
+
+    if not transcript:
+        return jsonify({'success': False, 'error': 'No transcript provided'}), 400
+    if not session_id:
+        return jsonify({'success': False, 'error': 'No session_id provided'}), 400
+
+    # Use GPT to extract the business owner's contact details from the transcript
+    extract_prompt = """You are a data extraction assistant. Read this voice call transcript between an AI receptionist demo assistant (Aria) and a business owner.
+
+Extract ONLY the business owner's personal contact details — NOT the demo business they described.
+The business owner is the person who called in / used the widget. They are a potential client of ClickFlow Grow.
+
+Extract:
+- Their first name (what Aria called them, or what they introduced themselves as)
+- Their email address (if they provided one)
+- Their phone number (if they provided one)
+- Their company or business name (their own business, not the demo scenario)
+
+If a field was not mentioned, return null for that field.
+
+Respond ONLY with valid JSON in this exact format:
+{"first_name": "...", "last_name": null, "email": "...", "phone": "...", "company": "..."}"""
+
+    extracted = {'first_name': None, 'last_name': None, 'email': None, 'phone': None, 'company': None}
+    try:
+        gpt_response = client.chat.completions.create(
+            model='gpt-4.1-mini',
+            messages=[
+                {'role': 'system', 'content': extract_prompt},
+                {'role': 'user', 'content': f'TRANSCRIPT:\n{transcript}'}
+            ],
+            temperature=0.1,
+            max_tokens=200
+        )
+        raw = gpt_response.choices[0].message.content.strip()
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if match:
+            extracted = json.loads(match.group())
+    except Exception as e:
+        app.logger.error(f'GPT extraction error: {e}')
+
+    # Build contact payload for GHL upsert
+    contact_payload = {
+        'tags': ['aria-demo-call', 'cfg-ai-lab-event', 'voice-ai-lead'],
+        'source': 'CFG AI Lab — Aria Voice Demo',
+    }
+    if extracted.get('first_name'):
+        contact_payload['firstName'] = extracted['first_name']
+    if extracted.get('last_name'):
+        contact_payload['lastName'] = extracted['last_name']
+    if extracted.get('email'):
+        contact_payload['email'] = extracted['email']
+    if extracted.get('phone'):
+        contact_payload['phone'] = extracted['phone']
+    if extracted.get('company'):
+        contact_payload['companyName'] = extracted['company']
+
+    # Only upsert if we have at least an email or phone
+    contact_id = ghl_contact_id
+    if extracted.get('email') or extracted.get('phone'):
+        contact_data, err = ghl_mcp('contacts_upsert-contact', contact_payload)
+        if err:
+            app.logger.error(f'GHL upsert error after voice call: {err}')
+        else:
+            contact = contact_data.get('contact') or contact_data if contact_data else {}
+            contact_id = contact.get('id') if isinstance(contact, dict) else contact_id
+
+    # Store in session store for the page to poll
+    _cleanup_sessions()
+    with _call_sessions_lock:
+        _call_sessions[session_id] = {
+            'first_name': extracted.get('first_name') or '',
+            'last_name':  extracted.get('last_name') or '',
+            'email':      extracted.get('email') or '',
+            'phone':      extracted.get('phone') or '',
+            'company':    extracted.get('company') or '',
+            'contact_id': contact_id or '',
+            'ts': time.time()
+        }
+
+    return jsonify({'success': True, 'session_id': session_id, 'contact_id': contact_id})
+
+
+@app.route('/api/poll-call-data', methods=['GET'])
+def poll_call_data():
+    """
+    The page polls this endpoint every 3 seconds while the voice widget is active.
+    Returns the extracted contact data when available, so the booking form can auto-fill.
+    Query param: session_id
+    """
+    session_id = request.args.get('session_id', '').strip()
+    if not session_id:
+        return jsonify({'ready': False, 'error': 'No session_id'}), 400
+
+    with _call_sessions_lock:
+        data = _call_sessions.get(session_id)
+
+    if data:
+        return jsonify({'ready': True, **data})
+    return jsonify({'ready': False})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STATIC FILE SERVING
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/')
+def index():
+    return send_from_directory(STATIC_DIR, 'index.html')
+
+@app.route('/<path:path>')
+def static_files(path):
+    # Don't intercept API routes
+    if path.startswith('api/'):
+        return jsonify({'error': 'Not found'}), 404
+    full = os.path.join(STATIC_DIR, path)
+    if os.path.isfile(full):
+        return send_from_directory(STATIC_DIR, path)
+    return send_from_directory(STATIC_DIR, 'index.html')
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=False)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port, debug=False)
