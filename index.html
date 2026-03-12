@@ -3529,19 +3529,65 @@
         <div id="t1-dd-form" style="max-width:640px; margin:0 auto;">
 
           <!-- PRIMARY: Voice widget (hero action) -->
-          <div style="background: linear-gradient(135deg, #060d1a, #0a1e35); border:2px solid rgba(11,234,181,0.35); border-radius:24px; padding:44px 36px; text-align:center; margin-bottom:24px;">
-            <div style="width:80px; height:80px; background:rgba(11,234,181,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; border:2px solid rgba(11,234,181,0.3); box-shadow:0 0 40px rgba(11,234,181,0.15);">
-              <svg viewBox="0 0 24 24" width="40" height="40" fill="#0BEAB5"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+          <style>
+            @keyframes aria-pulse {
+              0%   { box-shadow: 0 0 0 0 rgba(11,234,181,0.55), 0 0 40px rgba(11,234,181,0.18); }
+              50%  { box-shadow: 0 0 0 18px rgba(11,234,181,0), 0 0 80px rgba(11,234,181,0.32); }
+              100% { box-shadow: 0 0 0 0 rgba(11,234,181,0), 0 0 40px rgba(11,234,181,0.18); }
+            }
+            @keyframes aria-ring {
+              0%   { transform: scale(1);   opacity: 0.55; }
+              70%  { transform: scale(2.2); opacity: 0; }
+              100% { transform: scale(2.2); opacity: 0; }
+            }
+            #aria-widget-wrap {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 56px 0 48px;
+              margin-bottom: 24px;
+            }
+            #aria-glow-ring {
+              position: absolute;
+              width: 120px;
+              height: 120px;
+              border-radius: 50%;
+              background: transparent;
+              border: 2px solid rgba(11,234,181,0.5);
+              animation: aria-ring 2.4s ease-out infinite;
+              pointer-events: none;
+            }
+            #aria-glow-ring-2 {
+              position: absolute;
+              width: 120px;
+              height: 120px;
+              border-radius: 50%;
+              background: transparent;
+              border: 2px solid rgba(11,234,181,0.3);
+              animation: aria-ring 2.4s ease-out 0.8s infinite;
+              pointer-events: none;
+            }
+            #aria-widget-inner {
+              position: relative;
+              z-index: 2;
+              transform: scale(1.35);
+              transform-origin: center center;
+              filter: drop-shadow(0 0 24px rgba(11,234,181,0.5));
+            }
+          </style>
+          <div id="aria-widget-wrap">
+            <div id="aria-glow-ring"></div>
+            <div id="aria-glow-ring-2"></div>
+            <div id="aria-widget-inner">
+              <!-- GHL Voice AI Widget (live) -->
+              <script
+                src="https://beta.leadconnectorhq.com/loader.js"
+                data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
+                data-widget-id="69b2e92d6a7fada2ec2e45f7">
+              </script>
             </div>
-            <div style="font-size:22px; font-weight:800; color:#fff; margin-bottom:10px;">Talk to Aria — live</div>
-            <div style="font-size:16px; color:rgba(255,255,255,0.65); margin-bottom:28px; max-width:400px; margin-left:auto; margin-right:auto; line-height:1.6;">Aria will ask you two quick questions, then immediately answer as your own AI receptionist.</div>
-            <!-- GHL Voice AI Widget (live) -->
-            <div id="t1-ghl-voice-widget" style="display:flex; justify-content:center; align-items:center; min-height:80px;"></div>
-            <script
-              src="https://beta.leadconnectorhq.com/loader.js"
-              data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
-              data-widget-id="69b2e92d6a7fada2ec2e45f7">
-            </script>
           </div>
 
           <!-- SECONDARY: Optional website context (collapsed by default) -->
@@ -6142,15 +6188,23 @@
         /* AI Lab custom overrides — profile-picture-hidden */
         .lc_text-widget--profile-picture { display: none !important; }
         .lc_text-widget--agency-branding { display: none !important; }
+        /* Centre and size the pill */
         .lc_text-widget--embedded {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
+          width: 100% !important;
+          max-width: 320px !important;
+          margin: 0 auto !important;
+          display: flex !important;
+          justify-content: center !important;
         }
         .lc_text-widget--horizontal {
           background: transparent !important;
           padding: 0 !important;
           gap: 0 !important;
+          justify-content: center !important;
+          width: 100% !important;
         }
         .lc_text-widget--text {
           color: #ffffff !important;
