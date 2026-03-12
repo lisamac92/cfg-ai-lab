@@ -3561,9 +3561,9 @@
             }
             #aria-glow-ring {
               position: absolute;
-              width: 220px;
-              height: 100px;
-              border-radius: 60px;
+              width: 420px;
+              height: 90px;
+              border-radius: 50px;
               background: transparent;
               border: 1.5px solid rgba(11,234,181,0.45);
               animation: aria-ring 2.6s ease-out infinite;
@@ -3571,9 +3571,9 @@
             }
             #aria-glow-ring-2 {
               position: absolute;
-              width: 220px;
-              height: 100px;
-              border-radius: 60px;
+              width: 420px;
+              height: 90px;
+              border-radius: 50px;
               background: transparent;
               border: 1.5px solid rgba(11,234,181,0.25);
               animation: aria-ring 2.6s ease-out 0.9s infinite;
@@ -6198,28 +6198,54 @@
         /* AI Lab custom overrides — profile-picture-hidden */
         .lc_text-widget--profile-picture { display: none !important; }
         .lc_text-widget--agency-branding { display: none !important; }
-        /* Centre and size the pill */
+        /* Make the pill large and properly spaced */
         .lc_text-widget--embedded {
-          background: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-          width: 100% !important;
-          max-width: 320px !important;
-          margin: 0 auto !important;
+          width: 380px !important;
+          min-width: 380px !important;
+          height: 72px !important;
+          min-height: 72px !important;
+          overflow: visible !important;
           display: flex !important;
+          align-items: center !important;
           justify-content: center !important;
+          background: transparent !important;
         }
         .lc_text-widget--horizontal {
-          background: transparent !important;
-          padding: 0 !important;
-          gap: 0 !important;
-          justify-content: center !important;
-          width: 100% !important;
+          width: 380px !important;
+          min-width: 380px !important;
+          height: 72px !important;
+          min-height: 72px !important;
+          border-radius: 40px !important;
+          padding: 0 20px 0 28px !important;
+          gap: 16px !important;
+          overflow: visible !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          background: rgba(11, 20, 40, 0.9) !important;
+          border: 1.5px solid rgba(11,234,181,0.4) !important;
+          box-shadow: 0 0 20px rgba(11,234,181,0.15) !important;
         }
+        /* Full text, no clipping */
         .lc_text-widget--text {
           color: #ffffff !important;
           font-weight: 700 !important;
-          font-size: 18px !important;
+          font-size: 22px !important;
+          letter-spacing: 0.01em !important;
+          white-space: nowrap !important;
+          overflow: visible !important;
+          flex: 1 !important;
+          width: auto !important;
+        }
+        /* Larger mic button */
+        .lc_text-widget--phone-icon {
+          width: 56px !important;
+          height: 56px !important;
+          min-width: 56px !important;
+          min-height: 56px !important;
+          border-radius: 50% !important;
+          padding: 14px !important;
+          flex-shrink: 0 !important;
         }
         .icon.widget-open-icon {
           background-color: #0BEAB5 !important;
