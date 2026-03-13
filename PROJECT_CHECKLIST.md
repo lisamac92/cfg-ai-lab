@@ -1,5 +1,5 @@
 # CFG AI Lab — Project Checklist
-**Last updated:** March 12, 2026  
+**Last updated:** March 13, 2026  
 **Live URL (sandbox):** https://8080-idglvrmshignkf4wht6zv-6a341fe9.us2.manus.computer  
 **GitHub:** https://github.com/lisamac92/cfg-ai-lab
 
@@ -86,12 +86,15 @@
 - [ ] Consider adding a "New search" / reset button after results appear
 - [ ] Consider showing a "What this costs without AI" time/cost counter
 
-### 9. Table 03 — AI Workflows 🔄 IN DESIGN
-- [ ] **Approve Table 03 concept** — see `TABLE03_PROPOSAL.md` for full options
-- [ ] **Confirm 3-4 business scenarios** for the selector (suggested: Restaurant, Accountant, Trades, Estate Agent)
+### 9. Table 03 — AI Workflows ✅ COMPLETE (minor items remain)
+- [x] **Option C approved** — business type selector + animated workflow + live chat
+- [x] **Scenarios confirmed** — Restaurant, Accountant/Solicitor, Dental Practice, Estate Agent
+- [x] **Built and tested** — all four scenarios working, live chat via OpenAI, lead capture wired
+- [x] **Colour scheme** — deep purple/indigo, consistent with Table 03 identity
+- [x] **Backend** — `/api/chat` endpoint with scenario-specific AI personas
+- [x] **Global scope bug fixed** — Module 2 & 3 JS moved to separate script block
 - [ ] **Provide GHL calendar link** for "Book a Workflow Audit" CTA
-- [ ] **Confirm colour scheme** — currently purple/violet for Table 03
-- [ ] **Build Table 03** once concept is approved
+- [ ] **Test workflow email** — confirm personalised workflow map email template in GHL
 
 ### 10. DemoDrop Experience
 - [ ] **Test the full DemoDrop flow** — business name + website → AI greeting → activation panel
