@@ -1,0 +1,178 @@
+
+    <!-- Table nav -->
+    <nav class="nav table-nav" style="--room-color: #7C5CFC;">
+      <div class="container">
+        <button class="table-nav-back" onclick="showView('table-2')">← AI Prospecting</button>
+        <div class="table-nav-breadcrumb">
+          <span class="table-nav-num" style="color:#7C5CFC;">03</span> AI Workflows
+        </div>
+        <button class="table-nav-next" onclick="showView('demodrop')">The DemoDrop →</button>
+      </div>
+    </nav>
+
+    <!-- Room colour stripe -->
+    <div style="height:4px; background: linear-gradient(90deg, #7C5CFC, #0BEAB5); width:100%;"></div>
+
+    <!-- Progress dots -->
+    <div class="room-progress">
+      <span class="room-dot" style="border-color:#7C5CFC;"></span>
+      <span class="room-dot" style="border-color:#7C5CFC;"></span>
+      <span class="room-dot active" style="background: linear-gradient(135deg, #7C5CFC, #0BEAB5);"></span>
+    </div>
+
+    <!-- STEP 0: Room hero -->
+    <div class="room-hero" style="background: radial-gradient(ellipse at 70% 30%, rgba(124,92,252,0.18) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(11,234,181,0.10) 0%, transparent 50%), linear-gradient(160deg, #060d1a 0%, #0c0a1e 50%, #060d1a 100%);">
+      <canvas class="hero-particle-canvas" data-color="124,92,252"></canvas>
+      <div class="room-hero-num" style="color: rgba(124,92,252,0.07);">03</div>
+      <div class="room-hero-content">
+        <div class="room-eyebrow" style="background: linear-gradient(90deg, #7C5CFC, #0BEAB5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Table 03 &nbsp;·&nbsp; AI Workflows</div>
+        <h1 class="room-headline"><span class="typewriter-text">Your business, running<br/>while you sleep.</span></h1>
+        <p class="room-subhead">A customer books at midnight. A new client uploads their documents on Sunday. A patient confirms their appointment without a single phone call. Pick a scenario and watch it happen — then try it yourself.</p>
+        <div class="room-hero-steps">
+          <div class="hero-step"><span class="hero-step-num" style="background: linear-gradient(135deg,#7C5CFC,#0BEAB5); color:white;">1</span><span>Pick your business</span></div>
+          <div class="hero-step-arrow" style="color:#7C5CFC;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background: linear-gradient(135deg,#7C5CFC,#0BEAB5); color:white;">2</span><span>Watch the workflow</span></div>
+          <div class="hero-step-arrow" style="color:#7C5CFC;">→</div>
+          <div class="hero-step"><span class="hero-step-num" style="background: linear-gradient(135deg,#7C5CFC,#0BEAB5); color:white;">3</span><span>Try it live</span></div>
+        </div>
+        <button class="room-start-btn" style="background: linear-gradient(135deg, #7C5CFC, #0BEAB5); color:white;" onclick="document.getElementById('t3-step1').scrollIntoView({behavior:'smooth'})">Choose your scenario ↓</button>
+      </div>
+    </div>
+
+    <!-- STEP 1: Scenario selector -->
+    <div class="room-step reveal" id="t3-step1" style="background: linear-gradient(180deg, #060d1a 0%, #0a0a1e 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
+        <div class="room-step-badge" style="background: rgba(124,92,252,0.15); color:#7C5CFC; border-color: rgba(124,92,252,0.3);">Step 1 of 3</div>
+        <h2 class="room-step-title">Which business are you?</h2>
+        <p class="room-step-desc">Pick the scenario closest to yours. We'll show you exactly what your AI workflow would look like — step by step.</p>
+      </div>
+      <div class="room-step-body reveal reveal-delay-2">
+        <div class="t3-scenario-grid">
+          <button class="t3-scenario-card active" data-scenario="restaurant" onclick="t3SelectScenario('restaurant', this)">
+            <div class="t3-scenario-icon">🍽️</div>
+            <div class="t3-scenario-name">Restaurant</div>
+            <div class="t3-scenario-desc">Bookings, menus &amp; reminders — handled automatically</div>
+          </button>
+          <button class="t3-scenario-card" data-scenario="accountant" onclick="t3SelectScenario('accountant', this)">
+            <div class="t3-scenario-icon">📊</div>
+            <div class="t3-scenario-name">Accountant / Solicitor</div>
+            <div class="t3-scenario-desc">Client onboarding &amp; document collection on autopilot</div>
+          </button>
+          <button class="t3-scenario-card" data-scenario="dental" onclick="t3SelectScenario('dental', this)">
+            <div class="t3-scenario-icon">🦷</div>
+            <div class="t3-scenario-name">Dental Practice</div>
+            <div class="t3-scenario-desc">Appointment booking, reminders &amp; follow-ups — zero admin</div>
+          </button>
+          <button class="t3-scenario-card" data-scenario="estate" onclick="t3SelectScenario('estate', this)">
+            <div class="t3-scenario-icon">🏡</div>
+            <div class="t3-scenario-name">Estate Agent</div>
+            <div class="t3-scenario-desc">Match buyers to listings &amp; book viewings automatically</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mint divider -->
+    <div class="t3-step-divider"></div>
+
+    <!-- STEP 2: Animated workflow diagram -->
+    <div class="room-step reveal" id="t3-step2" style="background: linear-gradient(180deg, #0a0a1e 0%, #060d1a 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
+        <div class="room-step-badge" style="background: rgba(124,92,252,0.15); color:#7C5CFC; border-color: rgba(124,92,252,0.3);">Step 2 of 3</div>
+        <h2 class="room-step-title">Here's what happens — automatically</h2>
+        <p class="room-step-desc" id="t3-workflow-subtitle">Watch each step fire in sequence. This is your AI working while you're busy doing everything else.</p>
+      </div>
+      <div class="room-step-body reveal reveal-delay-2">
+        <div class="t3-workflow-wrap">
+          <div class="t3-workflow-steps" id="t3-workflow-steps">
+            <!-- Populated by JS -->
+          </div>
+          <button class="t3-replay-btn" id="t3-replay-btn" onclick="t3PlayWorkflow()" style="display:none;">
+            ↺ Replay workflow
+          </button>
+          <button class="t3-try-btn" id="t3-try-btn" onclick="document.getElementById('t3-step3').scrollIntoView({behavior:'smooth'})" style="display:none;">
+            Try it yourself — live ↓
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mint divider -->
+    <div class="t3-step-divider"></div>
+
+    <!-- STEP 3: Live conversational AI -->
+    <div class="room-step reveal" id="t3-step3" style="background: linear-gradient(180deg, #060d1a 0%, #0a0a1e 100%);">
+      <div class="room-step-header reveal reveal-delay-1">
+        <div class="room-step-badge" style="background: rgba(124,92,252,0.15); color:#7C5CFC; border-color: rgba(124,92,252,0.3);">Step 3 of 3</div>
+        <h2 class="room-step-title" id="t3-chat-headline">You're the customer. The AI handles everything.</h2>
+        <p class="room-step-desc" id="t3-chat-subtitle">Type anything — ask to book, get a quote, or start the process. The AI will guide you through it exactly as your customers would experience it.</p>
+      </div>
+      <div class="room-step-body reveal reveal-delay-2">
+        <div class="t3-chat-container">
+          <!-- What just happened panel (hidden until chat completes) -->
+          <div class="t3-reveal-panel" id="t3-reveal-panel" style="display:none;">
+            <div class="t3-reveal-header">
+              <div class="t3-reveal-icon">⚡</div>
+              <div>
+                <div class="t3-reveal-title">What just happened — behind the scenes</div>
+                <div class="t3-reveal-subtitle">While you were chatting, your AI was doing this:</div>
+              </div>
+            </div>
+            <div class="t3-reveal-steps" id="t3-reveal-steps">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Chat panel -->
+          <div class="t3-chat-panel" id="t3-chat-panel">
+            <div class="t3-chat-header">
+              <div class="t3-chat-avatar">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+              </div>
+              <div>
+                <div class="t3-chat-title" id="t3-chat-title">AI Workflow Assistant</div>
+                <div class="t3-chat-status">● Live now</div>
+              </div>
+              <div class="t3-chat-scenario-badge" id="t3-chat-scenario-badge">Restaurant</div>
+            </div>
+            <div class="t3-messages" id="t3-messages"></div>
+            <div class="t3-input-bar">
+              <input class="t3-input" id="t3-input" type="text" placeholder="Type your message…" onkeydown="if(event.key==='Enter') t3SendMessage()" />
+              <button class="t3-send-btn" onclick="t3SendMessage()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Email capture -->
+          <div class="t3-email-capture" id="t3-email-capture">
+            <div class="t3-email-icon">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="white"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </div>
+            <div class="t3-email-text">
+              <div class="t3-email-title">Get a workflow map for your business.</div>
+              <div class="t3-email-sub">We'll email you a personalised AI workflow diagram — free.</div>
+            </div>
+            <div class="t3-email-fields">
+              <input class="email-input" id="t3-email-input" type="email" placeholder="your@email.co.uk" />
+              <button class="send-btn" onclick="t3CaptureEmail()">Send it to me</button>
+            </div>
+          </div>
+
+          <!-- CTA banner -->
+          <div class="t3-cta-banner">
+            <div class="t3-cta-eyebrow">IMAGINE THIS IN YOUR BUSINESS</div>
+            <h3 class="t3-cta-headline">Your AI Workflow, live in 48 hours</h3>
+            <p class="t3-cta-body">Our AI Builders will design the exact workflow your business needs — from first contact to completed task. Let's map it out together.</p>
+            <a href="#" class="btn-genius t3-cta-btn">Book a free Workflow Audit →</a>
+          </div>
+
+          <!-- Next: DemoDrop -->
+          <div class="room-next-table" onclick="showView('demodrop')" style="border-color: rgba(124,92,252,0.3);">
+            <div style="font-size:13px; letter-spacing:0.1em; color: rgba(255,255,255,0.70); margin-bottom:6px;">FINAL EXPERIENCE</div>
+            <div style="font-size:20px; font-weight:700; color:white;">The DemoDrop — Your Business, Live →</div>
+            <div style="font-size:16px; color: rgba(255,255,255,0.78); margin-top:4px;">Hear Aria answer calls for your actual business — right now.</div>
+          </div>
+        </div>
+      </div>
+    </div>

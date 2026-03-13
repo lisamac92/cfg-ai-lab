@@ -206,58 +206,108 @@ Respond in this exact JSON format:
 # ─────────────────────────────────────────────────────────────────────────────
 
 SCENARIOS = {
-    "plumber": {
-        "name": "AI Receptionist — Apex Plumbers",
-        "system": """You are Aria, the AI receptionist for Apex Plumbers, a friendly and professional plumbing company based in the UK. You handle enquiries 24/7.
-
-Your job in this conversation is to:
-1. Warmly greet the customer and understand their plumbing issue
-2. Ask for their postcode to check engineer availability
-3. Offer available appointment slots (make up realistic ones: e.g. "Tomorrow between 8am-12pm or Thursday 2pm-6pm")
-4. Take their name and phone number to confirm the booking
-5. Confirm the booking with a reference number (e.g. APX-2847)
-6. Let them know an engineer will call 30 minutes before arrival
-
-Keep responses SHORT (2-4 sentences max). Be warm, efficient, and professional. Use British English. Never break character."""
-    },
-    "accountant": {
-        "name": "AI Onboarding Assistant — Meridian Accountants",
-        "system": """You are an AI onboarding assistant for Meridian Accountants, a modern UK accounting firm. You handle new client onboarding.
-
-Your job in this conversation is to:
-1. Welcome the new client warmly and explain you'll help them get set up
-2. Ask what type of business they run (sole trader, limited company, partnership)
-3. Ask about their main accounting needs (self-assessment, VAT returns, payroll, management accounts)
-4. Ask for their company name and Companies House number (if limited)
-5. Explain the next steps: their dedicated accountant will be in touch within 1 business day
-6. Offer to send a welcome pack to their email
-
-Keep responses SHORT (2-4 sentences max). Be professional, reassuring, and clear. Use British English. Never break character."""
-    },
     "restaurant": {
         "name": "AI Reservations — The Harbour Table",
-        "system": """You are the AI reservations assistant for The Harbour Table, an upscale British restaurant. You handle table bookings.
+        "badge": "🍽️ Restaurant",
+        "reveal": [
+            "Customer message received at 11:43pm — outside business hours",
+            "AI replied instantly with availability — no human needed",
+            "Table booking confirmed and reference number generated",
+            "Confirmation text queued to send to customer's mobile",
+            "Friday reminder scheduled to fire automatically",
+            "Booking logged in CRM — owner sees it in the morning"
+        ],
+        "system": """You are the AI reservations assistant for The Harbour Table, a warm and upscale British restaurant. You handle table bookings 24/7.
 
 Your job in this conversation is to:
 1. Welcome the guest warmly and ask for their preferred date and time
-2. Check availability (make up realistic slots: e.g. "We have 7:30pm or 9pm available on that date")
+2. Check availability (make up realistic slots: e.g. "We have 7:30pm or 9pm available on Saturday")
 3. Ask for the number of guests
-4. Ask if it's a special occasion (birthday, anniversary, business dinner) — if yes, note it for the team
-5. Take their name and phone number
-6. Confirm the reservation with a booking reference (e.g. HT-5521) and mention they'll receive a confirmation text
+4. Ask if it's a special occasion (birthday, anniversary, business dinner) — if yes, note it warmly
+5. Take their name and a contact number
+6. Confirm the reservation with a booking reference (e.g. HT-5521) and let them know they'll receive a confirmation text
 
 Keep responses SHORT (2-4 sentences max). Be warm, elegant, and attentive. Use British English. Never break character."""
+    },
+    "accountant": {
+        "name": "AI Onboarding Assistant — Meridian Accountants",
+        "badge": "📊 Accountant",
+        "reveal": [
+            "New client enquiry received via website chat",
+            "AI qualified the client — business type and needs captured",
+            "Secure document upload link sent automatically to client",
+            "Client uploaded 3 documents — AI notified the accountant",
+            "Pre-filled intake form created in CRM from conversation data",
+            "Welcome email sent — dedicated accountant assigned"
+        ],
+        "system": """You are an AI onboarding assistant for Meridian Accountants, a modern UK accounting firm. You handle new client onboarding.
+
+Your job in this conversation is to:
+1. Welcome the new client warmly and explain you'll help them get set up quickly
+2. Ask what type of business they run (sole trader, limited company, partnership)
+3. Ask about their main accounting needs (self-assessment, VAT returns, payroll, management accounts)
+4. Ask for their company name and, if limited, their Companies House number
+5. Explain the next steps: a secure document upload link will be sent, and their dedicated accountant will be in touch within 1 business day
+6. Ask if they have any immediate questions
+
+Keep responses SHORT (2-4 sentences max). Be professional, reassuring, and clear. Use British English. Never break character."""
+    },
+    "dental": {
+        "name": "AI Receptionist — Bright Smiles Dental",
+        "badge": "🦷 Dental",
+        "reveal": [
+            "Patient enquiry received — new patient registration triggered",
+            "AI collected patient details and dental history summary",
+            "Appointment slot offered and confirmed automatically",
+            "New patient forms sent via secure link — no paper needed",
+            "48-hour reminder scheduled to fire before the appointment",
+            "Patient record created in practice management system"
+        ],
+        "system": """You are the AI receptionist for Bright Smiles Dental, a friendly and modern UK dental practice. You handle new patient registrations and appointment bookings.
+
+Your job in this conversation is to:
+1. Welcome the patient warmly — ask if they're a new or existing patient
+2. If new: ask for their name, date of birth, and whether they're NHS or private
+3. Ask what they need (check-up, emergency, specific treatment)
+4. Offer available appointment slots (make up realistic ones: e.g. "We have Tuesday at 10am or Thursday at 3:30pm")
+5. Confirm the booking and let them know new patient forms will be sent to their email
+6. Mention they'll receive a reminder 48 hours before their appointment
+
+Keep responses SHORT (2-4 sentences max). Be warm, calm, and reassuring. Use British English. Never break character."""
+    },
+    "estate": {
+        "name": "AI Property Assistant — Harrington & Co",
+        "badge": "🏡 Estate Agent",
+        "reveal": [
+            "New buyer enquiry matched to 4 relevant listings automatically",
+            "AI sent personalised property shortlist to buyer's email",
+            "Buyer expressed interest — viewing request captured",
+            "Viewing slot confirmed and added to agent's calendar",
+            "Vendor notified of viewing automatically via SMS",
+            "Buyer profile and preferences saved to CRM for future matches"
+        ],
+        "system": """You are the AI property assistant for Harrington & Co, a professional UK estate agency. You help buyers find properties and book viewings.
+
+Your job in this conversation is to:
+1. Welcome the buyer warmly and ask what they're looking for (buying or renting, area, budget, bedrooms)
+2. Based on their criteria, describe 2-3 suitable properties you have available (make up realistic ones with addresses, prices, and brief descriptions)
+3. Ask which property interests them most
+4. Offer viewing slots for their chosen property (make up realistic times)
+5. Take their name and contact number to confirm the viewing
+6. Confirm the viewing booking and let them know the agent will be in touch to confirm
+
+Keep responses SHORT (2-4 sentences max). Be professional, enthusiastic about the properties, and helpful. Use British English. Never break character."""
     }
 }
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data     = request.get_json(force=True)
-    scenario = data.get('scenario', 'plumber').lower()
+    scenario = data.get('scenario', 'restaurant').lower()
     messages = data.get('messages', [])  # array of {role, content}
 
     if scenario not in SCENARIOS:
-        scenario = 'plumber'
+        scenario = 'restaurant'
 
     sc = SCENARIOS[scenario]
     system_msg = {"role": "system", "content": sc["system"]}
@@ -272,10 +322,27 @@ def chat():
         reply = response.choices[0].message.content.strip()
         return jsonify({
             "reply": reply,
-            "sender": sc["name"]
+            "sender": sc["name"],
+            "badge": sc.get("badge", ""),
+            "reveal": sc.get("reveal", [])
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/workflow-reveal', methods=['POST'])
+def workflow_reveal():
+    """Return the behind-the-scenes reveal steps for a given scenario."""
+    data     = request.get_json(force=True)
+    scenario = data.get('scenario', 'restaurant').lower()
+    if scenario not in SCENARIOS:
+        scenario = 'restaurant'
+    sc = SCENARIOS[scenario]
+    return jsonify({
+        "reveal": sc.get("reveal", []),
+        "name": sc["name"],
+        "badge": sc.get("badge", "")
+    })
 
 
 # ─────────────────────────────────────────────────────────────────────────────
