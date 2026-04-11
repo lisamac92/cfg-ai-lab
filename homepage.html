@@ -1026,65 +1026,226 @@
     }, { threshold: 0.12 });
     document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-    // ── Particle canvas in hero ──
+    // ── Orb Network Animation ──────────────────────────────────
+    // Renders a fixed geodesic-sphere network centred on the hero orb
+    // with glowing data pulses racing along the edges, node brightening,
+    // and a soft ambient pulsing glow — all composited over the hero image.
+
     const canvas = document.getElementById('hero-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    let W, H;
+    const ctx    = canvas.getContext('2d');
+    let W, H, orbX, orbY, orbR;
 
     function resize() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = canvas.parentElement.offsetHeight;
+      // Orb sits roughly centre-right in the hero image
+      orbX = W * 0.68;
+      orbY = H * 0.50;
+      orbR = Math.min(W, H) * 0.22;   // radius of the sphere
     }
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', () => { resize(); buildNetwork(); });
 
-    class Particle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * W;
-        this.y = Math.random() * H;
-        this.r = Math.random() * 1.5 + 0.3;
-        this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = (Math.random() - 0.5) * 0.3;
-        this.alpha = Math.random() * 0.5 + 0.1;
-      }
-      update() {
-        this.x += this.vx; this.y += this.vy;
-        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(11,234,181,${this.alpha})`;
-        ctx.fill();
-      }
+    // ── Build a geodesic node network on the sphere surface ──────
+    let nodes = [], edges = [];
+
+    function spherePoint(theta, phi) {
+      // Convert spherical coords → 2-D projected position on canvas
+      // Simple orthographic projection with slight tilt
+      const tilt = 0.25; // radians — tilts sphere slightly toward viewer
+      const x3 = Math.sin(phi) * Math.cos(theta);
+      const y3 = Math.cos(phi);
+      const z3 = Math.sin(phi) * Math.sin(theta);
+      // Apply tilt rotation around X axis
+      const y3t = y3 * Math.cos(tilt) - z3 * Math.sin(tilt);
+      const z3t = y3 * Math.sin(tilt) + z3 * Math.cos(tilt);
+      return {
+        cx: orbX + x3 * orbR,
+        cy: orbY + y3t * orbR,
+        depth: z3t   // -1 (back) to +1 (front)
+      };
     }
 
-    for (let i = 0; i < 120; i++) particles.push(new Particle());
+    function buildNetwork() {
+      nodes = []; edges = [];
+      // Latitude rings + poles
+      const latitudes  = [0, Math.PI/5, 2*Math.PI/5, Math.PI/2,
+                          3*Math.PI/5, 4*Math.PI/5, Math.PI];
+      const longitudes = 10; // segments per ring
 
-    function drawConnections() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 100) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(11,234,181,${0.08 * (1 - dist / 100)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
+      // Poles
+      nodes.push({ ...spherePoint(0, 0),        baseAlpha: 0.9, glow: 0 });
+      nodes.push({ ...spherePoint(0, Math.PI),  baseAlpha: 0.9, glow: 0 });
+
+      // Ring nodes
+      for (let li = 1; li < latitudes.length - 1; li++) {
+        const phi = latitudes[li];
+        for (let lo = 0; lo < longitudes; lo++) {
+          const theta = (lo / longitudes) * Math.PI * 2;
+          nodes.push({ ...spherePoint(theta, phi), baseAlpha: 0.6 + Math.random() * 0.3, glow: 0 });
+        }
+      }
+
+      // Connect: rings to adjacent rings, and within same ring
+      const ringStart = [2]; // index where each ring starts
+      for (let li = 1; li < latitudes.length - 1; li++) {
+        ringStart.push(ringStart[ringStart.length - 1] + longitudes);
+      }
+
+      // Pole → first ring
+      for (let lo = 0; lo < longitudes; lo++) {
+        edges.push({ a: 0, b: ringStart[0] + lo });
+      }
+      // Last ring → south pole
+      const lastRing = ringStart[ringStart.length - 1];
+      for (let lo = 0; lo < longitudes; lo++) {
+        edges.push({ a: 1, b: lastRing + lo });
+      }
+      // Within each ring
+      for (let ri = 0; ri < ringStart.length; ri++) {
+        const base = ringStart[ri];
+        for (let lo = 0; lo < longitudes; lo++) {
+          edges.push({ a: base + lo, b: base + (lo + 1) % longitudes });
+        }
+      }
+      // Between adjacent rings
+      for (let ri = 0; ri < ringStart.length - 1; ri++) {
+        const baseA = ringStart[ri], baseB = ringStart[ri + 1];
+        for (let lo = 0; lo < longitudes; lo++) {
+          edges.push({ a: baseA + lo, b: baseB + lo });
+          edges.push({ a: baseA + lo, b: baseB + (lo + 1) % longitudes });
         }
       }
     }
+    buildNetwork();
 
+    // ── Data pulses ──────────────────────────────────────────────
+    // Each pulse travels along one edge from node A to node B
+    let pulses = [];
+
+    function spawnPulse() {
+      if (edges.length === 0) return;
+      const edge = edges[Math.floor(Math.random() * edges.length)];
+      pulses.push({
+        edge,
+        t:     0,                          // 0 → 1 along the edge
+        speed: 0.004 + Math.random() * 0.006,
+        size:  2 + Math.random() * 2.5,
+        alpha: 0.7 + Math.random() * 0.3,
+        color: Math.random() < 0.85
+          ? '11,234,181'   // teal (dominant)
+          : '255,255,255'  // occasional white flash
+      });
+    }
+
+    // Seed initial pulses
+    for (let i = 0; i < 18; i++) spawnPulse();
+
+    // ── Ambient glow pulse (the orb breathing) ───────────────────
+    let glowPhase = 0;
+
+    // ── Main render loop ─────────────────────────────────────────
+    let frame = 0;
     function animate() {
+      frame++;
       ctx.clearRect(0, 0, W, H);
-      particles.forEach(p => { p.update(); p.draw(); });
-      drawConnections();
+
+      // Spawn new pulses periodically
+      if (frame % 12 === 0) spawnPulse();
+
+      // ── 1. Ambient orb glow (soft breathing ring) ──
+      glowPhase += 0.012;
+      const glowAlpha = 0.04 + 0.03 * Math.sin(glowPhase);
+      const glowSize  = orbR * (1.05 + 0.04 * Math.sin(glowPhase * 0.7));
+      const grad = ctx.createRadialGradient(orbX, orbY, orbR * 0.5, orbX, orbY, glowSize * 1.6);
+      grad.addColorStop(0,   `rgba(11,234,181,${glowAlpha * 2})`);
+      grad.addColorStop(0.5, `rgba(11,234,181,${glowAlpha})`);
+      grad.addColorStop(1,   'rgba(11,234,181,0)');
+      ctx.beginPath();
+      ctx.arc(orbX, orbY, glowSize * 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // ── 2. Draw edges (dim base lines) ──
+      for (const e of edges) {
+        const na = nodes[e.a], nb = nodes[e.b];
+        if (!na || !nb) continue;
+        // Only draw edges on front hemisphere (depth > -0.3)
+        const avgDepth = (na.depth + nb.depth) / 2;
+        if (avgDepth < -0.3) continue;
+        const depthAlpha = 0.04 + 0.08 * ((avgDepth + 1) / 2);
+        ctx.beginPath();
+        ctx.moveTo(na.cx, na.cy);
+        ctx.lineTo(nb.cx, nb.cy);
+        ctx.strokeStyle = `rgba(11,234,181,${depthAlpha})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+
+      // ── 3. Draw nodes ──
+      for (const n of nodes) {
+        if (n.depth < -0.2) continue;
+        const depthAlpha = 0.2 + 0.6 * ((n.depth + 1) / 2);
+        const glowBoost  = n.glow > 0 ? n.glow : 0;
+        const r = 1.5 + glowBoost * 3;
+        // Glow halo when lit
+        if (glowBoost > 0.1) {
+          ctx.beginPath();
+          ctx.arc(n.cx, n.cy, r * 3, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(11,234,181,${glowBoost * 0.25})`;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(n.cx, n.cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(11,234,181,${Math.min(1, depthAlpha + glowBoost)})`;
+        ctx.fill();
+        // Decay glow
+        if (n.glow > 0) n.glow = Math.max(0, n.glow - 0.03);
+      }
+
+      // ── 4. Animate pulses ──
+      pulses = pulses.filter(p => p.t <= 1);
+      for (const p of pulses) {
+        p.t += p.speed;
+        const na = nodes[p.edge.a], nb = nodes[p.edge.b];
+        if (!na || !nb) continue;
+        const avgDepth = (na.depth + nb.depth) / 2;
+        if (avgDepth < -0.3) { p.t = 2; continue; } // skip back-face pulses
+
+        const px = na.cx + (nb.cx - na.cx) * p.t;
+        const py = na.cy + (nb.cy - na.cy) * p.t;
+
+        // Bright the line segment behind the pulse
+        const trailLen = 0.18;
+        const t0 = Math.max(0, p.t - trailLen);
+        const tx0 = na.cx + (nb.cx - na.cx) * t0;
+        const ty0 = na.cy + (nb.cy - na.cy) * t0;
+        const trailGrad = ctx.createLinearGradient(tx0, ty0, px, py);
+        trailGrad.addColorStop(0, `rgba(${p.color},0)`);
+        trailGrad.addColorStop(1, `rgba(${p.color},${p.alpha * 0.9})`);
+        ctx.beginPath();
+        ctx.moveTo(tx0, ty0);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = trailGrad;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // Bright head dot
+        const headGrad = ctx.createRadialGradient(px, py, 0, px, py, p.size * 2.5);
+        headGrad.addColorStop(0,   `rgba(${p.color},${p.alpha})`);
+        headGrad.addColorStop(0.4, `rgba(${p.color},${p.alpha * 0.6})`);
+        headGrad.addColorStop(1,   `rgba(${p.color},0)`);
+        ctx.beginPath();
+        ctx.arc(px, py, p.size * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = headGrad;
+        ctx.fill();
+
+        // Brighten destination node when pulse arrives
+        if (p.t > 0.9 && nodes[p.edge.b]) {
+          nodes[p.edge.b].glow = Math.min(1, (nodes[p.edge.b].glow || 0) + 0.6);
+        }
+      }
+
       requestAnimationFrame(animate);
     }
     animate();
