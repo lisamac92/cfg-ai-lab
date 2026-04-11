@@ -273,39 +273,35 @@
     .fives-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 2px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      overflow: hidden;
+      gap: 20px;
     }
     .f-card {
-      background: var(--bg);
-      padding: 40px 28px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
       display: flex; flex-direction: column;
-      gap: 16px;
-      transition: background 0.3s, transform 0.3s;
+      transition: transform 0.3s, box-shadow 0.3s;
       cursor: default;
       position: relative;
       overflow: hidden;
     }
-    /* Background image layer */
+    .f-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(11,234,181,0.12); }
+    /* Top image area */
     .f-card .f-bg {
-      position: absolute; inset: 0;
-      background-size: cover; background-position: center;
-      opacity: 0.90;
-      transition: opacity 0.4s ease;
-      z-index: 0;
+      width: 100%; height: 200px;
+      background-size: cover; background-position: center top;
+      opacity: 1;
+      transition: transform 0.4s ease;
+      flex-shrink: 0;
+      position: relative;
     }
-    /* Dark gradient overlay on top of image */
     .f-card .f-bg::after {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(160deg, rgba(6,13,31,0.10) 0%, rgba(6,13,31,0.35) 100%);
+      background: linear-gradient(to bottom, rgba(6,13,31,0) 40%, rgba(6,13,31,0.6) 100%);
     }
-    .f-card:hover .f-bg { opacity: 1.0; }
-    /* Ensure content sits above the bg */
-    .f-card > *:not(.f-bg) { position: relative; z-index: 1; }
+    .f-card:hover .f-bg { transform: scale(1.03); }
+    /* Teal top bar on hover */
     .f-card::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -314,30 +310,38 @@
       transition: transform 0.4s ease;
       z-index: 2;
     }
-    .f-card:hover { background: var(--bg); transform: translateY(-4px); }
     .f-card:hover::before { transform: scaleX(1); }
+    /* Text content area — solid dark background for readability */
+    .f-body {
+      padding: 24px 24px 28px;
+      display: flex; flex-direction: column;
+      gap: 12px;
+      background: var(--bg2);
+      flex: 1;
+    }
     .f-number {
-      font-family: var(--font-h); font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--teal); opacity: 0.6;
+      font-family: var(--font-h); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--teal);
     }
     .f-icon {
-      width: 48px; height: 48px;
+      width: 44px; height: 44px;
       background: var(--teal-glow);
-      border: 1px solid rgba(11,234,181,0.2);
-      border-radius: 12px;
+      border: 1px solid rgba(11,234,181,0.25);
+      border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
     }
-    .f-icon svg { width: 22px; height: 22px; stroke: var(--teal); fill: none; stroke-width: 1.8; }
+    .f-icon svg { width: 20px; height: 20px; stroke: var(--teal); fill: none; stroke-width: 1.8; }
     .f-title {
-      font-family: var(--font-h); font-size: 1.3rem; font-weight: 800;
-      color: var(--text);
+      font-family: var(--font-h); font-size: 1.2rem; font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
     }
     .f-desc {
-      font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;
+      font-size: 0.875rem; color: rgba(200,215,255,0.90); line-height: 1.65;
     }
     .f-link {
-      margin-top: auto;
+      margin-top: 8px;
       font-size: 0.82rem; font-weight: 600; color: var(--teal);
       display: flex; align-items: center; gap: 6px;
       opacity: 0;
@@ -598,6 +602,9 @@
     .footer-legal a:hover { color: var(--text); }
 
     /* ── RESPONSIVE ───────────────────────────────────────────── */
+    @media (max-width: 1280px) {
+      .fives-grid { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 1024px) {
       .fives-grid { grid-template-columns: repeat(3, 1fr); }
       .lab-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -607,6 +614,7 @@
     }
     @media (max-width: 768px) {
       .fives-grid { grid-template-columns: 1fr 1fr; }
+      .f-card .f-bg { height: 180px; }
       .proof-grid { grid-template-columns: 1fr; }
       .nav-links { display: none; }
       .footer-top { grid-template-columns: 1fr; }
@@ -714,61 +722,71 @@
         <!-- F1: Formulate -->
         <div class="f-card">
           <div class="f-bg" style="background-image:url('5f_formulate_v2.jpg')"></div>
-          <div class="f-number">01</div>
-          <div class="f-icon">
-            <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          <div class="f-body">
+            <div class="f-number">01</div>
+            <div class="f-icon">
+              <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+            </div>
+            <div class="f-title">Formulate</div>
+            <div class="f-desc">We map your business, identify the highest-impact AI opportunities, and build a bespoke strategy before a single line of code is written.</div>
+            <div class="f-link">Strategy session →</div>
           </div>
-          <div class="f-title">Formulate</div>
-          <div class="f-desc">We map your business, identify the highest-impact AI opportunities, and build a bespoke strategy before a single line of code is written.</div>
-          <div class="f-link">Strategy session →</div>
         </div>
 
         <!-- F2: Be Found -->
         <div class="f-card">
           <div class="f-bg" style="background-image:url('5f_befound_v2.jpg')"></div>
-          <div class="f-number">02</div>
-          <div class="f-icon">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <div class="f-body">
+            <div class="f-number">02</div>
+            <div class="f-icon">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </div>
+            <div class="f-title">Be Found</div>
+            <div class="f-desc">AI-powered SEO, always-on receptionist bots, and optimised online presence that ensures your business is visible 24/7.</div>
+            <div class="f-link">See AI Receptionist →</div>
           </div>
-          <div class="f-title">Be Found</div>
-          <div class="f-desc">AI-powered SEO, always-on receptionist bots, and optimised online presence that ensures your business is visible 24/7.</div>
-          <div class="f-link">See AI Receptionist →</div>
         </div>
 
         <!-- F3: Find -->
         <div class="f-card">
           <div class="f-bg" style="background-image:url('5f_find_v2.jpg')"></div>
-          <div class="f-number">03</div>
-          <div class="f-icon">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <div class="f-body">
+            <div class="f-number">03</div>
+            <div class="f-icon">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <div class="f-title">Find</div>
+            <div class="f-desc">AI prospecting that identifies, qualifies, and delivers verified leads directly to your pipeline — while you focus on closing.</div>
+            <div class="f-link">See AI Prospecting →</div>
           </div>
-          <div class="f-title">Find</div>
-          <div class="f-desc">AI prospecting that identifies, qualifies, and delivers verified leads directly to your pipeline — while you focus on closing.</div>
-          <div class="f-link">See AI Prospecting →</div>
         </div>
 
         <!-- F4: Fulfil -->
         <div class="f-card">
           <div class="f-bg" style="background-image:url('5f_fulfil_v2.jpg')"></div>
-          <div class="f-number">04</div>
-          <div class="f-icon">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="f-body">
+            <div class="f-number">04</div>
+            <div class="f-icon">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="f-title">Fulfil</div>
+            <div class="f-desc">AI-powered delivery systems that ensure every client receives a seamless, consistent service — from onboarding to completion, without manual effort.</div>
+            <div class="f-link">See AI Workflows →</div>
           </div>
-          <div class="f-title">Fulfil</div>
-          <div class="f-desc">AI-powered delivery systems that ensure every client receives a seamless, consistent service — from onboarding to completion, without manual effort.</div>
-          <div class="f-link">See AI Workflows →</div>
         </div>
 
         <!-- F5: Fanfare -->
         <div class="f-card">
           <div class="f-bg" style="background-image:url('5f_fanfare_v2.jpg')"></div>
-          <div class="f-number">05</div>
-          <div class="f-icon">
-            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div class="f-body">
+            <div class="f-number">05</div>
+            <div class="f-icon">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <div class="f-title">Fanfare</div>
+            <div class="f-desc">Automated Google Review requests, referral programmes, and advocacy systems that turn happy clients into your most powerful source of new business.</div>
+            <div class="f-link">Learn more →</div>
           </div>
-          <div class="f-title">Fanfare</div>
-          <div class="f-desc">Automated Google Review requests, referral programmes, and advocacy systems that turn happy clients into your most powerful source of new business.</div>
-          <div class="f-link">Learn more →</div>
         </div>
 
       </div>
