@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Opportunity Scan — ClickFlow Grow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a0f1e;
+      --navy-mid: #0d1528;
+      --navy-card: #111827;
+      --teal: #00d4aa;
+      --teal-dark: #00a88a;
+      --teal-glow: rgba(0, 212, 170, 0.15);
+      --white: #ffffff;
+      --grey: #94a3b8;
+      --grey-light: #cbd5e1;
+      --border: rgba(0, 212, 170, 0.2);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND PARTICLES ── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── LAYOUT ── */
+    .scan-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    .scan-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .scan-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .scan-logo span { color: var(--teal); }
+    .scan-back {
+      font-size: 0.85rem;
+      color: var(--grey);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .scan-back:hover { color: var(--teal); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-container {
+      padding: 24px 40px 0;
+    }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .progress-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .progress-count {
+      font-size: 0.78rem;
+      color: var(--grey);
+    }
+    .progress-track {
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal-dark), var(--teal));
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0%;
+    }
+
+    /* ── MAIN QUESTION AREA ── */
+    .scan-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .question-stage {
+      width: 100%;
+      max-width: 680px;
+      position: relative;
+    }
+
+    /* ── QUESTION CARD ── */
+    .q-card {
+      display: none;
+      animation: fadeSlideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .q-card.active { display: block; }
+    .q-card.exit {
+      animation: fadeSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideOut {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-16px); }
+    }
+
+    .q-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .q-text {
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .q-hint {
+      font-size: 0.9rem;
+      color: var(--grey);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    /* ── ANSWER OPTIONS ── */
+    .options-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .options-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .options-grid.cols-1 { grid-template-columns: 1fr; }
+
+    .option-btn {
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--white);
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.4;
+    }
+    .option-btn:hover {
+      border-color: var(--teal);
+      background: var(--teal-glow);
+      transform: translateY(-1px);
+    }
+    .option-btn.selected {
+      border-color: var(--teal);
+      background: var(--teal-glow);
+      color: var(--teal);
+    }
+    .option-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── TEXT INPUT ── */
+    .text-input-wrap {
+      margin-bottom: 32px;
+    }
+    .scan-textarea {
+      width: 100%;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      color: var(--white);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      resize: none;
+      min-height: 130px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .scan-textarea::placeholder { color: var(--grey); }
+    .scan-textarea:focus { border-color: var(--teal); }
+
+    .scan-input {
+      width: 100%;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--white);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .scan-input::placeholder { color: var(--grey); }
+    .scan-input:focus { border-color: var(--teal); }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    /* ── NAV BUTTONS ── */
+    .q-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .btn-next {
+      background: var(--teal);
+      color: var(--navy);
+      border: none;
+      border-radius: 10px;
+      padding: 14px 32px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+    .btn-next:hover { background: #00f0c0; transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-back-q {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--grey);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-back-q:hover { border-color: var(--grey-light); color: var(--white); }
+
+    /* ── INTRO SCREEN ── */
+    #intro-screen {
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+    .intro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--teal-glow);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .intro-title {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .intro-title span { color: var(--teal); }
+    .intro-desc {
+      font-size: 1.05rem;
+      color: var(--grey-light);
+      line-height: 1.7;
+      margin-bottom: 40px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .intro-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .intro-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--grey);
+    }
+    .intro-meta-item svg { color: var(--teal); }
+    .btn-start {
+      background: var(--teal);
+      color: var(--navy);
+      border: none;
+      border-radius: 12px;
+      padding: 18px 48px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-start:hover { background: #00f0c0; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,170,0.3); }
+
+    /* ── CONTACT SCREEN ── */
+    #contact-screen { display: none; }
+    .contact-card {
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .contact-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .contact-subtitle {
+      font-size: 0.9rem;
+      color: var(--grey);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--teal);
+      color: var(--navy);
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-submit:hover { background: #00f0c0; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .privacy-note {
+      font-size: 0.75rem;
+      color: var(--grey);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── LOADING SCREEN ── */
+    #loading-screen {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .loading-orb {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      border-top-color: var(--teal);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 28px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .loading-sub { font-size: 0.9rem; color: var(--grey); }
+    .loading-steps {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .loading-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--grey);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .loading-step.visible { opacity: 1; color: var(--teal); }
+    .loading-step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      flex-shrink: 0;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .scan-header { padding: 16px 20px; }
+      .progress-container { padding: 16px 20px 0; }
+      .scan-main { padding: 24px 16px; }
+      .options-grid.cols-2 { grid-template-columns: 1fr; }
+      .input-row { grid-template-columns: 1fr; }
+      .contact-card { padding: 28px 20px; }
+      .intro-meta { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="scan-wrapper">
+
+  <!-- HEADER -->
+  <header class="scan-header">
+    <a href="homepage.html" class="scan-logo">ClickFlow<span>Grow</span></a>
+    <a href="homepage.html" class="scan-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to site
+    </a>
+  </header>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-container" id="progress-bar-wrap" style="display:none;">
+    <div class="progress-meta">
+      <span class="progress-label">AI Opportunity Scan</span>
+      <span class="progress-count" id="progress-count">Question 1 of 11</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <main class="scan-main">
+
+    <!-- ── INTRO ── -->
+    <div id="intro-screen">
+      <div class="intro-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Free · No login required
+      </div>
+      <h1 class="intro-title">Your <span>AI Opportunity</span><br>Scan</h1>
+      <p class="intro-desc">Answer 11 quick questions about your business and we'll show you exactly where AI could make the biggest difference — in plain English, with real examples.</p>
+      <div class="intro-meta">
+        <div class="intro-meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Takes about 3 minutes
+        </div>
+        <div class="intro-meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Personalised results
+        </div>
+        <div class="intro-meta-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          No obligation
+        </div>
+      </div>
+      <button class="btn-start" onclick="startScan()">
+        Start my scan
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <!-- ── QUESTIONS ── -->
+    <div class="question-stage" id="question-stage" style="display:none;">
+
+      <!-- Q1: Business type -->
+      <div class="q-card" id="q1">
+        <div class="q-number">Question 1 of 11 · Formulate</div>
+        <h2 class="q-text">What best describes your business?</h2>
+        <p class="q-hint">This helps us tailor your results to businesses like yours.</p>
+        <div class="options-grid cols-2">
+          <button class="option-btn" onclick="selectOption('q1','service','🛠️','Professional services (accountant, solicitor, consultant)')">
+            <span class="option-icon">🛠️</span>Professional services
+          </button>
+          <button class="option-btn" onclick="selectOption('q1','retail','🛍️','Retail or e-commerce')">
+            <span class="option-icon">🛍️</span>Retail or e-commerce
+          </button>
+          <button class="option-btn" onclick="selectOption('q1','trades','🔧','Trades or property (builder, letting agent, surveyor)')">
+            <span class="option-icon">🔧</span>Trades or property
+          </button>
+          <button class="option-btn" onclick="selectOption('q1','hospitality','🍽️','Hospitality or leisure')">
+            <span class="option-icon">🍽️</span>Hospitality or leisure
+          </button>
+          <button class="option-btn" onclick="selectOption('q1','health','🏥','Health, wellness or care')">
+            <span class="option-icon">🏥</span>Health, wellness or care
+          </button>
+          <button class="option-btn" onclick="selectOption('q1','other','💼','Something else')">
+            <span class="option-icon">💼</span>Something else
+          </button>
+        </div>
+        <div class="q-nav">
+          <div></div>
+          <button class="btn-next" id="q1-next" disabled onclick="nextQuestion(2)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q2: Team size -->
+      <div class="q-card" id="q2">
+        <div class="q-number">Question 2 of 11 · Formulate</div>
+        <h2 class="q-text">How many people are in your team?</h2>
+        <p class="q-hint">Including yourself — this shapes which AI solutions are most relevant.</p>
+        <div class="options-grid cols-2">
+          <button class="option-btn" onclick="selectOption('q2','solo','👤','Just me — I run it solo')">
+            <span class="option-icon">👤</span>Just me
+          </button>
+          <button class="option-btn" onclick="selectOption('q2','small','👥','2–5 people')">
+            <span class="option-icon">👥</span>2–5 people
+          </button>
+          <button class="option-btn" onclick="selectOption('q2','medium','🏢','6–20 people')">
+            <span class="option-icon">🏢</span>6–20 people
+          </button>
+          <button class="option-btn" onclick="selectOption('q2','large','🏗️','More than 20')">
+            <span class="option-icon">🏗️</span>More than 20
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(1)">← Back</button>
+          <button class="btn-next" id="q2-next" disabled onclick="nextQuestion(3)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q3: Biggest bottleneck -->
+      <div class="q-card" id="q3">
+        <div class="q-number">Question 3 of 11 · Formulate</div>
+        <h2 class="q-text">What's the biggest bottleneck in your business right now?</h2>
+        <p class="q-hint">Be honest — there's no wrong answer here.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q3','newclients','🎯','Getting enough new clients or customers')">
+            <span class="option-icon">🎯</span>Getting enough new clients or customers
+          </button>
+          <button class="option-btn" onclick="selectOption('q3','delivery','⚙️','Delivering my service consistently without it all falling on me')">
+            <span class="option-icon">⚙️</span>Delivering my service consistently without it all falling on me
+          </button>
+          <button class="option-btn" onclick="selectOption('q3','team','👥','Managing my team — they need me for everything')">
+            <span class="option-icon">👥</span>Managing my team — they need me for everything
+          </button>
+          <button class="option-btn" onclick="selectOption('q3','admin','📋','Too much admin and repetitive tasks eating my time')">
+            <span class="option-icon">📋</span>Too much admin and repetitive tasks eating my time
+          </button>
+          <button class="option-btn" onclick="selectOption('q3','growth','📈','I'm busy but not growing — I can't scale what I have')">
+            <span class="option-icon">📈</span>I'm busy but not growing — I can't scale what I have
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(2)">← Back</button>
+          <button class="btn-next" id="q3-next" disabled onclick="nextQuestion(4)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q4: Online presence -->
+      <div class="q-card" id="q4">
+        <div class="q-number">Question 4 of 11 · Be Found</div>
+        <h2 class="q-text">When someone searches for your type of business online, do they find you?</h2>
+        <p class="q-hint">Think about Google, Google Maps, and your website.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q4','yes','✅','Yes — we show up well and get enquiries from it')">
+            <span class="option-icon">✅</span>Yes — we show up well and get enquiries from it
+          </button>
+          <button class="option-btn" onclick="selectOption('q4','partial','⚠️','Partially — we have a presence but it's not generating much')">
+            <span class="option-icon">⚠️</span>Partially — we have a presence but it's not generating much
+          </button>
+          <button class="option-btn" onclick="selectOption('q4','no','❌','Not really — we rely on referrals and word of mouth')">
+            <span class="option-icon">❌</span>Not really — we rely on referrals and word of mouth
+          </button>
+          <button class="option-btn" onclick="selectOption('q4','unsure','🤷','I honestly don't know')">
+            <span class="option-icon">🤷</span>I honestly don't know
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(3)">← Back</button>
+          <button class="btn-next" id="q4-next" disabled onclick="nextQuestion(5)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q5: Out of hours -->
+      <div class="q-card" id="q5">
+        <div class="q-number">Question 5 of 11 · Be Found</div>
+        <h2 class="q-text">Can new clients reach or book you outside of business hours?</h2>
+        <p class="q-hint">Think about evenings, weekends, and bank holidays.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q5','yes','✅','Yes — we have online booking or an automated response')">
+            <span class="option-icon">✅</span>Yes — we have online booking or an automated response
+          </button>
+          <button class="option-btn" onclick="selectOption('q5','partial','⚠️','They can email or fill in a form but nobody responds until we're back')">
+            <span class="option-icon">⚠️</span>They can email or fill in a form but nobody responds until we're back
+          </button>
+          <button class="option-btn" onclick="selectOption('q5','no','❌','No — if we're not available, they have to wait or go elsewhere')">
+            <span class="option-icon">❌</span>No — if we're not available, they have to wait or go elsewhere
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(4)">← Back</button>
+          <button class="btn-next" id="q5-next" disabled onclick="nextQuestion(6)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q6: Lead follow-up -->
+      <div class="q-card" id="q6">
+        <div class="q-number">Question 6 of 11 · Find</div>
+        <h2 class="q-text">When a new enquiry comes in, what typically happens?</h2>
+        <p class="q-hint">Be honest about the reality, not the ideal.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q6','fast','⚡','Someone responds within minutes — we have a clear process')">
+            <span class="option-icon">⚡</span>Someone responds within minutes — we have a clear process
+          </button>
+          <button class="option-btn" onclick="selectOption('q6','same-day','🕐','We get back to them the same day, usually')">
+            <span class="option-icon">🕐</span>We get back to them the same day, usually
+          </button>
+          <button class="option-btn" onclick="selectOption('q6','slow','😬','It depends who sees it — sometimes it takes a day or two')">
+            <span class="option-icon">😬</span>It depends who sees it — sometimes it takes a day or two
+          </button>
+          <button class="option-btn" onclick="selectOption('q6','lost','❌','Honestly, some enquiries probably fall through the cracks')">
+            <span class="option-icon">❌</span>Honestly, some enquiries probably fall through the cracks
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(5)">← Back</button>
+          <button class="btn-next" id="q6-next" disabled onclick="nextQuestion(7)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q7: Repetitive team questions -->
+      <div class="q-card" id="q7">
+        <div class="q-number">Question 7 of 11 · Fulfil</div>
+        <h2 class="q-text">How much time do you or your team spend answering the same questions repeatedly?</h2>
+        <p class="q-hint">From clients, from staff, from suppliers — all counts.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q7','none','✅','Very little — we have good documentation and processes')">
+            <span class="option-icon">✅</span>Very little — we have good documentation and processes
+          </button>
+          <button class="option-btn" onclick="selectOption('q7','some','⚠️','A few hours a week — it's manageable but annoying')">
+            <span class="option-icon">⚠️</span>A few hours a week — it's manageable but annoying
+          </button>
+          <button class="option-btn" onclick="selectOption('q7','lots','😤','A significant amount — it interrupts my day constantly')">
+            <span class="option-icon">😤</span>A significant amount — it interrupts my day constantly
+          </button>
+          <button class="option-btn" onclick="selectOption('q7','critical','🔥','It's a serious problem — I can't get anything done without being interrupted')">
+            <span class="option-icon">🔥</span>It's a serious problem — I can't get anything done
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(6)">← Back</button>
+          <button class="btn-next" id="q7-next" disabled onclick="nextQuestion(8)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q8: Repetitive tasks -->
+      <div class="q-card" id="q8">
+        <div class="q-number">Question 8 of 11 · Fulfil</div>
+        <h2 class="q-text">Are there tasks in your business that happen the same way every single time?</h2>
+        <p class="q-hint">Think: onboarding new clients, sending invoices, weekly reports, booking confirmations.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q8','automated','✅','Yes — and most of them are already automated')">
+            <span class="option-icon">✅</span>Yes — and most of them are already automated
+          </button>
+          <button class="option-btn" onclick="selectOption('q8','manual','⚠️','Yes — but we do them manually every time')">
+            <span class="option-icon">⚠️</span>Yes — but we do them manually every time
+          </button>
+          <button class="option-btn" onclick="selectOption('q8','inconsistent','😬','Sort of — but they're inconsistent depending on who does them')">
+            <span class="option-icon">😬</span>Sort of — but they're inconsistent depending on who does them
+          </button>
+          <button class="option-btn" onclick="selectOption('q8','unsure','🤷','I haven't really thought about it')">
+            <span class="option-icon">🤷</span>I haven't really thought about it
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(7)">← Back</button>
+          <button class="btn-next" id="q8-next" disabled onclick="nextQuestion(9)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q9: Google Reviews -->
+      <div class="q-card" id="q9">
+        <div class="q-number">Question 9 of 11 · Fanfare</div>
+        <h2 class="q-text">Do you have a consistent way of asking happy clients for a Google Review?</h2>
+        <p class="q-hint">Not just occasionally — a repeatable system that runs every time.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q9','yes','✅','Yes — we have a process and it generates reviews regularly')">
+            <span class="option-icon">✅</span>Yes — we have a process and it generates reviews regularly
+          </button>
+          <button class="option-btn" onclick="selectOption('q9','sometimes','⚠️','Sometimes — but it depends on us remembering to ask')">
+            <span class="option-icon">⚠️</span>Sometimes — but it depends on us remembering to ask
+          </button>
+          <button class="option-btn" onclick="selectOption('q9','no','❌','Not really — we rely on clients doing it voluntarily')">
+            <span class="option-icon">❌</span>Not really — we rely on clients doing it voluntarily
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(8)">← Back</button>
+          <button class="btn-next" id="q9-next" disabled onclick="nextQuestion(10)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q10: Referrals -->
+      <div class="q-card" id="q10">
+        <div class="q-number">Question 10 of 11 · Fanfare</div>
+        <h2 class="q-text">If a client had a great experience, what's the most likely way they'd tell someone else about you?</h2>
+        <p class="q-hint">Think about what actually happens, not what you'd like to happen.</p>
+        <div class="options-grid cols-1">
+          <button class="option-btn" onclick="selectOption('q10','word','💬','Word of mouth — they'd mention us in conversation')">
+            <span class="option-icon">💬</span>Word of mouth — they'd mention us in conversation
+          </button>
+          <button class="option-btn" onclick="selectOption('q10','review','⭐','They'd leave a Google Review if we asked')">
+            <span class="option-icon">⭐</span>They'd leave a Google Review if we asked
+          </button>
+          <button class="option-btn" onclick="selectOption('q10','social','📱','They might share something on social media')">
+            <span class="option-icon">📱</span>They might share something on social media
+          </button>
+          <button class="option-btn" onclick="selectOption('q10','referral','🤝','They'd actively refer someone to us')">
+            <span class="option-icon">🤝</span>They'd actively refer someone to us
+          </button>
+          <button class="option-btn" onclick="selectOption('q10','nothing','😐','Honestly, probably nothing — we don't make it easy for them')">
+            <span class="option-icon">😐</span>Honestly, probably nothing — we don't make it easy for them
+          </button>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(9)">← Back</button>
+          <button class="btn-next" id="q10-next" disabled onclick="nextQuestion(11)">Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Q11: Magic wand -->
+      <div class="q-card" id="q11">
+        <div class="q-number">Question 11 of 11 · The Big One</div>
+        <h2 class="q-text">If you could wave a magic wand — what's the one thing you'd want AI to fix in your business today?</h2>
+        <p class="q-hint">Don't overthink it. Your first instinct is usually the most honest answer. There's no wrong answer here.</p>
+        <div class="text-input-wrap">
+          <textarea class="scan-textarea" id="q11-text" placeholder="e.g. I want my team to stop calling me with questions I've answered a hundred times..." oninput="checkTextarea('q11')"></textarea>
+        </div>
+        <div class="q-nav">
+          <button class="btn-back-q" onclick="prevQuestion(10)">← Back</button>
+          <button class="btn-next" id="q11-next" disabled onclick="showContactScreen()">See my results <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── CONTACT SCREEN ── -->
+    <div id="contact-screen" class="question-stage">
+      <div class="contact-card">
+        <h2 class="contact-title">Almost there 🎯</h2>
+        <p class="contact-subtitle">Your personalised results are ready. Just tell us where to send them — and we'll show you exactly where AI can make the biggest difference in your business.</p>
+        <div class="input-row">
+          <input type="text" class="scan-input" id="contact-first" placeholder="First name" oninput="checkContact()" />
+          <input type="text" class="scan-input" id="contact-last" placeholder="Last name" oninput="checkContact()" />
+        </div>
+        <input type="email" class="scan-input" id="contact-email" placeholder="Work email address" oninput="checkContact()" style="margin-bottom:12px;" />
+        <input type="tel" class="scan-input" id="contact-phone" placeholder="Phone number (optional)" style="margin-bottom:0;" />
+        <button class="btn-submit" id="submit-btn" disabled onclick="submitScan()">
+          Show me my results
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <p class="privacy-note">🔒 Your information is kept private. We'll never share it with third parties.</p>
+      </div>
+    </div>
+
+    <!-- ── LOADING SCREEN ── -->
+    <div id="loading-screen" class="question-stage" style="display:none;">
+      <div class="loading-orb"></div>
+      <h2 class="loading-title">Analysing your business...</h2>
+      <p class="loading-sub">We're mapping your AI opportunities across the 5Fs</p>
+      <div class="loading-steps">
+        <div class="loading-step" id="ls1"><div class="loading-step-dot"></div>Scoring your Formulate readiness</div>
+        <div class="loading-step" id="ls2"><div class="loading-step-dot"></div>Checking your Be Found signals</div>
+        <div class="loading-step" id="ls3"><div class="loading-step-dot"></div>Mapping your Find opportunities</div>
+        <div class="loading-step" id="ls4"><div class="loading-step-dot"></div>Auditing your Fulfil processes</div>
+        <div class="loading-step" id="ls5"><div class="loading-step-dot"></div>Calculating your Fanfare potential</div>
+        <div class="loading-step" id="ls6"><div class="loading-step-dot"></div>Building your personalised report</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ── BACKGROUND PARTICLES ──
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.5 + 0.3,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      a: Math.random() * 0.5 + 0.1
+    });
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0, 212, 170, ${p.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+
+  // ── SCAN STATE ──
+  const answers = {};
+  let currentQ = 0;
+  const TOTAL = 11;
+
+  function startScan() {
+    document.getElementById('intro-screen').style.display = 'none';
+    document.getElementById('question-stage').style.display = 'block';
+    document.getElementById('progress-bar-wrap').style.display = 'block';
+    showQuestion(1);
+  }
+
+  function showQuestion(n) {
+    currentQ = n;
+    document.querySelectorAll('.q-card').forEach(c => c.classList.remove('active', 'exit'));
+    const card = document.getElementById('q' + n);
+    if (card) card.classList.add('active');
+    updateProgress(n);
+  }
+
+  function updateProgress(n) {
+    const pct = ((n - 1) / TOTAL) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-count').textContent = 'Question ' + n + ' of ' + TOTAL;
+  }
+
+  function selectOption(qId, value, icon, label) {
+    answers[qId] = { value, label };
+    document.querySelectorAll('#' + qId + ' .option-btn').forEach(btn => btn.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    const nextBtn = document.getElementById(qId + '-next');
+    if (nextBtn) nextBtn.disabled = false;
+  }
+
+  function nextQuestion(n) {
+    const current = document.getElementById('q' + (n - 1));
+    if (current) {
+      current.classList.add('exit');
+      setTimeout(() => { current.classList.remove('active', 'exit'); showQuestion(n); }, 280);
+    } else {
+      showQuestion(n);
+    }
+  }
+
+  function prevQuestion(n) {
+    showQuestion(n);
+  }
+
+  function checkTextarea(qId) {
+    const val = document.getElementById(qId + '-text').value.trim();
+    answers[qId] = { value: val, label: val };
+    const nextBtn = document.getElementById(qId + '-next');
+    if (nextBtn) nextBtn.disabled = val.length < 10;
+  }
+
+  function showContactScreen() {
+    document.getElementById('question-stage').style.display = 'none';
+    document.getElementById('contact-screen').style.display = 'block';
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-count').textContent = 'Almost done!';
+  }
+
+  function checkContact() {
+    const first = document.getElementById('contact-first').value.trim();
+    const last = document.getElementById('contact-last').value.trim();
+    const email = document.getElementById('contact-email').value.trim();
+    const valid = first.length > 0 && last.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    document.getElementById('submit-btn').disabled = !valid;
+  }
+
+  async function submitScan() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = 'Submitting... <span style="animation:spin 1s linear infinite;display:inline-block;">⟳</span>';
+
+    const contact = {
+      firstName: document.getElementById('contact-first').value.trim(),
+      lastName: document.getElementById('contact-last').value.trim(),
+      email: document.getElementById('contact-email').value.trim(),
+      phone: document.getElementById('contact-phone').value.trim()
+    };
+
+    const scanData = { contact, answers };
+
+    // Show loading screen
+    document.getElementById('contact-screen').style.display = 'none';
+    document.getElementById('loading-screen').style.display = 'block';
+
+    // Animate loading steps
+    const steps = ['ls1','ls2','ls3','ls4','ls5','ls6'];
+    for (let i = 0; i < steps.length; i++) {
+      await new Promise(r => setTimeout(r, 600));
+      document.getElementById(steps[i]).classList.add('visible');
+    }
+
+    // Submit to backend
+    try {
+      await fetch('/api/opportunity-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scanData)
+      });
+    } catch(e) {
+      // Continue to results even if API call fails
+    }
+
+    // Calculate scores and redirect to results
+    await new Promise(r => setTimeout(r, 800));
+    const scores = calculateScores();
+    const params = new URLSearchParams({
+      name: contact.firstName,
+      f1: scores.formulate,
+      f2: scores.befound,
+      f3: scores.find,
+      f4: scores.fulfil,
+      f5: scores.fanfare,
+      magic: encodeURIComponent(answers.q11?.value || ''),
+      bottleneck: answers.q3?.value || '',
+      team: answers.q2?.value || '',
+      biz: answers.q1?.value || ''
+    });
+    window.location.href = 'scan-results.html?' + params.toString();
+  }
+
+  function calculateScores() {
+    // Score each F out of 100
+    let formulate = 50;
+    let befound = 50;
+    let find = 50;
+    let fulfil = 50;
+    let fanfare = 50;
+
+    // Formulate: Q3 bottleneck
+    if (answers.q3?.value === 'newclients') formulate = 40;
+    else if (answers.q3?.value === 'delivery') formulate = 35;
+    else if (answers.q3?.value === 'team') formulate = 30;
+    else if (answers.q3?.value === 'admin') formulate = 35;
+    else if (answers.q3?.value === 'growth') formulate = 45;
+
+    // Be Found: Q4 + Q5
+    const foundMap = { yes: 85, partial: 55, no: 20, unsure: 30 };
+    const hoursMap = { yes: 80, partial: 45, no: 15 };
+    befound = Math.round(((foundMap[answers.q4?.value] || 50) + (hoursMap[answers.q5?.value] || 50)) / 2);
+
+    // Find: Q6
+    const followMap = { fast: 90, 'same-day': 65, slow: 35, lost: 15 };
+    find = followMap[answers.q6?.value] || 50;
+
+    // Fulfil: Q7 + Q8
+    const repeatMap = { none: 90, some: 60, lots: 30, critical: 10 };
+    const taskMap = { automated: 90, manual: 40, inconsistent: 30, unsure: 45 };
+    fulfil = Math.round(((repeatMap[answers.q7?.value] || 50) + (taskMap[answers.q8?.value] || 50)) / 2);
+
+    // Fanfare: Q9 + Q10
+    const reviewMap = { yes: 90, sometimes: 50, no: 15 };
+    const referralMap = { word: 40, review: 60, social: 50, referral: 75, nothing: 10 };
+    fanfare = Math.round(((reviewMap[answers.q9?.value] || 50) + (referralMap[answers.q10?.value] || 50)) / 2);
+
+    return { formulate, befound, find, fulfil, fanfare };
+  }
+</script>
+
+</body>
+</html>

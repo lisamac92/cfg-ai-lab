@@ -533,6 +533,105 @@ def ghl_capture():
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# AI OPPORTUNITY SCAN — captures scan results and creates GHL contact + opportunity
+# ─────────────────────────────────────────────────────────────────────────────
+
+GHL_PIPELINE_ID = 'q6uFBb0ktjT1AO8gGmMX'
+GHL_STAGE_ENGAGED = 'caaa2dae-60c9-49a4-aa8e-bdda831bd5d6'
+
+@app.route('/api/opportunity-scan', methods=['POST'])
+def opportunity_scan():
+    body    = request.get_json(force=True)
+    contact = body.get('contact', {})
+    answers = body.get('answers', {})
+
+    first_name = (contact.get('firstName') or '').strip()
+    last_name  = (contact.get('lastName') or '').strip()
+    email      = (contact.get('email') or '').strip().lower()
+    phone      = (contact.get('phone') or '').strip()
+
+    if not email or '@' not in email:
+        return jsonify({'success': False, 'error': 'Invalid email'}), 400
+
+    # Extract magic wand answer
+    magic_wand = ''
+    if answers.get('q11'):
+        magic_wand = answers['q11'].get('value', '') or answers['q11'].get('label', '')
+
+    # Extract bottleneck and business type
+    bottleneck = answers.get('q3', {}).get('label', '') if answers.get('q3') else ''
+    biz_type   = answers.get('q1', {}).get('label', '') if answers.get('q1') else ''
+    team_size  = answers.get('q2', {}).get('label', '') if answers.get('q2') else ''
+
+    # Build tags based on answers
+    tags = ['ai-opportunity-scan', 'cfg-ai-lab-event']
+    if answers.get('q1', {}).get('value'):
+        tags.append(f"biz-{answers['q1']['value']}")
+    if answers.get('q2', {}).get('value'):
+        tags.append(f"team-{answers['q2']['value']}")
+    if answers.get('q3', {}).get('value'):
+        tags.append(f"bottleneck-{answers['q3']['value']}")
+
+    # 1. Upsert contact in GHL
+    contact_payload = {
+        'email': email,
+        'firstName': first_name,
+        'lastName': last_name,
+        'tags': tags,
+        'source': 'AI Opportunity Scan — ClickFlow Grow',
+    }
+    if phone:
+        contact_payload['phone'] = phone
+
+    contact_data, err = ghl_mcp('contacts_upsert-contact', contact_payload)
+    if err:
+        app.logger.error(f'GHL upsert error (scan): {err}')
+        return jsonify({'success': False, 'error': f'Contact error: {err}'}), 500
+
+    contact_id = None
+    if contact_data:
+        c = contact_data.get('contact') or contact_data
+        contact_id = c.get('id') if isinstance(c, dict) else None
+
+    if not contact_id:
+        app.logger.error(f'No contact ID returned (scan): {contact_data}')
+        return jsonify({'success': False, 'error': 'Could not retrieve contact ID'}), 500
+
+    # 2. Create opportunity in Leads → Sales Pipeline at Engaged Lead stage
+    opp_name = f"AI Scan — {first_name} {last_name}".strip(' —')
+    opp_payload = {
+        'pipelineId': GHL_PIPELINE_ID,
+        'pipelineStageId': GHL_STAGE_ENGAGED,
+        'contactId': contact_id,
+        'name': opp_name,
+        'status': 'open',
+        'source': 'AI Opportunity Scan',
+    }
+    opp_data, opp_err = ghl_mcp('opportunities_create-opportunity', opp_payload)
+    if opp_err:
+        app.logger.warning(f'GHL opportunity creation warning (scan): {opp_err}')
+
+    # 3. Add a note with the magic wand answer and scan summary
+    if magic_wand or bottleneck:
+        note_lines = ['=== AI Opportunity Scan Results ===']
+        if biz_type:   note_lines.append(f'Business type: {biz_type}')
+        if team_size:  note_lines.append(f'Team size: {team_size}')
+        if bottleneck: note_lines.append(f'Biggest bottleneck: {bottleneck}')
+        if magic_wand: note_lines.append(f'\n🪄 Magic wand answer:\n"{magic_wand}"')
+        note_text = '\n'.join(note_lines)
+
+        note_payload = {
+            'contactId': contact_id,
+            'body': note_text,
+        }
+        note_data, note_err = ghl_mcp('contacts_create-note', note_payload)
+        if note_err:
+            app.logger.warning(f'GHL note creation warning (scan): {note_err}')
+
+    return jsonify({'success': True, 'contactId': contact_id})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # VOICE AI WEBHOOK — receives post-call data from GHL workflow
 # ─────────────────────────────────────────────────────────────────────────────
 
