@@ -1,151 +1,173 @@
 # CFG AI Lab — Project Checklist
-**Last updated:** March 13, 2026  
-**Live URL (sandbox):** https://8080-idglvrmshignkf4wht6zv-6a341fe9.us2.manus.computer  
-**GitHub:** https://github.com/lisamac92/cfg-ai-lab
+**Last updated:** 25 April 2025
+**GitHub:** https://github.com/lisamac92/cfg-ai-lab (public, branch: main)
 
 ---
 
-## ✅ DONE — Completed
+## ✅ COMPLETED
 
-- [x] Entrance door animation — glass doors, cinematic zoom, amber wash to dark navy
-- [x] Brand colour update — `#EC8A01` amber-gold throughout
-- [x] Table lobby cards — AI-generated overhead table photos
-- [x] Home nav link added to main navigation
-- [x] Email capture bars wired to GHL CRM (all 4 bars)
-- [x] AI Builder page — Alex portrait, iPad-style form, chip interest selector, GHL-wired submit
-- [x] All "Speak to an AI Builder" CTAs wired to AI Builder page
-- [x] Flask server — unified static + API on port 8080
-- [x] HTML structure fix — view-table-2 and view-table-3 nesting bug resolved
-- [x] GHL Voice AI widget embedded in Table 01 Step 3
-- [x] Shadow DOM injection — avatar hidden, pill styled dark navy with teal border
-- [x] Pulsing teal rings around the Talk to Aria widget
-- [x] Mint green divider lines between Step 1 / Step 2 / Step 3
-- [x] Widget pill properly sized — 380×72px, white text, large mic button
-- [x] **Table 02 REBUILT** — new Option C demo flow: search → live results → enrich → CTA
-  - [x] Three dropdowns: Target Role (×9), Industry (×10), Location (×10 UK)
-  - [x] 5 AI-generated hyper-realistic UK leads with masked emails (animated reveal)
-  - [x] One-click enrichment: company insight + personalised opening line + copy button
-  - [x] "Want 25 free leads?" lead capture → GHL CRM
-  - [x] Backend: `/api/leads` and `/api/enrich` endpoints via OpenAI
-  - [x] Fixed TDZ bug (let → var for state variables)
+### Core Pages
+- [x] `index.html` — AI Lab with three interactive product tables (Table 01, 02, 03)
+- [x] `homepage.html` — ClickFlowGrow homepage with animated hero, 5Fs section, scan band, AI Lab showcase
+- [x] `opportunity-scan.html` — AI Opportunity Scan Act 1 (11-question conversational form)
+- [x] `scan-results.html` — AI Opportunity Scan Acts 2 & 3 (personalised results + three pathways)
 
----
+### AI Lab — Table 01: AI Receptionist
+- [x] Live chat demo with scenario selector (restaurant, accountant, trades, dental)
+- [x] Aria voice AI widget embedded (GHL widget ID: `69b2e92d6a7fada2ec2e45f7`)
+- [x] Pulsing teal rings around widget, shadow DOM styling
+- [x] Step 1 / Step 2 / Step 3 layout with mint green dividers
+- [x] Lead capture → GHL via `/api/ghl-capture`
 
-## 🔴 TIER 1 — Blockers (must do before event)
+### AI Lab — Table 02: AI Prospecting
+- [x] Live lead generation (role + industry + location dropdowns)
+- [x] 5 AI-generated hyper-realistic UK leads with masked emails
+- [x] One-click enrichment: company insight + personalised opening line + copy button
+- [x] Intelligence brief generator
+- [x] Lead capture → GHL
+- [x] "Talk to an AI Builder →" CTA → GHL calendar ✅ WIRED
 
-### 1. Production Deployment
-- [ ] **Choose a host** — Netlify, Vercel, Railway, or VPS (e.g. `ailab.clickflowgrow.com`)
-- [ ] **Set up GitHub Actions CI/CD** — Manus to add workflow so every push to `main` auto-deploys
-- [ ] **Update all GHL email templates** — replace sandbox URLs with production domain
-- [ ] **Test all GHL email sends** from production domain
+### AI Lab — Table 03: AI Workflow Audit
+- [x] Business type selector (restaurant, accountant, dental, estate agent)
+- [x] Animated workflow visualisation
+- [x] Live chat via OpenAI with scenario-specific AI personas
+- [x] Lead capture → GHL
+- [x] "Book a free Workflow Audit →" CTA → GHL calendar ✅ WIRED
 
-### 2. GHL Booking Calendar URL
-- [ ] **Get the GHL calendar URL** for "Speak to an AI Builder" appointments
-- [ ] **Send to Manus** — will wire into all "Book a call" buttons in ~5 minutes
+### AI Lab — AI Builder View
+- [x] Alex portrait + iPad-style contact form
+- [x] Interest chip selector (AI Receptionist, AI Prospecting, AI Workflows, Not sure yet, All of it)
+- [x] Form submission → GHL contact creation
+- [x] "Speak to an AI Builder" nav + lobby CTAs → AI Builder view
 
-### 3. Stripe Payment Link
-- [ ] **Get the Stripe payment link** for £600 AI Receptionist activation
-- [ ] **Send to Manus** — will replace placeholder `https://buy.stripe.com/placeholder`
-- [ ] **Confirm pricing** — currently shows "£600 setup + £499/month"
+### AI Opportunity Scan
+- [x] Act 1: 11-question conversational form (one at a time, animated transitions, progress bar)
+- [x] Magic wand question: "If you could wave a magic wand, what's the one thing you'd want AI to fix in your business today?" — free text, Q11
+- [x] Contact capture screen (first name, last name, email, phone optional)
+- [x] 6-step loading animation with F-dimension labels
+- [x] Scoring logic: each F scored 0–100 from answer combinations
+- [x] Redirect to scan-results.html with URL params
+- [x] Act 2: 5F Signal Strength visual (signal bars, colour-coded green/amber/red)
+- [x] Act 2: Magic wand callout — their words reflected back prominently
+- [x] Act 2: 2–3 personalised AI idea stories based on lowest-scoring Fs
+- [x] Act 2: "Ask Sam before you wake Sam" story (Fulfil)
+- [x] Act 2: "11pm Sunday plumber" story (Be Found)
+- [x] Act 2: Magic wand dedicated idea card
+- [x] Act 2: "See more ideas" expandable section
+- [x] Act 3: Three pathways — Try it live (AI Lab), Book a call (GHL calendar), See more ideas
+- [x] Backend: `/api/opportunity-scan` endpoint
 
----
+### Backend API (api_server.py)
+- [x] `/api/leads` — live lead generation
+- [x] `/api/enrich` — lead enrichment
+- [x] `/api/intelligence` — intelligence brief (legacy, kept for compatibility)
+- [x] `/api/chat` — workflow chat (Table 03)
+- [x] `/api/ghl-capture` — AI Lab lead capture → GHL contact upsert + follow-up email
+- [x] `/api/opportunity-scan` — scan submission → GHL contact + opportunity + note
+- [x] `/api/voice-webhook` — post-call transcript processing + GPT extraction
+- [x] `/api/poll-call-data` — voice call session polling
 
-## 🟠 TIER 2 — Voice AI Loop (flagship feature)
+### GHL Integration
+- [x] MCP connection: `manus-cfg-sales` server, Location ID `ve9EPM428h8vShlRW1KT`
+- [x] Contact upsert on all form submissions
+- [x] Tags applied on scan submissions (biz type, team size, bottleneck)
+- [x] Opportunity created in "Leads → Sales Pipeline" at "Engaged Lead" stage
+- [x] Magic wand answer saved as note on contact record
+- [x] Follow-up emails sent via GHL conversations (Tables 01–03)
+- [x] Calendar created: "AI-Driven Business Growth"
+- [x] Booking URL wired across all pages: `https://link.clickflowgrow.com/widget/booking/1oQg9EeqtweL4ewewqP7`
 
-### 4. GHL Voice AI Agent Setup (You — ~5 mins)
-- [ ] Go to GHL → Automation → AI Agents → Voice AI → + Create New
-- [ ] Agent name: `Aria — AI Receptionist Demo`
-- [ ] Paste full prompt from `ARIA_PROMPT.md`
-- [ ] Choose a female voice (e.g. Nicole or Sarah)
-- [ ] Save and confirm widget ID `69b2e92d6a7fada2ec2e45f7` is linked
+### Homepage
+- [x] Animated orb hero with data-pulse canvas animation
+- [x] Trust bar
+- [x] 5Fs framework section — five cards with v2 photography backgrounds (90% opacity)
+- [x] AI Opportunity Scan band (between 5Fs and AI Lab sections)
+- [x] AI Lab showcase section
+- [x] How it works (3 steps)
+- [x] Testimonials / social proof
+- [x] CTA band with live booking link
+- [x] Footer
 
-### 5. Session ID + Polling JS (Manus — ~20 mins)
-- [ ] Add UUID generation to the widget embed so each browser session gets a unique ID
-- [ ] Pass session ID as a custom variable to the GHL widget
-- [ ] Start polling `/api/poll-call-data` when widget loads
-- [ ] Auto-fill the booking form below the widget when call data arrives
+### Assets
+- [x] Homepage hero background (`homepage_hero_bg_web.jpg`)
+- [x] 5Fs photography cards v2 (all five: formulate, befound, find, fulfil, fanfare)
+- [x] GHL calendar banner (`calendar_banner_web.jpg` — 112KB, upload-ready)
+- [x] GHL calendar logo (`calendar_logo_web.jpg` — 16KB, upload-ready)
 
-### 6. Post-Call GHL Workflow Webhook (You — ~10 mins in GHL)
-- [ ] Create a GHL Workflow: trigger = "Voice AI Call Ended"
-- [ ] Add action: "Send Webhook" → POST to `{production_url}/api/voice-webhook`
-- [ ] Payload must include: `transcript`, `session_id`, `contact_id`
-- [ ] The server will parse the transcript with GPT, extract contact details, upsert in CRM, and store for polling
-
----
-
-## 🟡 TIER 3 — Table Improvements (polish before event)
-
-### 7. Table 01 — AI Receptionist ✅ COMPLETE (minor items remain)
-- [ ] **Confirm industry tabs** — currently Plumbing / Law / Estate Agency — right for the audience?
-- [ ] **Confirm audio files** — pre-recorded demo calls final and matched to each industry?
-- [ ] **Step 2 business name input** — currently generates a text greeting; consider upgrading to live voice call
-
-### 8. Table 02 — AI Prospecting ✅ COMPLETE (minor items remain)
-- [ ] **Confirm "25 free leads" offer** — is this what ClickFlow Leads actually delivers?
-- [ ] **Provide GHL calendar link** for "Talk to an AI Builder" button
-- [ ] Consider adding a "New search" / reset button after results appear
-- [ ] Consider showing a "What this costs without AI" time/cost counter
-
-### 9. Table 03 — AI Workflows ✅ COMPLETE (minor items remain)
-- [x] **Option C approved** — business type selector + animated workflow + live chat
-- [x] **Scenarios confirmed** — Restaurant, Accountant/Solicitor, Dental Practice, Estate Agent
-- [x] **Built and tested** — all four scenarios working, live chat via OpenAI, lead capture wired
-- [x] **Colour scheme** — deep purple/indigo, consistent with Table 03 identity
-- [x] **Backend** — `/api/chat` endpoint with scenario-specific AI personas
-- [x] **Global scope bug fixed** — Module 2 & 3 JS moved to separate script block
-- [ ] **Provide GHL calendar link** for "Book a Workflow Audit" CTA
-- [ ] **Test workflow email** — confirm personalised workflow map email template in GHL
-
-### 10. DemoDrop Experience
-- [ ] **Test the full DemoDrop flow** — business name + website → AI greeting → activation panel
-- [ ] **Confirm pricing copy** — "£600 setup + £499/month"
-- [ ] **DemoDrop email** — confirm personalised demo email template is set up in GHL
-
-### 11. AI Builder Page
-- [ ] **Confirm "Alex" name and photo** — or replace with real team member
-- [ ] **Add direct calendar booking link** as alternative CTA ("Prefer to book a call? →")
-- [ ] **Test GHL contact creation** from AI Builder form with real data
+### Version Control
+- [x] GitHub repo: `github.com/lisamac92/cfg-ai-lab` (public, branch: main)
+- [x] All files committed and pushed — checkpoint 25 April 2025
 
 ---
 
-## 🟢 TIER 4 — Nice to Have (post-event)
+## ⏳ PENDING — Requires User Input
 
-### 12. Analytics & Tracking
-- [ ] Add Google Analytics or GHL tracking pixel
-- [ ] Track email capture conversion rate per table
-- [ ] Track AI Builder form submissions vs. page views
+### Stripe / Pricing Links
+- [ ] Table 01 — AI Receptionist: add Stripe product link to pricing CTA (currently no link)
+- [ ] Table 02 — AI Prospecting: add Stripe product link to pricing CTA
+- [ ] Table 03 — AI Workflow Audit: add Stripe product link to pricing CTA
+- *Waiting on: user to create Stripe products and provide URLs*
 
-### 13. Mobile Optimisation
-- [ ] Test entrance animation on mobile
-- [ ] Adjust font sizes for smaller screens
-- [ ] Test iPad form layout on mobile
+### GHL Calendar Setup (user actions in GHL UI)
+- [ ] Upload `calendar_banner_web.jpg` as calendar banner (Settings → Calendars → AI-Driven Business Growth)
+- [ ] Upload `calendar_logo_web.jpg` as calendar profile image
+- [ ] Set calendar availability hours and buffer times
+- [ ] Write confirmation email copy (can be drafted on request)
+- [ ] Write reminder SMS/email copy (can be drafted on request)
 
-### 14. Performance
-- [ ] Compress large images (interior_bg.jpg, table0x_surface.jpg, ai_builder.jpg)
-- [ ] Add lazy loading to table surface images
-- [ ] Test page load speed on mobile connection
-
-### 15. Content Review
-- [ ] Proofread all copy across all tables and AI Builder page
-- [ ] Confirm "ClickFlow Grow" branding is consistent throughout
-- [ ] Review all three email templates (email_t1/t2/t3.html)
+### Production Deployment
+- [ ] Choose a host (Netlify, Vercel, Railway, or VPS — e.g. `ailab.clickflowgrow.com`)
+- [ ] Set up CI/CD from GitHub → host
+- [ ] Update all GHL email templates with production domain (currently sandbox URLs)
 
 ---
 
-## 🔗 Key Links & IDs
+## 🔮 FUTURE PHASES (not started)
+
+### GHL Conversation AI — Site-wide Chat Widget
+- User wants a site-wide AI "salesperson/guide" chat widget
+- Will use GHL Conversation AI (native, not third-party)
+- The Opportunity Scan is the interim solution until this is built
+- Requires: GHL Conversation AI setup, knowledge base, bot persona
+
+### Additional GHL Calendars
+- "New Client Onboarding" calendar (post-purchase)
+- "Client Meetings" calendar (existing clients e.g. Bureau Veritas)
+- Shared availability pool across all three calendars
+- Sync to master Google Calendar
+
+### GHL Workflow Automations (UI-only — cannot be built via MCP)
+- "New scan submission" notification workflow
+- "Engaged Lead" pipeline follow-up sequence
+- Review request automation (post-service Google Review request)
+- Voice AI post-call workflow (trigger: "Voice AI Call Ended" → webhook → `/api/voice-webhook`)
+
+### AI Lab Future Tables
+- Table 04 — AI Reviews (Google Review automation demo)
+- Table 05 — AI Onboarding (client onboarding automation demo)
+
+### Other
+- Prompt library (separate project — do NOT build into current site)
+- Blog / content section on homepage
+- Case studies page
+
+---
+
+## 🔗 Key Reference Values
 
 | Item | Value |
 |---|---|
-| GHL Location ID | `E4vxxqsZzDt35YcgEH2d` |
-| GHL Pipeline (AI Lab leads) | `q6uFBb0ktjT1AO8gGmMX` |
-| GHL Pipeline Stage (new leads) | `1e353e29-7d12-48b3-ba00-51c2d250cb98` |
+| GHL MCP Server | `manus-cfg-sales` |
+| GHL Location ID | `ve9EPM428h8vShlRW1KT` |
+| GHL Pipeline ID | `q6uFBb0ktjT1AO8gGmMX` (Leads → Sales Pipeline) |
+| GHL Engaged Lead Stage | `caaa2dae-60c9-49a4-aa8e-bdda831bd5d6` |
 | GHL Voice Widget ID | `69b2e92d6a7fada2ec2e45f7` |
-| Live URL (sandbox) | https://8080-idglvrmshignkf4wht6zv-6a341fe9.us2.manus.computer |
+| GHL Booking URL | `https://link.clickflowgrow.com/widget/booking/1oQg9EeqtweL4ewewqP7` |
+| GHL From Email | `hello@clickflowgrow.com` |
+| Meta Pixel ID | `955639412997577` |
+| Brand teal | `#00d4aa` |
+| Brand amber-gold (AI Lab) | `#EC8A01` |
 | GitHub repo | https://github.com/lisamac92/cfg-ai-lab |
-| Brand colour (amber-gold) | `#EC8A01` |
-| Brand colour (teal) | `#0BEAB5` |
-| Stripe payment link | **PLACEHOLDER — needs replacing** |
-| Booking calendar URL | **PLACEHOLDER — needs replacing** |
 
 ---
 
@@ -153,9 +175,26 @@
 
 | File | Purpose |
 |---|---|
-| `index.html` | Full site — all three tables |
+| `index.html` | AI Lab — all three tables + AI Builder view |
+| `homepage.html` | ClickFlowGrow homepage |
+| `opportunity-scan.html` | AI Opportunity Scan — Act 1 (form) |
+| `scan-results.html` | AI Opportunity Scan — Acts 2 & 3 (results) |
 | `api_server.py` | Flask backend — all API endpoints |
-| `ARIA_PROMPT.md` | GHL Voice AI system prompt for Aria |
+| `README.md` | Full project documentation and design system |
+| `PROJECT_CREDENTIALS.md` | Key credentials (Meta Pixel, GHL settings) |
 | `GHL_SETUP_GUIDE.md` | Step-by-step GHL configuration guide |
-| `TABLE03_PROPOSAL.md` | Table 03 concept options and recommendation |
-| `PROJECT_CHECKLIST.md` | This file — living project tracker |
+| `CFG_WEBSITE_AUDIT.md` | Audit notes on current ClickFlowGrow.com website |
+| `ARIA_PROMPT.md` | GHL Voice AI system prompt for Aria |
+| `email_t1.html` | Follow-up email: AI Receptionist table |
+| `email_t2.html` | Follow-up email: AI Prospecting table |
+| `email_t3.html` | Follow-up email: AI Workflow Audit table |
+
+---
+
+## Brand Rules (non-negotiable)
+
+- Always **ClickFlow Grow** or **ClickFlowGrow** — never "GHL" in user-facing content
+- Always **UK English** — colour not color, organised not organized, fulfil not fulfill
+- **Fulfil** not "Be Full" for F4 of the 5Fs framework
+- No Manus branding anywhere on the site
+- Dark navy/teal aesthetic throughout — no light themes
