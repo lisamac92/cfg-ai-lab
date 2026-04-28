@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cancellation &amp; Refund Policy — ClickFlow Grow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0a0e1a; --navy-mid: #111827; --navy-card: #1a2235; --navy-border: #1e2d45;
+      --blue: #253377; --magenta: #D0006E; --teal: #0D98A9; --white: #ffffff;
+      --text-primary: #f0f4ff; --text-secondary: #94a3b8; --text-muted: #64748b;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--text-primary); line-height: 1.7; min-height: 100vh; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,14,26,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--navy-border);
+      padding: 0 2rem; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--magenta));
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1rem; color: white;
+    }
+    .nav-logo-text { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); }
+    .nav-back { font-size: 0.875rem; color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--teal); }
+    .legal-hero {
+      background: linear-gradient(135deg, #0d1525 0%, #111827 100%);
+      border-bottom: 1px solid var(--navy-border);
+      padding: 4rem 2rem 3rem; text-align: center;
+    }
+    .legal-hero .badge {
+      display: inline-block;
+      background: rgba(13,152,169,0.15); border: 1px solid rgba(13,152,169,0.3);
+      color: var(--teal); font-family: 'Manrope', sans-serif; font-size: 0.75rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 1.25rem;
+    }
+    .legal-hero h1 { font-family: 'Manrope', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: var(--white); margin-bottom: 1rem; }
+    .legal-hero .meta { font-size: 0.9rem; color: var(--text-muted); }
+    .legal-wrap { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .legal-wrap p { color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.975rem; }
+    .legal-wrap h2 { font-family: 'Manrope', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--white); margin: 2.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--navy-border); }
+    .legal-wrap h3 { font-family: 'Manrope', sans-serif; font-size: 1rem; font-weight: 600; color: var(--text-primary); margin: 1.5rem 0 0.5rem; }
+    .legal-wrap ul { margin: 0.5rem 0 1.25rem 1.5rem; color: var(--text-secondary); font-size: 0.975rem; }
+    .legal-wrap ul li { margin-bottom: 0.4rem; }
+    .legal-wrap a { color: var(--teal); text-decoration: none; }
+    .legal-wrap a:hover { text-decoration: underline; }
+    .legal-wrap strong { color: var(--text-primary); }
+    .policy-card {
+      background: var(--navy-card); border: 1px solid var(--navy-border);
+      border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0;
+    }
+    .policy-card h3 { margin-top: 0; color: var(--white); font-size: 1rem; margin-bottom: 0.75rem; }
+    .policy-card ul { margin: 0 0 0 1.25rem; }
+    .contact-card {
+      background: rgba(13,152,169,0.08); border: 1px solid rgba(13,152,169,0.25);
+      border-radius: 12px; padding: 1.5rem; margin: 2rem 0;
+    }
+    .contact-card p { margin: 0; color: var(--text-secondary); }
+    .contact-card strong { color: var(--teal); }
+    footer { background: #060a14; border-top: 1px solid var(--navy-border); padding: 2rem; text-align: center; }
+    .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; }
+    .footer-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-mark">CFG</div>
+      <span class="nav-logo-text">ClickFlow Grow</span>
+    </a>
+    <a href="/" class="nav-back">← Back to site</a>
+  </nav>
+
+  <div class="legal-hero">
+    <div class="badge">Legal</div>
+    <h1>Cancellation &amp; Refund Policy</h1>
+    <p class="meta">ClickFlowGrow Limited &nbsp;·&nbsp; All changes effective immediately upon posting</p>
+  </div>
+
+  <div class="legal-wrap">
+
+    <h2>SaaS Products</h2>
+    <p>Our SaaS products (AI Voice, AI Chat, and Automations) follow these refund terms:</p>
+    <div class="policy-card">
+      <ul>
+        <li><strong>14-day money-back guarantee</strong> for all new subscriptions</li>
+        <li>Refunds only available for unused subscription periods</li>
+        <li>No refunds on partially used monthly or annual subscriptions</li>
+        <li>Refunds processed to original payment method within <strong>5–7 business days</strong></li>
+      </ul>
+    </div>
+
+    <h2>Marketing Services</h2>
+    <p>For marketing services, the following terms apply:</p>
+    <div class="policy-card">
+      <ul>
+        <li><strong>Project Cancellation:</strong> Minimum 7-day written notice required before project start</li>
+        <li><strong>Active Projects:</strong> No refunds once work has commenced</li>
+        <li><strong>Retainer Services:</strong> 30-day written notice required for cancellation</li>
+        <li><strong>Deposits:</strong> Non-refundable after work has begun</li>
+        <li><strong>Milestone Payments:</strong> Non-refundable for completed work</li>
+      </ul>
+    </div>
+
+    <h2>Non-Refundable Items</h2>
+    <p>The following items are non-refundable under any circumstances:</p>
+    <ul>
+      <li>Custom development work</li>
+      <li>Completed marketing deliverables</li>
+      <li>Used API credits</li>
+      <li>Training or consultation sessions already delivered</li>
+      <li>Setup or onboarding fees</li>
+    </ul>
+
+    <h2>Refund Process</h2>
+    <p>To request a refund, please follow these steps:</p>
+    <ol style="margin: 0.5rem 0 1.25rem 1.5rem; color: var(--text-secondary); font-size: 0.975rem;">
+      <li style="margin-bottom: 0.4rem;">Submit your refund request to <a href="mailto:info@clickflowgrow.com">info@clickflowgrow.com</a></li>
+      <li style="margin-bottom: 0.4rem;">Include your account details, service/subscription details, and reason for refund</li>
+      <li style="margin-bottom: 0.4rem;">Expect a response within <strong>48 hours</strong></li>
+      <li style="margin-bottom: 0.4rem;">Approved refunds are processed within <strong>5–7 business days</strong></li>
+    </ol>
+
+    <h2>Service Cancellations</h2>
+    <p>For ongoing services, to cancel you must:</p>
+    <ul>
+      <li>Provide written notice to <a href="mailto:info@clickflowgrow.com">info@clickflowgrow.com</a></li>
+      <li>Complete the minimum notice period (7 days for projects, 30 days for retainers)</li>
+      <li>Settle any outstanding payments</li>
+      <li>Receive final deliverables and exports of your data</li>
+    </ul>
+
+    <h2>Exceptions</h2>
+    <p>We may consider exceptions to this policy for:</p>
+    <ul>
+      <li>Technical issues preventing service delivery</li>
+      <li>Failure to meet guaranteed service levels</li>
+      <li>Major system outages exceeding 24 hours</li>
+    </ul>
+    <p>All refund requests are reviewed on a case-by-case basis. We reserve the right to decline refund requests that do not meet our policy requirements.</p>
+
+    <h2>Need Assistance?</h2>
+    <div class="contact-card">
+      <p><strong>Email:</strong> <a href="mailto:info@clickflowgrow.com">info@clickflowgrow.com</a></p>
+      <p style="margin-top: 0.5rem;"><strong>Support Hours:</strong> Monday–Friday, 9am–5pm GMT</p>
+    </div>
+
+    <h2>Legal Notice</h2>
+    <p>This refund policy is subject to change without notice. All changes will be effective immediately upon posting to our website.</p>
+
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/cookie-policy.html">Cookie Policy</a>
+      <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/cancellation-policy.html">Cancellation &amp; Refund Policy</a>
+    </div>
+    <p class="footer-copy">© 2024 Click Flow Grow Limited · 20–22 Wenlock Road, London N1 7GU · <a href="mailto:info@clickflowgrow.com" style="color:inherit;">info@clickflowgrow.com</a></p>
+  </footer>
+
+</body>
+</html>

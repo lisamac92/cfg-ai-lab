@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Policy — ClickFlow Grow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0a0e1a;
+      --navy-mid: #111827;
+      --navy-card: #1a2235;
+      --navy-border: #1e2d45;
+      --blue: #253377;
+      --magenta: #D0006E;
+      --teal: #0D98A9;
+      --white: #ffffff;
+      --text-primary: #f0f4ff;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--navy);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,14,26,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--navy-border);
+      padding: 0 2rem; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-mark {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--blue), var(--magenta));
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1rem; color: white;
+    }
+    .nav-logo-text { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); }
+    .nav-back { font-size: 0.875rem; color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+    .nav-back:hover { color: var(--teal); }
+    .legal-hero {
+      background: linear-gradient(135deg, #0d1525 0%, #111827 100%);
+      border-bottom: 1px solid var(--navy-border);
+      padding: 4rem 2rem 3rem; text-align: center;
+    }
+    .legal-hero .badge {
+      display: inline-block;
+      background: rgba(13,152,169,0.15); border: 1px solid rgba(13,152,169,0.3);
+      color: var(--teal); font-family: 'Manrope', sans-serif; font-size: 0.75rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 1.25rem;
+    }
+    .legal-hero h1 { font-family: 'Manrope', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; color: var(--white); margin-bottom: 1rem; }
+    .legal-hero .meta { font-size: 0.9rem; color: var(--text-muted); }
+    .legal-wrap { max-width: 800px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+    .legal-wrap p { color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.975rem; }
+    .legal-wrap h2 { font-family: 'Manrope', sans-serif; font-size: 1.25rem; font-weight: 700; color: var(--white); margin: 2.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--navy-border); }
+    .legal-wrap h3 { font-family: 'Manrope', sans-serif; font-size: 1rem; font-weight: 600; color: var(--text-primary); margin: 1.5rem 0 0.5rem; }
+    .legal-wrap ul { margin: 0.5rem 0 1.25rem 1.5rem; color: var(--text-secondary); font-size: 0.975rem; }
+    .legal-wrap ul li { margin-bottom: 0.4rem; }
+    .legal-wrap a { color: var(--teal); text-decoration: none; }
+    .legal-wrap a:hover { text-decoration: underline; }
+    .legal-wrap strong { color: var(--text-primary); }
+    .cookie-banner-note {
+      background: rgba(13,152,169,0.08);
+      border: 1px solid rgba(13,152,169,0.25);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+    }
+    .cookie-banner-note p { color: var(--teal); margin: 0; font-size: 0.9rem; }
+    footer { background: #060a14; border-top: 1px solid var(--navy-border); padding: 2rem; text-align: center; }
+    .footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; }
+    .footer-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy { font-size: 0.75rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-mark">CFG</div>
+      <span class="nav-logo-text">ClickFlow Grow</span>
+    </a>
+    <a href="/" class="nav-back">← Back to site</a>
+  </nav>
+
+  <div class="legal-hero">
+    <div class="badge">Legal</div>
+    <h1>Cookie Policy</h1>
+    <p class="meta">Effective Date: 27 September 2024 &nbsp;·&nbsp; Last Updated: 27 September 2024</p>
+  </div>
+
+  <div class="legal-wrap">
+
+    <h2>What are cookies?</h2>
+    <p>This Cookie Policy explains what cookies are and how we use them, the types of cookies we use — the information we collect using cookies and how that information is used — and how to manage the cookie settings.</p>
+    <p>Cookies are small text files that are used to store small pieces of information. They are stored on your device when the website is loaded on your browser. These cookies help us make the website function properly, make it more secure, provide better user experience, and understand how the website performs and to analyse what works and where it needs improvement.</p>
+
+    <h2>How do we use cookies?</h2>
+    <p>As most online services, our website uses first-party and third-party cookies for several purposes. First-party cookies are mostly necessary for the website to function the right way, and they do not collect any of your personally identifiable data.</p>
+    <p>The third-party cookies used on our website are mainly for understanding how the website performs, how you interact with our website, keeping our services secure, providing advertisements that are relevant to you, and all in all providing you with a better and improved user experience and helping speed up your future interactions with our website.</p>
+
+    <h2>Types of cookies we use</h2>
+    <p>Our website uses the following categories of cookies:</p>
+    <ul>
+      <li><strong>Strictly Necessary Cookies</strong> — Required for the website to function. These cannot be switched off in our systems.</li>
+      <li><strong>Performance / Analytics Cookies</strong> — These allow us to count visits and traffic sources so we can measure and improve the performance of our site.</li>
+      <li><strong>Functional Cookies</strong> — These enable the website to provide enhanced functionality and personalisation.</li>
+      <li><strong>Targeting / Advertising Cookies</strong> — These may be set through our site by our advertising partners to build a profile of your interests.</li>
+    </ul>
+
+    <h2>Managing cookie preferences</h2>
+
+    <div class="cookie-banner-note">
+      <p>🍪 <strong>Cookie consent management</strong> — We are currently implementing our own cookie consent platform. A full cookie preference centre will be available on this site shortly, allowing you to review and update your preferences at any time.</p>
+    </div>
+
+    <p>In the meantime, you can change your browser settings to block or delete cookies. Listed below are links to the support documents for the major browsers:</p>
+    <ul>
+      <li><a href="https://support.google.com/accounts/answer/32050" target="_blank" rel="noopener">Google Chrome</a></li>
+      <li><a href="https://support.apple.com/en-in/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Apple Safari</a></li>
+      <li><a href="https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox" target="_blank" rel="noopener">Mozilla Firefox</a></li>
+      <li><a href="https://support.microsoft.com/en-us/topic/how-to-delete-cookie-files-in-internet-explorer-bca9446f-d873-78de-77ba-d42645fa1d11" target="_blank" rel="noopener">Microsoft Internet Explorer</a></li>
+    </ul>
+    <p>If you are using any other web browser, please visit your browser's official support documents.</p>
+
+    <h2>Contact us</h2>
+    <p>If you have any questions about our use of cookies, please contact us at <a href="mailto:info@clickflowgrow.com">info@clickflowgrow.com</a>.</p>
+
+  </div>
+
+  <footer>
+    <div class="footer-links">
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/cookie-policy.html">Cookie Policy</a>
+      <a href="/terms.html">Terms &amp; Conditions</a>
+      <a href="/cancellation-policy.html">Cancellation &amp; Refund Policy</a>
+    </div>
+    <p class="footer-copy">© 2024 Click Flow Grow Limited · 20–22 Wenlock Road, London N1 7GU · <a href="mailto:info@clickflowgrow.com" style="color:inherit;">info@clickflowgrow.com</a></p>
+  </footer>
+
+</body>
+</html>
