@@ -68,7 +68,7 @@
 - [x] `/api/poll-call-data` — voice call session polling
 
 ### GHL Integration
-- [x] MCP connection: `manus-cfg-sales` server, Location ID `ve9EPM428h8vShlRW1KT`
+- [x] MCP connection: `manus-cfg-sales` server, Location ID `E4vxxqsZzDt35YcgEH2d`
 - [x] Contact upsert on all form submissions
 - [x] Tags applied on scan submissions (biz type, team size, bottleneck)
 - [x] Opportunity created in "Leads → Sales Pipeline" at "Engaged Lead" stage
@@ -158,7 +158,7 @@
 | Item | Value |
 |---|---|
 | GHL MCP Server | `manus-cfg-sales` |
-| GHL Location ID | `ve9EPM428h8vShlRW1KT` |
+| GHL Location ID | `E4vxxqsZzDt35YcgEH2d` |
 | GHL Pipeline ID | `q6uFBb0ktjT1AO8gGmMX` (Leads → Sales Pipeline) |
 | GHL Engaged Lead Stage | `caaa2dae-60c9-49a4-aa8e-bdda831bd5d6` |
 | GHL Voice Widget ID | `69b2e92d6a7fada2ec2e45f7` |

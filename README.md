@@ -127,7 +127,7 @@ Personalised results page — reads URL params and builds everything dynamically
 | Setting | Value |
 |---|---|
 | MCP Server name | `manus-cfg-sales` |
-| Location ID | `ve9EPM428h8vShlRW1KT` |
+| Location ID | `E4vxxqsZzDt35YcgEH2d` |
 | Pipeline | "Leads → Sales Pipeline" (ID: `q6uFBb0ktjT1AO8gGmMX`) |
 | Engaged Lead stage | ID: `caaa2dae-60c9-49a4-aa8e-bdda831bd5d6` |
 | Calendar | AI-Driven Business Growth |

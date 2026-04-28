@@ -8,6 +8,7 @@ Handles:
 """
 
 import os, json, re
+import requests as http_requests
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from openai import OpenAI
@@ -403,7 +404,7 @@ Respond in this exact JSON format:
 # GHL LEAD CAPTURE — AI Lab email bar submissions
 # ─────────────────────────────────────────────────────────────────────────────
 
-import subprocess
+# subprocess no longer needed — GHL calls use direct HTTP MCP endpoint
 
 EMAIL_SUBJECTS = {
     'receptionist': 'Your AI Receptionist Summary — CFG AI Lab',
@@ -432,30 +433,49 @@ def _load_email_bodies():
 _load_email_bodies()
 
 
+GHL_MCP_URL = 'https://services.leadconnectorhq.com/mcp/'
+GHL_PIT     = os.environ.get('GHL_PIT', 'pit-1cc76d09-9b25-47c7-99ad-f89c85e40427')
+GHL_LOC_ID  = os.environ.get('GHL_LOCATION_ID', 'E4vxxqsZzDt35YcgEH2d')
+
 def ghl_mcp(tool_name, payload):
-    """Call a GHL MCP tool server-side and return (data, error)."""
-    result = subprocess.run(
-        ['manus-mcp-cli', 'tool', 'call', tool_name,
-         '--server', 'manus-cfg-sales',
-         '--input', json.dumps(payload)],
-        capture_output=True, text=True, timeout=30
-    )
-    result_file = None
-    for line in result.stdout.split('\n'):
-        if 'Tool execution result saved to:' in line:
-            result_file = line.split('saved to: ')[1].strip()
-            break
-    if not result_file:
-        return None, 'No result file found'
+    """Call a GHL MCP tool via the hosted HTTP endpoint and return (data, error)."""
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/event-stream',
+        'Authorization': f'Bearer {GHL_PIT}',
+        'locationId': GHL_LOC_ID,
+    }
+    body = {
+        'jsonrpc': '2.0',
+        'id': 1,
+        'method': 'tools/call',
+        'params': {
+            'name': tool_name,
+            'arguments': payload,
+        }
+    }
     try:
-        with open(result_file) as f:
-            raw = f.read().strip()
-        if raw.startswith('Error:'):
-            return None, raw[7:].strip()
-        data = json.loads(raw)
-        if not data.get('success'):
-            return None, str(data.get('data', {}).get('message', 'GHL error'))
-        return data.get('data', {}), None
+        resp = http_requests.post(GHL_MCP_URL, headers=headers, json=body, timeout=30)
+        resp.raise_for_status()
+        # GHL MCP may return SSE or plain JSON — handle both
+        raw = resp.text.strip()
+        # Strip SSE event prefix if present
+        if raw.startswith('data:'):
+            lines = [l[5:].strip() for l in raw.split('\n') if l.startswith('data:')]
+            raw = ' '.join(lines)
+        result = json.loads(raw)
+        if 'error' in result:
+            return None, str(result['error'].get('message', 'GHL MCP error'))
+        content = result.get('result', {}).get('content', [])
+        # content is a list of {type, text} blocks — parse the first text block
+        for block in content:
+            if block.get('type') == 'text':
+                try:
+                    data = json.loads(block['text'])
+                    return data, None
+                except Exception:
+                    return {'raw': block['text']}, None
+        return result.get('result', {}), None
     except Exception as e:
         return None, str(e)
 
