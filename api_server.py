@@ -774,7 +774,11 @@ def poll_call_data():
 # ─────────────────────────────────────────────────────────────────────────────
 
 @app.route('/')
-def index():
+def home():
+    return send_from_directory(STATIC_DIR, 'homepage.html')
+
+@app.route('/lab')
+def lab():
     return send_from_directory(STATIC_DIR, 'index.html')
 
 @app.route('/<path:path>')
@@ -784,7 +788,7 @@ def static_files(path):
     full = os.path.join(STATIC_DIR, path)
     if os.path.isfile(full):
         return send_from_directory(STATIC_DIR, path)
-    return send_from_directory(STATIC_DIR, 'index.html')
+    return send_from_directory(STATIC_DIR, 'homepage.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
