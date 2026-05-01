@@ -601,7 +601,7 @@ def opportunity_scan():
         'source': 'AI Opportunity Scan — ClickFlow Grow',
         'customFields': [
             {'key': 'scan_bottleneck',  'field_value': bottleneck},
-            {'key': 'scan_biz_type',    'field_value': biz_type},
+            {'key': 'scan_business_type', 'field_value': biz_type},
             {'key': 'scan_team_size',   'field_value': team_size},
             {'key': 'scan_magic_wand',  'field_value': magic_wand},
         ]
@@ -787,7 +787,7 @@ def opportunity_scan_scores():
         'id': contact_id,
         'customFields': [
             {'key': 'scan_f1_formulate', 'field_value': str(scores.get('f1', ''))},
-            {'key': 'scan_f2_befound',   'field_value': str(scores.get('f2', ''))},
+            {'key': 'scan_f2_be_found',  'field_value': str(scores.get('f2', ''))},
             {'key': 'scan_f3_find',      'field_value': str(scores.get('f3', ''))},
             {'key': 'scan_f4_fulfil',    'field_value': str(scores.get('f4', ''))},
             {'key': 'scan_f5_fanfare',   'field_value': str(scores.get('f5', ''))},
