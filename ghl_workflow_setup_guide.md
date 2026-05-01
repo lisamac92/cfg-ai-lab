@@ -1,57 +1,56 @@
 # GHL Workflow Setup Guide — AI Opportunity Scan Follow-Up
 ## ClickFlowGrow CRM
-
-This guide walks you through building the complete AI Opportunity Scan follow-up workflow in ClickFlowGrow (GoHighLevel). The workflow uses the new **AI Agent** action to handle the entire follow-up conversation autonomously — no if/else branches needed.
+## Last updated: 1 May 2026 — all field keys verified against live GHL custom fields
 
 ---
 
-## Before You Start — Checklist
+## Status Checklist
 
 - [x] Pipeline created: **AI Opportunity Scan** (7 stages)
-- [x] Calendar created: **AI Discovery Call** (30 min, booking link: https://link.clickflowgrow.com/widget/booking/4zgS77DacE6RnoPTJ4WL)
-- [ ] Custom fields created for scan data (see Step 1 below)
-- [ ] Workflow built (see Steps 2–6 below)
+- [x] Calendar created: **AI Discovery Call** — https://link.clickflowgrow.com/widget/booking/4zgS77DacE6RnoPTJ4WL
+- [x] Custom fields created (all 9 — see table below)
+- [ ] Workflow built (follow Steps 1–5 below)
 
 ---
 
-## Step 1 — Create Custom Fields for Scan Data
+## Custom Fields Reference
 
-Go to **Settings → Custom Fields → Contacts** and create these fields (if not already present):
+All 9 fields are live in ClickFlowGrow. Use these exact merge tags in your workflow messages:
 
-| Field Name | Field Key | Type |
-|---|---|---|
-| Scan Bottleneck | `scan_bottleneck` | Text |
-| Scan Business Type | `scan_biz_type` | Text |
-| Scan Team Size | `scan_team_size` | Text |
-| Scan Magic Wand | `scan_magic_wand` | Text |
-| Scan Score F1 — Formulate | `scan_f1` | Number |
-| Scan Score F2 — Be Found | `scan_f2` | Number |
-| Scan Score F3 — Find | `scan_f3` | Number |
-| Scan Score F4 — Fulfil | `scan_f4` | Number |
-| Scan Score F5 — Fanfare | `scan_f5` | Number |
+| Field Name | GHL Merge Tag | Type | Contains |
+|---|---|---|---|
+| Scan Bottleneck | `{{contact.scan_bottleneck}}` | Text | Their biggest business challenge |
+| Scan Business Type | `{{contact.scan_business_type}}` | Text | Type of business |
+| Scan Team Size | `{{contact.scan_team_size}}` | Text | Number of people in the business |
+| Scan Magic Wand | `{{contact.scan_magic_wand}}` | Text | What they'd fix if they could wave a magic wand |
+| Scan F1 Formulate | `{{contact.scan_f1_formulate}}` | Number | Formulate score (0–100) |
+| Scan F2 Be Found | `{{contact.scan_f2_be_found}}` | Number | Be Found score (0–100) |
+| Scan F3 Find | `{{contact.scan_f3_find}}` | Number | Find score (0–100) |
+| Scan F4 Fulfil | `{{contact.scan_f4_fulfil}}` | Number | Fulfil score (0–100) |
+| Scan F5 Fanfare | `{{contact.scan_f5_fanfare}}` | Number | Fanfare score (0–100) |
 
-These fields are populated automatically when someone completes the scan (the website API writes them to the GHL contact record).
+These fields are populated automatically when someone submits the scan on clickflowgrow.com.
 
 ---
 
-## Step 2 — Create the Workflow
+## Step 1 — Create the Workflow
 
 Go to **Automation → Workflows → + New Workflow → Start from Scratch**
 
-**Name it:** `AI Opportunity Scan — Follow-Up`
+Name it: `AI Opportunity Scan — Follow-Up`
 
 ---
 
-## Step 3 — Set the Trigger
+## Step 2 — Set the Trigger
 
 **Trigger:** Contact Tag Added
-**Tag:** `ai-opportunity-scan`
+**Tag value:** `ai-opportunity-scan`
 
 This fires the moment someone completes the scan on the website.
 
 ---
 
-## Step 4 — Add Workflow Actions (in order)
+## Step 3 — Add Workflow Actions (in order)
 
 ### Action 1: Create Opportunity
 - **Pipeline:** AI Opportunity Scan
@@ -61,14 +60,19 @@ This fires the moment someone completes the scan on the website.
 
 ### Action 2: Wait
 - **Duration:** 2 minutes
-- *(Gives the results page time to load before the first message arrives)*
+*(Gives the results page time to load before the first message arrives)*
 
 ### Action 3: Send Email
 - **Subject:** `Your AI Opportunity Scan results, {{contact.first_name}}`
 - **From:** hello@clickflowgrow.com
 - **Content:** Set to **"AI will fill this field"**
 - **AI Instructions for this email:**
-  > *Write a warm, personal email to {{contact.first_name}} who has just completed the AI Opportunity Scan. Their biggest bottleneck is {{contact.scan_bottleneck}}. Their business type is {{contact.scan_biz_type}}. Their team size is {{contact.scan_team_size}}. Their magic wand answer was: "{{contact.scan_magic_wand}}". Write 3 short paragraphs: (1) acknowledge what they shared and validate it, (2) give them one specific insight about what AI could do for their type of business, (3) invite them to book a free 30-minute discovery call at https://link.clickflowgrow.com/widget/booking/4zgS77DacE6RnoPTJ4WL. Tone: warm, direct, no jargon. Sign off as Alex from ClickFlowGrow.*
+
+> *Write a warm, personal email to {{contact.first_name}} who has just completed the AI Opportunity Scan on clickflowgrow.com. Their biggest bottleneck is {{contact.scan_bottleneck}}. Their business type is {{contact.scan_business_type}}. Their team size is {{contact.scan_team_size}}. Their magic wand answer was: "{{contact.scan_magic_wand}}".*
+>
+> *Write 3 short paragraphs: (1) acknowledge what they shared and validate it — make them feel understood, (2) give them one specific, concrete insight about what AI could do for their type of business based on their bottleneck, (3) invite them to book a free 30-minute discovery call at https://link.clickflowgrow.com/widget/booking/4zgS77DacE6RnoPTJ4WL.*
+>
+> *Tone: warm, direct, no jargon. UK English. Sign off as Alex from ClickFlowGrow.*
 
 ### Action 4: Wait
 - **Duration:** 5 minutes
@@ -77,66 +81,84 @@ This fires the moment someone completes the scan on the website.
 This is the core autonomous follow-up action.
 
 - **Channel:** SMS
-- **AI Agent Instructions:** *(Paste the full prompt from the file `ghl_ai_agent_prompt.md`)*
+- **AI Agent Instructions:** Paste the full content from the file `ghl_ai_agent_prompt.md`
 - **Tools to enable:**
-  - Send SMS ✓ (AI will fill content)
-  - Update Opportunity ✓
-  - Create Appointment ✓ (AI Discovery Call calendar)
-- **Model:** GPT-4o or GPT-5.2 (whichever is available)
+  - Send SMS (set content to: AI will fill this field)
+  - Update Opportunity
+  - Create Appointment (select: AI Discovery Call calendar)
+- **Model:** GPT-4o or GPT-5.2 (whichever is available — choose highest available)
 - **Max turns:** 20
 - **Inactivity timeout:** 3 days
 
 ### Action 6: Wait (if no reply)
 - **Duration:** 3 days
-- **Condition:** Only continue if contact has NOT replied
+- **Condition:** Only continue if contact has NOT replied to the AI Agent
 
 ### Action 7: Send SMS (Day 3 follow-up)
 - **Content:** Set to **"AI will fill this field"**
 - **AI Instructions:**
-  > *Write a short, friendly 2-sentence SMS follow-up to {{contact.first_name}}. They completed an AI Opportunity Scan 3 days ago. Their main bottleneck was {{contact.scan_bottleneck}}. Reference this specifically and ask if they had a chance to look at their results. Keep it casual and human — not salesy.*
+
+> *Write a short, friendly 2-sentence SMS follow-up to {{contact.first_name}}. They completed an AI Opportunity Scan 3 days ago and haven't replied yet. Their main bottleneck was {{contact.scan_bottleneck}} and their magic wand wish was "{{contact.scan_magic_wand}}". Reference one of these specifically and ask if they had a chance to look at their results. Keep it casual and human — not salesy. No more than 2 sentences.*
 
 ### Action 8: Wait
 - **Duration:** 4 days
 
-### Action 9: Send Email (Day 7 — final)
+### Action 9: Send Email (Day 7 — final touch)
 - **Subject:** `Still thinking about it, {{contact.first_name}}?`
 - **Content:** Set to **"AI will fill this field"**
 - **AI Instructions:**
-  > *Write a short, warm final follow-up email to {{contact.first_name}}. They completed an AI Opportunity Scan 7 days ago and haven't booked a call yet. Their magic wand answer was "{{contact.scan_magic_wand}}". Acknowledge that timing isn't always right, remind them their results are still available, and leave the door open with the booking link: https://link.clickflowgrow.com/widget/booking/4zgS77DacE6RnoPTJ4WL. No pressure. Sign off as Alex from ClickFlowGrow.*
+
+> *Write a short, warm final follow-up email to {{contact.first_name}}. They completed an AI Opportunity Scan 7 days ago and haven't booked a call yet. Their magic wand answer was "{{contact.scan_magic_wand}}" and their business type is {{contact.scan_business_type}}. Acknowledge that timing isn't always right, remind them their personalised results are still available at clickflowgrow.com/opportunity-scan.html, and leave the door open with the booking link: https://link.clickflowgrow.com/widget/booking/4zgS77DacE6RnoPTJ4WL. No pressure. 3 short paragraphs maximum. Sign off as Alex from ClickFlowGrow.*
 
 ### Action 10: Add Tag
 - **Tag:** `scan-sequence-complete`
 
 ### Action 11: Update Opportunity Stage
 - **Stage:** Not Ready — Nurture
-- *(Only reached if they haven't booked — the AI Agent will have moved them to Call Booked if they engaged)*
+*(Only reached if they haven't booked — the AI Agent will have already moved them to Call Booked if they engaged)*
 
 ---
 
-## Step 5 — Publish the Workflow
+## Step 4 — Publish the Workflow
 
 Click **Publish** (top right). The workflow is now live.
 
 ---
 
-## Step 6 — Test It
+## Step 5 — Test It
 
 1. Go to **Contacts → + New Contact**
-2. Create a test contact with your own mobile number and email
+2. Create a test contact with your own mobile number and email address
 3. Manually add the tag `ai-opportunity-scan`
-4. Watch the workflow fire — you should receive the email within 2 minutes and the SMS within 7 minutes
-5. Reply to the SMS and watch the AI Agent respond and move the opportunity through the pipeline
+4. Watch the workflow fire — you should receive the confirmation email within 2 minutes and the first SMS within 7 minutes
+5. Reply to the SMS and watch the AI Agent respond, handle the conversation, and move the opportunity through the pipeline stages
+6. Test booking — when the AI offers the call, accept it and confirm the appointment appears in the AI Discovery Call calendar
+
+---
+
+## Pipeline Stages Reference
+
+| Stage | Meaning |
+|---|---|
+| New Scan Lead | Just completed the scan — workflow has fired |
+| Engaged | Has replied to the AI Agent |
+| Call Booked | Discovery call booked in the calendar |
+| Call Completed | Discovery call has taken place |
+| Proposal Sent | Follow-up proposal or quote sent |
+| Client Won | Signed up as a client |
+| Not Ready — Nurture | Not ready now — keep warm for future |
 
 ---
 
 ## What This Demonstrates to Potential Clients
 
 This workflow is a live, working example of everything ClickFlowGrow sells:
+
 - **Instant response** — contact is followed up within minutes, not hours
-- **AI personalisation** — every message references their specific answers
-- **Autonomous conversation** — the AI handles the entire follow-up without human input
+- **AI personalisation** — every message references their specific scan answers
+- **Autonomous conversation** — the AI Agent handles the entire follow-up without human input
 - **Pipeline management** — the AI moves the lead through stages as the conversation progresses
 - **Appointment booking** — the AI books the call directly into the calendar
-- **Multi-channel** — email + SMS working together
+- **Multi-channel** — email and SMS working together in a coordinated sequence
 
-When you demonstrate this to a prospect, you're not showing them a slide deck — you're showing them their own future.
+When you demonstrate this to a prospect, you are not showing them a slide deck — you are showing them their own future.
