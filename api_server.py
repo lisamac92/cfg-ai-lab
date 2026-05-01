@@ -592,13 +592,19 @@ def opportunity_scan():
     if answers.get('q3', {}).get('value'):
         tags.append(f"bottleneck-{answers['q3']['value']}")
 
-    # 1. Upsert contact in GHL
+    # 1. Upsert contact in GHL with scan custom fields
     contact_payload = {
         'email': email,
         'firstName': first_name,
         'lastName': last_name,
         'tags': tags,
         'source': 'AI Opportunity Scan — ClickFlow Grow',
+        'customFields': [
+            {'key': 'scan_bottleneck',  'field_value': bottleneck},
+            {'key': 'scan_biz_type',    'field_value': biz_type},
+            {'key': 'scan_team_size',   'field_value': team_size},
+            {'key': 'scan_magic_wand',  'field_value': magic_wand},
+        ]
     }
     if phone:
         contact_payload['phone'] = phone
@@ -648,7 +654,147 @@ def opportunity_scan():
         if note_err:
             app.logger.warning(f'GHL note creation warning (scan): {note_err}')
 
-    return jsonify({'success': True, 'contactId': contact_id})
+    # 4. Generate AI-powered personalised recommendations
+    ai_recommendations = generate_scan_recommendations(
+        first_name=first_name,
+        biz_type=biz_type,
+        team_size=team_size,
+        bottleneck=bottleneck,
+        magic_wand=magic_wand,
+        answers=answers
+    )
+
+    return jsonify({
+        'success': True,
+        'contactId': contact_id,
+        'recommendations': ai_recommendations
+    })
+
+
+def generate_scan_recommendations(first_name, biz_type, team_size, bottleneck, magic_wand, answers):
+    """
+    Use GPT to generate a personalised AI opportunity summary based on scan answers.
+    Returns a dict with keys: headline, summary, top_opportunities (list of 3), next_step
+    """
+    # Build answer context
+    q_labels = {
+        'q4': {'yes': 'Has a working website that generates enquiries', 'partial': 'Has a website but it doesn\'t generate much', 'no': 'No website or very basic online presence', 'unsure': 'Unsure about online presence effectiveness'},
+        'q5': {'yes': 'Responds to enquiries within the hour', 'partial': 'Sometimes responds same day', 'no': 'Often takes days to respond'},
+        'q6': {'fast': 'Follows up leads within minutes', 'same-day': 'Follows up same day', 'slow': 'Follow-up takes a few days', 'lost': 'Leads often go cold or get lost'},
+        'q7': {'none': 'Very little repetitive Q&A', 'some': 'Some repetitive questions', 'lots': 'Lots of repetitive questions', 'critical': 'Repetitive questions are a major drain'},
+        'q8': {'automated': 'Most tasks are automated', 'manual': 'Most tasks are done manually', 'inconsistent': 'Inconsistent — some automated, some not', 'unsure': 'Unsure what could be automated'},
+        'q9': {'yes': 'Actively collects reviews', 'sometimes': 'Sometimes collects reviews', 'no': 'Rarely or never collects reviews'},
+        'q10': {'word': 'Clients refer by word of mouth', 'review': 'Clients leave Google Reviews if asked', 'social': 'Clients share on social media', 'referral': 'Clients actively refer others', 'nothing': 'Clients don\'t typically refer or review'},
+    }
+    context_lines = []
+    for q, mapping in q_labels.items():
+        val = answers.get(q, {}).get('value', '') if answers.get(q) else ''
+        if val and val in mapping:
+            context_lines.append(f'- {mapping[val]}')
+
+    context = '\n'.join(context_lines) if context_lines else 'No additional context'
+
+    prompt = f"""You are an AI business consultant for ClickFlow Grow, a UK-based AI systems agency.
+You have just received the results of an AI Opportunity Scan from a business owner.
+
+BUSINESS PROFILE:
+- Name: {first_name or 'the business owner'}
+- Business type: {biz_type or 'Not specified'}
+- Team size: {team_size or 'Not specified'}
+- Biggest bottleneck: {bottleneck or 'Not specified'}
+- Their magic wand wish: "{magic_wand or 'Not provided'}"
+
+KEY FINDINGS FROM THEIR ANSWERS:
+{context}
+
+Your task: Write a SHORT, punchy, personalised AI opportunity analysis. UK English. No jargon. Conversational but professional.
+
+Return ONLY valid JSON in this exact format:
+{{
+  "headline": "A 6-10 word punchy headline summarising their biggest AI opportunity (no quotes around it)",
+  "summary": "2-3 sentences. Be direct and specific to their situation. Reference their bottleneck and magic wand wish if provided. Tell them what AI could realistically do for them.",
+  "opportunities": [
+    {{
+      "title": "Short title (4-6 words)",
+      "description": "1-2 sentences explaining this specific AI opportunity for their business. Be concrete.",
+      "impact": "High" or "Medium"
+    }},
+    {{
+      "title": "Short title (4-6 words)",
+      "description": "1-2 sentences.",
+      "impact": "High" or "Medium"
+    }},
+    {{
+      "title": "Short title (4-6 words)",
+      "description": "1-2 sentences.",
+      "impact": "High" or "Medium"
+    }}
+  ],
+  "next_step": "One sentence. A specific, actionable next step they should take — e.g. book a call, try the AI Lab, etc."
+}}"""
+
+    try:
+        resp = client.chat.completions.create(
+            model='gpt-4.1-mini',
+            messages=[{'role': 'user', 'content': prompt}],
+            temperature=0.7,
+            max_tokens=600,
+            response_format={'type': 'json_object'}
+        )
+        raw = resp.choices[0].message.content
+        return json.loads(raw)
+    except Exception as e:
+        app.logger.warning(f'AI recommendations error: {e}')
+        return {
+            'headline': 'Strong AI opportunities identified for your business',
+            'summary': f'Based on your scan results, there are clear areas where AI can save you time and help you grow. Your biggest opportunity is around {bottleneck or "streamlining your operations"}.',
+            'opportunities': [
+                {'title': 'Automate your lead follow-up', 'description': 'AI can respond to every enquiry instantly — even at 11pm on a Sunday — so no lead ever goes cold.', 'impact': 'High'},
+                {'title': 'Reduce repetitive questions', 'description': 'An AI assistant can handle the questions your team answers every day, freeing them up for higher-value work.', 'impact': 'High'},
+                {'title': 'Automate review collection', 'description': 'A simple automated sequence after every job completion can dramatically increase your Google reviews without any manual effort.', 'impact': 'Medium'}
+            ],
+            'next_step': 'Book a free 30-minute call to see exactly how these would work for your business.'
+        }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# OPPORTUNITY SCAN — scores endpoint (receives computed 5F scores from browser)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@app.route('/api/opportunity-scan/scores', methods=['POST'])
+def opportunity_scan_scores():
+    """Receive computed 5F scores from the browser and write them to GHL custom fields."""
+    body   = request.get_json(force=True)
+    email  = (body.get('email') or '').strip().lower()
+    scores = body.get('scores', {})
+
+    if not email or not scores:
+        return jsonify({'success': False}), 400
+
+    # Find the contact by email
+    search_data, search_err = ghl_mcp('contacts_get-contacts', {'query': email, 'limit': 1})
+    contact_id = None
+    if search_data:
+        contacts = search_data.get('contacts') or []
+        if contacts:
+            contact_id = contacts[0].get('id')
+
+    if not contact_id:
+        return jsonify({'success': False, 'error': 'Contact not found'}), 404
+
+    # Update contact with score custom fields
+    update_payload = {
+        'id': contact_id,
+        'customFields': [
+            {'key': 'scan_f1_formulate', 'field_value': str(scores.get('f1', ''))},
+            {'key': 'scan_f2_befound',   'field_value': str(scores.get('f2', ''))},
+            {'key': 'scan_f3_find',      'field_value': str(scores.get('f3', ''))},
+            {'key': 'scan_f4_fulfil',    'field_value': str(scores.get('f4', ''))},
+            {'key': 'scan_f5_fanfare',   'field_value': str(scores.get('f5', ''))},
+        ]
+    }
+    ghl_mcp('contacts_update-contact', update_payload)
+    return jsonify({'success': True})
 
 
 # ─────────────────────────────────────────────────────────────────────────────

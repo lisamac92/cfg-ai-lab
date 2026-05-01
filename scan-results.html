@@ -544,6 +544,16 @@
   </div>
 </div>
 
+<!-- AI PERSONALISED RECOMMENDATIONS -->
+<section class="section fade-in" id="ai-recs-section" style="display:none;">
+  <div class="section-label">Your personalised AI analysis</div>
+  <h2 class="section-title" id="ai-recs-headline">Loading your personalised analysis...</h2>
+  <p class="section-sub" id="ai-recs-summary"></p>
+  <div class="ideas-grid" id="ai-recs-grid" style="margin-top:32px;"></div>
+</section>
+
+<div class="section-divider" id="ai-recs-divider" style="display:none;"></div>
+
 <!-- 5F SIGNAL STRENGTH -->
 <section class="section fade-in">
   <div class="section-label">Your 5F Signal Strength</div>
@@ -634,7 +644,7 @@
 
 <!-- FOOTER -->
 <footer class="results-footer">
-  <p>© 2025 ClickFlow Grow · <a href="/">Home</a> · <a href="/lab">AI Lab</a> · <a href="opportunity-scan.html">Retake the scan</a></p>
+  <p>© 2025 ClickFlow Grow · <a href="/">Home</a> · <a href="/lab">AI Lab</a> · <a href="/opportunity-scan.html">Retake the scan</a></p>
 </footer>
 
 <script>
@@ -853,6 +863,54 @@
       }, 600);
     }
   }
+
+  // ── AI PERSONALISED RECOMMENDATIONS ──
+  (function loadAiRecs() {
+    try {
+      const raw = sessionStorage.getItem('cfg_scan_recs');
+      if (!raw) return;
+      const recs = JSON.parse(raw);
+      sessionStorage.removeItem('cfg_scan_recs'); // consume once
+
+      const section = document.getElementById('ai-recs-section');
+      const divider = document.getElementById('ai-recs-divider');
+      const headline = document.getElementById('ai-recs-headline');
+      const summary  = document.getElementById('ai-recs-summary');
+      const grid     = document.getElementById('ai-recs-grid');
+
+      if (recs.headline) headline.textContent = recs.headline;
+      if (recs.summary)  summary.textContent  = recs.summary;
+
+      if (recs.opportunities && recs.opportunities.length) {
+        recs.opportunities.forEach(opp => {
+          const impactColour = opp.impact === 'High' ? 'var(--teal)' : 'var(--amber)';
+          grid.innerHTML += `
+            <div class="idea-card">
+              <div class="idea-tag" style="background:${impactColour}20; color:${impactColour};">${opp.impact} Impact</div>
+              <h3 class="idea-title">${opp.title}</h3>
+              <p class="idea-story">${opp.description}</p>
+            </div>
+          `;
+        });
+      }
+
+      if (recs.next_step) {
+        grid.innerHTML += `
+          <div class="idea-card" style="border-color:var(--teal); background:rgba(0,212,170,0.05);">
+            <div class="idea-tag" style="background:rgba(0,212,170,0.15); color:var(--teal);">Your next step</div>
+            <h3 class="idea-title">Ready to take this further?</h3>
+            <p class="idea-story">${recs.next_step}</p>
+            <a href="https://link.clickflowgrow.com/widget/booking/1oQg9EeqtweL4ewewqP7" target="_blank" class="pathway-btn pathway-btn-primary" style="display:inline-flex; margin-top:16px;">Book a free call &rarr;</a>
+          </div>
+        `;
+      }
+
+      section.style.display = '';
+      divider.style.display = '';
+    } catch(e) {
+      // silently skip if no recs available
+    }
+  })();
 
   // ── FADE IN ANIMATIONS ──
   const observer = new IntersectionObserver((entries) => {

@@ -979,20 +979,46 @@
       document.getElementById(steps[i]).classList.add('visible');
     }
 
-    // Submit to backend
+    // Submit to backend and capture AI recommendations
+    let aiRecs = null;
     try {
-      await fetch('/api/opportunity-scan', {
+      const resp = await fetch('/api/opportunity-scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(scanData)
       });
+      const data = await resp.json();
+      if (data.recommendations) {
+        aiRecs = data.recommendations;
+        sessionStorage.setItem('cfg_scan_recs', JSON.stringify(aiRecs));
+      }
     } catch(e) {
       // Continue to results even if API call fails
     }
 
-    // Calculate scores and redirect to results
+    // Calculate scores
     await new Promise(r => setTimeout(r, 800));
     const scores = calculateScores();
+
+    // Send scores to backend so they can be stored in GHL custom fields
+    try {
+      await fetch('/api/opportunity-scan/scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: contact.email,
+          scores: {
+            f1: scores.formulate,
+            f2: scores.befound,
+            f3: scores.find,
+            f4: scores.fulfil,
+            f5: scores.fanfare
+          }
+        })
+      });
+    } catch(e) { /* non-blocking */ }
+
+    // Redirect to results page
     const params = new URLSearchParams({
       name: contact.firstName,
       f1: scores.formulate,
