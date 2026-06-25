@@ -17,7 +17,21 @@ STATIC_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='')
 CORS(app)
 
-client = OpenAI()  # uses OPENAI_API_KEY + base_url from environment
+# Lazy-init the OpenAI client — avoids startup crash if OPENAI_API_KEY is not yet
+# present in the environment (e.g. during Railway cold-start before env vars load).
+_openai_client = None
+def _get_client():
+    global _openai_client
+    if _openai_client is None:
+        _openai_client = OpenAI()  # uses OPENAI_API_KEY + base_url from environment
+    return _openai_client
+
+class _LazyOpenAI:
+    """Proxy that defers OpenAI() construction until the first API call."""
+    def __getattr__(self, name):
+        return getattr(_get_client(), name)
+
+client = _LazyOpenAI()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MODULE 2 — AI PROSPECTING: LIVE LEAD SEARCH
